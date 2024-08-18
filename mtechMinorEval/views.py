@@ -3,4 +3,4 @@ from django.http import HttpResponse
 # Create your views here.
 
 def test(request):
-    return render(request,'test.html')
+    return render(request,'mtechMinorEval/test.html')
