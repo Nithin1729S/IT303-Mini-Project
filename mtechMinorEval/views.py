@@ -7,7 +7,9 @@ def home(request):
     return render(request,'mtechMinorEval/home.html')
 
 def projectsList(request):
-    return render(request,'mtechMinorEval/projectsList.html')
+    projects=Project.objects.all()
+    context={'projects':projects}
+    return render(request,'mtechMinorEval/projectsList.html',context=context)
 
 def evaluate(request):
     formExaminer=ExaminerEvaluationForm()

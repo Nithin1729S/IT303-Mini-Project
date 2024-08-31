@@ -1,28 +1,42 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../static/css/style.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.min.css' %}">
     <title>Project List</title>
 </head>
-<body>
-    <h1>Projects List</h1>
-    <table>
-        <tr>
-            <th>Student Rollno</th>
-            <th>Student Name</th>
-            <th>Minor Project Name</th>
-        </tr>
-        {% for project in projects %}
-        <tr>
-            <td></td>
-            <td></td>
-            <th></td>
-            <td><a href=""></a></td>
-        </tr>
-        {% endfor %}
-    </table>
+
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-semibold mb-6 text-center">Projects List</h1>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-2 px-4 border-b">Minor Project Name</th>
+                        <th class="py-2 px-4 border-b">Student Roll No</th>
+                        <th class="py-2 px-4 border-b">Student Name</th>
+                        <th class="py-2 px-4 border-b">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-2 px-4 border-b">{{ project.title }}</td>
+                        <td class="py-2 px-4 border-b">{{ project.student.rollno }}</td>
+                        <td class="py-2 px-4 border-b">{{ project.student.name }}</td>
+                        <td class="py-2 px-4 border-b">
+                            <a href="{% url 'evaluate' %}" class="text-blue-500 hover:text-blue-700">Evaluate</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
+
 </html>

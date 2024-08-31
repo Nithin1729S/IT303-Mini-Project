@@ -20,11 +20,11 @@ class Student(models.Model):
     name=models.CharField(max_length=255,null=True,blank=True)
     rollno=models.CharField(max_length=200,null=True,blank=True)
     def __str__(self):
-        return self.profile.user.get_full_name()
+        return f"{self.name}"
 
 class Faculty(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, limit_choices_to={'role': 'faculty'})
     name=models.CharField(max_length=255,null=True,blank=True)
     facultyID=models.CharField(max_length=200,null=True,blank=True)
     def __str__(self):
-        return self.profile.user.get_full_name()
+        return f"{self.name}"
