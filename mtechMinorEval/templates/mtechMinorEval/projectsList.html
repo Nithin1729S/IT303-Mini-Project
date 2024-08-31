@@ -7,56 +7,22 @@
     <link rel="stylesheet" href="../../static/css/style.min.css">
     <title>Project List</title>
 </head>
-<body class="bg-gray-100 text-gray-800">
-
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-8  text-indigo-400 text-center">Project List</h1>
-
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-                <thead>
-                    <tr class="bg-green-600 text-white">
-                        <th class="py-3 px-6 text-left text-yellow-400">Student Name</th>
-                        <th class="py-3 px-6 text-left">Project Name</th>
-                        <th class="py-3 px-6 text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Sample Row 1 -->
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-4 px-6">amar Doe</td>
-                        <td class="py-4 px-6">AI Chatbot</td>
-                        <td class="py-4 px-6 text-center">
-                            <button class="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Evaluate</button>
-                        </td>
-                    </tr>
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-4 px-6">John Doe</td>
-                        <td class="py-4 px-6 text-orange-600">AI Chatbot</td>
-                        <td class="py-4 px-6 text-center">
-                            <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Evaluate</button>
-                        </td>
-                    </tr>
-                    <!-- Sample Row 2 -->
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-4 px-6">Jane Smith</td>
-                        <td class="py-4 px-6">E-commerce Website</td>
-                        <td class="py-4 px-6 text-center">
-                            <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Evaluate</button>
-                        </td>
-                    </tr>
-                    <!-- Sample Row 3 -->
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-4 px-6">Michael Johnson</td>
-                        <td class="py-4 px-6">Data Analytics Tool</td>
-                        <td class="py-4 px-6 text-center">
-                            <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Evaluate</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
+<body>
+    <h1>Projects List</h1>
+    <table>
+        <tr>
+            <th>Student Rollno</th>
+            <th>Student Name</th>
+            <th>Minor Project Name</th>
+        </tr>
+        {% for project in projects %}
+        <tr>
+            <td></td>
+            <td></td>
+            <th></td>
+            <td><a href=""></a></td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
