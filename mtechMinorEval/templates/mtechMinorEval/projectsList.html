@@ -12,6 +12,7 @@
 <body class="bg-gray-100 text-gray-800">
     <!-- Navbar -->
     {% include 'mtechMinorEval/navbar.html' %}
+    <div>Logged in {{request.user.username }}</div>
     <div class="container mx-auto p-6">
         <h1 class="text-3xl font-semibold mb-6 text-center">Projects List</h1>
         <div class="overflow-x-auto">
@@ -21,6 +22,7 @@
                         <th class="py-2 px-4 border-b">Minor Project Name</th>
                         <th class="py-2 px-4 border-b">Student Roll No</th>
                         <th class="py-2 px-4 border-b">Student Name</th>
+                        <th class="py-2 px-4 border-b">Role</th>
                         <th class="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -30,6 +32,11 @@
                         <td class="py-2 px-4 border-b">{{ project.title }}</td>
                         <td class="py-2 px-4 border-b">{{ project.student.rollno }}</td>
                         <td class="py-2 px-4 border-b">{{ project.student.name }}</td>
+                        {% if project.guide.name == request.user.username %}
+                        <td class="py-2 px-4 border-b">Guide</td>
+                        {% else %}
+                        <td class="py-2 px-4 border-b">Examiner</td>
+                        {% endif %}
                         <td class="py-2 px-4 border-b">
                             <a href="{% url 'evaluate' project.id%}" class="text-blue-500 hover:text-blue-700">Evaluate</a>
                         </td>
