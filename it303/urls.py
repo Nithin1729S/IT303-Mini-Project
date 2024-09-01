@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-
+from users.views import loginUser
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
+    path('login/', loginUser, name='login'),
     path('',include('mtechMinorEval.urls'))  #to allow urls from mtechMinorEval be valid
 ]

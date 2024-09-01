@@ -1,30 +1,31 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
-from .forms import UserRegistrationForm, UserLoginForm
-from users.models import Profile,Student,Faculty
+from django.contrib.auth.models import User
+from django.contrib import messages
 
-def register(request):
-    if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            profile = Profile.objects.create(user=user, role=form.cleaned_data['role'])
-            login(request, user)
-            return redirect('home')
-    else:
-        form = UserRegistrationForm()
-    return render(request, 'users/register.html', {'form': form})
+def loginUser(request):
+    if request.user.is_authenticated:
+        return redirect('projectsList')
+    
+    if request.method=='POST':
+        username=request.POST['username']
+        password=request.POST['password']
 
-def user_login(request):
-    if request.method == 'POST':
-        form = UserLoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')
-    else:
-        form = UserLoginForm()
-    return render(request, 'users/login.html', {'form': form})
+        try:
+            user=User.objects.get(username=username)
+        except:
+            messages.error(request,"Username does not exist")
+
+        user=authenticate(request,username=username,password=password)
+        if user is not None:
+            login(request,user)
+            return redirect('projectsList')
+        else:
+            messages.error(request,"Username or password is incorrect")
+
+    return render(request,'users/login.html')
+
+def logoutUser(request):
+    logout(request)
+    messages.error(request,"Username was successfully logged out ")
+    return redirect('login')
