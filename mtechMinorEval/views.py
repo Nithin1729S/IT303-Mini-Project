@@ -27,8 +27,21 @@ def projectsList(request):
     return render(request, 'mtechMinorEval/projectsList.html', context=context)
 
 @login_required(login_url='login')
-def evaluate(request):
-    formExaminer=ExaminerEvaluationForm()
-    formGuide=GuideEvaluationForm()
-    context={'formExaminer':formExaminer ,'formGuide':formGuide}
+def evaluate(request,pk):
+    project=Project.objects.get(id=pk)
+    print(project)
+    user=request.user
+    userEmail = user.email
+    userProfile = get_object_or_404(Profile, email=userEmail)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
+    role=""
+    if project.guide == faculty:
+        form=ExaminerEvaluationForm()
+        role='Guide'
+    elif project.examiner == faculty:
+        form=GuideEvaluationForm()
+        role='Examiner'
+    else:
+        return HttpResponse("You are not authorized to access this resource")
+    context={'form':form,'role':role}
     return render(request,'mtechMinorEval/projectEvaluation.html',context=context)

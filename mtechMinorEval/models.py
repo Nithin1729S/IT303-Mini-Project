@@ -15,7 +15,7 @@ class Project(models.Model):
     guide = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='guide_projects')
     
     def __str__(self):
-        return f"{self.title} by {self.student}"
+        return f"{self.title}"
     
 
 class GuideEvaluation(models.Model):
