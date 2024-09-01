@@ -34,6 +34,7 @@ def loginUser(request):
     return render(request,'users/login.html')
 
 def logoutUser(request):
+    username = request.user.username if request.user.is_authenticated else 'User'
     logout(request)
-    messages.error(request,"Username was successfully logged out ")
+    messages.error(request,f"{username} was successfully logged out ")
     return redirect('login')
