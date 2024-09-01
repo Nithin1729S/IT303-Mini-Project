@@ -11,13 +11,16 @@
     <form method="POST" action="">
         {% csrf_token %}
         {% for field in form %}
-            {% if field.name != 'project' and field.name != 'guide' and field.name != 'examiner' %} <!-- Adjust 'project' and role -->
-                    <label for="{{ field.id_for_label }}">
-                        {{ field.label }}
-                    </label>
-                    {{ field }}
+            {% if field.name == 'project' or field.name == 'guide' or field.name == 'examiner' %}
+                <!-- Render hidden fields for project, guide, and examiner -->
+                {{ field.as_hidden }}
+            {% else %}
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                <hr>
             {% endif %}
-            <hr>
         {% endfor %}
         <input type="submit" value="{% if form.instance.pk %}Update{% else %}Submit{% endif %}">
     </form>
