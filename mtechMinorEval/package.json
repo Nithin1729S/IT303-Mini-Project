@@ -1,0 +1,31 @@
+{
+  "name": "mtechminoreval",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tailwind build ./static/css/tailwind.css -o ./static/css/style.css && cleancss -o ./static/css/style.min.css ./static/css/style.css",
+    "watch": "npm-watch build"
+  },
+  "watch": {
+    "build": {
+      "patterns": ["templates/mtechMinorEval/*.html"], 
+      "extensions": "html",
+      "ignore": ["node_modules"],
+      "quiet": true
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "clean-css-cli": "^5.6.3",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^3.4.10"
+  },
+  "keywords": [],
+  "description": "",
+  "devDependencies": {
+    "npm-watch": "^0.13.0"
+  }
+}
