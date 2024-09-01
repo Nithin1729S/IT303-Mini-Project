@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from users.models import Profile,Student,Faculty
 from django.core.validators import FileExtensionValidator,MinValueValidator, MaxValueValidator
 import uuid
@@ -13,7 +15,7 @@ class Project(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
     examiner = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='examiner_projects')
     guide = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='guide_projects')
-    
+    deadline=models.DateTimeField(null=True,blank=True)
     def __str__(self):
         return f"{self.title}"
     
@@ -64,3 +66,47 @@ class ExaminerEvaluation(models.Model):
         return f"Examiner Evaluation for {self.project.title}"
 
 
+class ProjectEvalSummary(models.Model):
+    project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='eval_summary')
+    project_name = models.CharField(max_length=255)
+    examiner_total_eval = models.PositiveIntegerField(default=0)
+    guide_total_eval = models.PositiveIntegerField(default=0)
+    is_satisfactory = models.BooleanField(default=False)
+    guide_name = models.CharField(max_length=255, blank=True)
+    examiner_name = models.CharField(max_length=255, blank=True)
+    student_rollno = models.CharField(max_length=20, blank=True)
+
+    def __str__(self):
+        return f"Evaluation Summary for {self.project_name}"
+
+def create_or_update_eval_summary(project):
+    summary, created = ProjectEvalSummary.objects.get_or_create(project=project)
+    summary.project_name = project.title
+    summary.guide_name = project.guide.profile.user.get_full_name() if project.guide else ""
+    summary.examiner_name = project.examiner.profile.user.get_full_name() if project.examiner else ""
+    summary.student_rollno = project.student.rollno if hasattr(project.student, 'rollno') else ""
+    summary.save()
+    return summary
+
+@receiver(post_save, sender=Project)
+def project_post_save(sender, instance, created, **kwargs):
+    create_or_update_eval_summary(instance)
+
+@receiver(post_save, sender=GuideEvaluation)
+def update_guide_eval(sender, instance, **kwargs):
+    summary = create_or_update_eval_summary(instance.project)
+    summary.guide_total_eval = instance.total_score
+    summary.is_satisfactory = (summary.guide_total_eval + summary.examiner_total_eval) >= 50  # Adjust threshold as needed
+    summary.save()
+
+@receiver(post_save, sender=ExaminerEvaluation)
+def update_examiner_eval(sender, instance, **kwargs):
+    summary = create_or_update_eval_summary(instance.project)
+    summary.examiner_total_eval = instance.total_score
+    summary.is_satisfactory = (summary.guide_total_eval + summary.examiner_total_eval) >= 50  # Adjust threshold as needed
+    summary.save()
+
+# Run this function once to create ProjectEvalSummary for existing Projects
+def create_eval_summaries_for_existing_projects():
+    for project in Project.objects.all():
+        create_or_update_eval_summary(project)
