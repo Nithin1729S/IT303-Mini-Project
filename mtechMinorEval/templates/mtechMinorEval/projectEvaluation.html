@@ -6,7 +6,8 @@
     <title>Project Evaluation</title>
 </head>
 
-<body>
+<body class="bg-gray-100 text-gray-800">
+    {% include 'mtechMinorEval/navbar.html' %}
     <h1>{{role}} Evaluation Form </h1>
     <form method="POST" action="">
         {% csrf_token %}
