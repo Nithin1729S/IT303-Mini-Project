@@ -12,6 +12,8 @@
 <body class="bg-gray-100 text-gray-800">
     <!-- Navbar -->
     {% include 'mtechMinorEval/navbar.html' %}
+    <a href="{% url 'projectsList' %}" style="color: #4299e1; text-decoration: none; padding-left: 500px;">Go Back</a>
+
     <div>Logged in {{request.user.username }}</div>
     <div class="container mx-auto p-6">
         <h1 class="text-3xl font-semibold mb-6 text-center">Summary</h1>

@@ -10,7 +10,7 @@
 </head>
 <body class="flex flex-col min-h-screen bg-gray-100">
     {% include 'mtechMinorEval/navbar.html' %}
-
+    <a href="{% url 'projectsList' %}" style="color: #4299e1; text-decoration: none; padding-left: 500px;">Go Back</a>
     <div class="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none">
         {% if messages %}
         <div class="mt-4 w-full max-w-md">
