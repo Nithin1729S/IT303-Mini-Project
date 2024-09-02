@@ -1,11 +1,50 @@
 from django.forms import ModelForm
+from django.forms.widgets import NumberInput
+from django import forms
 from .models import ExaminerEvaluation,GuideEvaluation
-
 class ExaminerEvaluationForm(ModelForm):
     class Meta:
         model=ExaminerEvaluation
         exclude=[]
         fields=['datetime_from','datetime_to','depthOfUnderstanding','workDoneAndResults','exceptionalWork','vivaVoce','presentation','report','comments']
+        widgets={
+            'depthOfUnderstanding':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':8
+                }
+            ),
+            'workDoneAndResults':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':12
+                }
+            ),
+            'exceptionalWork':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':6
+                }
+            ),
+            'vivaVoce':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':8
+                }
+            ),
+            'presentation':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':4
+                }
+            ),
+            'report':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':2
+                }
+            )
+        }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         instance = kwargs.get('instance')
@@ -29,7 +68,50 @@ class GuideEvaluationForm(ModelForm):
         model=GuideEvaluation
         exclude=[]
         fields=['datetime_from','datetime_to','depthOfUnderstanding','workDoneAndResults','exceptionalWork','vivaVoce','presentation','report','attendance','comments']
-
+        widgets={
+            'depthOfUnderstanding':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':12
+                }
+            ),
+            'workDoneAndResults':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':18
+                }
+            ),
+            'exceptionalWork':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':6
+                }
+            ),
+            'vivaVoce':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':12
+                }
+            ),
+            'presentation':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':6
+                }
+            ),
+            'report':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':3
+                }
+            ),
+            'attendance':forms.NumberInput(
+                attrs={
+                    'min':0,
+                    'max':3
+                }
+            )
+        }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         instance = kwargs.get('instance')
