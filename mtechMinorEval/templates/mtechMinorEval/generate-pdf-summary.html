@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 8px;
+        }
+        th {
+            font-weight: bold;
+        }
+        th[colspan] {
+            text-align: left;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <h1>Minor Project Guide Evaluation</h1>
+    <table>
+        <tr>
+            <th>Sl. No.</th>
+            <th>Register Number</th>
+            <th>Name of the Student</th>
+            <th>Depth of Understanding (12 marks)</th>
+            <th>Work done and Results (18 marks)</th>
+            <th>Exceptional Work (6 marks)</th>
+            <th>Viva-Voce (12 marks)</th>
+            <th>Presentation (6 Marks)</th>
+            <th>Report (3 Marks)</th>
+            <th>Attendance (3 Marks)</th>
+            <th>Total (60 Marks)</th>
+        </tr>
+        {% for project in projects %}
+        <tr>
+            <td rowspan="2">{{ forloop.counter }}</td>
+            <td colspan="10" style="text-align: left;">Title of the Project: {{ project.title }}</td>
+        </tr>
+        <tr>
+            <td>{{ project.student.rollno }}</td>
+            <td>{{ project.student.name }}</td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.depthOfUnderstanding }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.workDoneAndResults }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.exceptionalWork }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.vivaVoce  }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.presentation }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.report }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.attendance }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.total_score }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h1>Minor Project Examiner Evaluation</h1>
+    <table>
+        <tr>
+            <th>Sl. No.</th>
+            <th>Register Number</th>
+            <th>Name of the Student</th>
+            <th>Depth of Understanding (8 marks)</th>
+            <th>Work done and Results (12 marks)</th>
+            <th>Exceptional Work (6 marks)</th>
+            <th>Viva-Voce (8 marks)</th>
+            <th>Presentation (4 Marks)</th>
+            <th>Report (2 Marks)</th>
+            <th>Total (40 Marks)</th>
+        </tr>
+        {% for project in projects %}
+        <tr>
+            <td rowspan="2">{{ forloop.counter }}</td>
+            <td colspan="10" style="text-align: left;">Title of the Project: {{ project.title }}</td>
+        </tr>
+        <tr>
+            <td>{{ project.student.rollno }}</td>
+            <td>{{ project.student.name }}</td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.depthOfUnderstanding }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.workDoneAndResults }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.exceptionalWork }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.vivaVoce  }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.presentation }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.report }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.total_score }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h1>Total Evaluation</h1>
+    <table>
+        <tr>
+            <th>Sl. No.</th>
+            <th>Register Number</th>
+            <th>Name of the Student</th>
+            <th>Guide Marks (Maximum 60)</th>
+            <th>Examiner Marks (Maximum 40)</th>
+            <th>Total Marks (Maximum 100)</th>
+            <th>Satisfactory/
+                Non-Satisfactory</th>
+        </tr>
+        {% for project in projects %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ project.student.rollno }}</td>
+            <td>{{ project.student.name }}</td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.total_score }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.total_score }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation and project.examiner_evaluation %}
+                    {{ project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" }}
+                {% else %}
+                     N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation and project.examiner_evaluation %}
+                    {% with total_score=project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" %}
+                        {% if total_score >= 50 %}
+                            S
+                        {% else %}
+                            N
+                        {% endif %}
+                    {% endwith %}
+                {% else %}
+                            N/A
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

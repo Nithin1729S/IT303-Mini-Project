@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import ExaminerEvaluationForm, GuideEvaluationForm
 from users.models import *
+from weasyprint import HTML, CSS
+from django.template.loader import render_to_string
 
 def home(request):
     return render(request,'mtechMinorEval/home.html')
@@ -89,3 +91,12 @@ def summary(request):
         'projects': projects,
     }
     return render(request, 'mtechMinorEval/summary.html', context)
+
+@login_required(login_url='login')
+def generate_pdf(request):
+    projects = Project.objects.select_related('student', 'guide', 'examiner')\
+                              .prefetch_related('guide_evaluation', 'examiner_evaluation')
+    context = {
+        'projects': projects,
+    }
+    return render(request,'mtechMinorEval/generate-pdf-summary.html', context)

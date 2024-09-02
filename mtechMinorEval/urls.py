@@ -4,5 +4,6 @@ urlpatterns=[
     path('',views.home,name='home'),
     path('projectsList/',views.projectsList,name='projectsList'),
     path('evaluate/<str:pk>/',views.evaluate,name='evaluate'),
-    path('summary/',views.summary,name='summary')
+    path('summary/',views.summary,name='summary'),
+    path('generate-pdf/',views.generate_pdf,name='generate-pdf')
 ]
