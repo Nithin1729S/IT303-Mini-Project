@@ -65,7 +65,19 @@ def evaluate(request, pk):
         else:
             form = FormClass(initial=initial_data)
 
-    context = {'form': form, 'role': role}
+    total_marks = 0
+    if evaluation_instance:
+        total_marks = (
+            getattr(evaluation_instance, 'depthOfUnderstanding', 0) +
+            getattr(evaluation_instance, 'workDoneAndResults', 0) +
+            getattr(evaluation_instance, 'exceptionalWork', 0) +
+            getattr(evaluation_instance, 'vivaVoce', 0) +
+            getattr(evaluation_instance, 'presentation', 0) +
+            getattr(evaluation_instance, 'report', 0) +
+            getattr(evaluation_instance, 'attendance', 0)
+        )
+    print(dir(evaluation_instance))
+    context = {'form': form, 'role': role,'total_marks':total_marks}
     return render(request, 'mtechMinorEval/projectEvaluation.html', context=context)
 
 @login_required(login_url='login')
