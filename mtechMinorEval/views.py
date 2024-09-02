@@ -67,3 +67,12 @@ def evaluate(request, pk):
 
     context = {'form': form, 'role': role}
     return render(request, 'mtechMinorEval/projectEvaluation.html', context=context)
+
+@login_required(login_url='login')
+def summary(request):
+    projects = Project.objects.select_related('student', 'guide', 'examiner')\
+                              .prefetch_related('guide_evaluation', 'examiner_evaluation')
+    context = {
+        'projects': projects,
+    }
+    return render(request, 'mtechMinorEval/summary.html', context)
