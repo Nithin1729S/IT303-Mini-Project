@@ -1,9 +1,9 @@
-inside mtechMinorEval folder
+inside mtechMinorEval folder open a terminal ( required only in dev phase )
 
 `npm i`
 `npm run watch`
 
-in the main folder 
+in the main folder open another terminal 
 `pip install -r requirements.txt`
 `python manage.py runserver`
 
