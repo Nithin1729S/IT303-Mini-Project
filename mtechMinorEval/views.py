@@ -58,7 +58,7 @@ def evaluate(request, pk):
             return redirect('projectsList')
         else:
             print("Form is invalid")
-            print(form.errors)
+            #print(form.errors)
     else:
         if evaluation_instance:
             form = FormClass(instance=evaluation_instance, initial=initial_data)
@@ -76,8 +76,9 @@ def evaluate(request, pk):
             getattr(evaluation_instance, 'report', 0) +
             getattr(evaluation_instance, 'attendance', 0)
         )
-    print(dir(evaluation_instance))
-    context = {'form': form, 'role': role,'total_marks':total_marks}
+    # print(project.student)
+    # print(project.student.rollno)
+    context = {'form': form, 'role': role,'total_marks':total_marks,'project':project}
     return render(request, 'mtechMinorEval/projectEvaluation.html', context=context)
 
 @login_required(login_url='login')

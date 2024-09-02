@@ -33,6 +33,16 @@
         <form method="POST" action="" class="bg-white p-6 rounded shadow-md w-full max-w-3xl">
             {% csrf_token %}
             <h1 class="text-3xl font-bold mb-6 text-center">{{ role }} Evaluation Form</h1>
+            <span>
+                <b>Student Name:</b> {{project.student}}
+                <br>
+                <b>Student RollNo:</b> {{project.student.rollno}}
+                <br>
+                <b>Project Name:</b> {{project.title}}
+                <br>
+            </span>
+            <hr>
+            <hr>
             {% if form.errors %}
                 <div role="alert" class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
                     <strong class="font-bold">Please correct the following errors:</strong>
