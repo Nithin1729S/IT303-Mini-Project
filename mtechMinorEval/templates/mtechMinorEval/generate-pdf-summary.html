@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 8px;
+        }
+        th {
+            font-weight: bold;
+        }
+        th[colspan] {
+            text-align: left;
+            font-weight: normal;
+        }
+        #printButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        @media print {
+            #printButton {
+                display: none;
+            }
+        }
+        @page {
+        size: landscape;
+        }
+    </style>
+</head>
+<body>
+    <button id="printButton" onclick="printPage()">Print PDF</button>
+    <div style="text-align: center; font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;  padding: 10px;">
+        <h2 style="margin-bottom: 5px;">Department of Information Technology</h2>
+        <h3 style="margin-top: 0; margin-bottom: 5px;">National Institute of Technology Karnataka, Surathkal-575025</h3>
+        <!-- <p style="color: red; font-weight: bold; margin-bottom: 5px;">Note : This sample evaluation sheet can be used to implement makrks evaluation module</p> -->
+        <p style="margin-bottom: 5px;">III Sem M.Tech. (IT) - Minor Projects (IT897)End-SemesterEvaluation Sheet (Guide)</p>
+        <p style="margin-bottom: 5px;">July – December 2023 Session</p>
+        <p style="font-size: 0.9em;">Each student is allotted a maximum of 20 minutes for their presentation, followed by a 10 minutes for Question and Answers.</p>
+      </div>
+    <h1>Minor Project Guide Evaluation</h1>
+    <table>
+        <tr>
+            <th>Sl. No.</th>
+            <th>Register Number</th>
+            <th>Name of the Student</th>
+            <th>Depth of Understanding (12 marks)</th>
+            <th>Work done and Results (18 marks)</th>
+            <th>Exceptional Work (6 marks)</th>
+            <th>Viva-Voce (12 marks)</th>
+            <th>Presentation (6 Marks)</th>
+            <th>Report (3 Marks)</th>
+            <th>Attendance (3 Marks)</th>
+            <th>Total (60 Marks)</th>
+        </tr>
+        {% for project in projects %}
+        <tr>
+            <td rowspan="2">{{ forloop.counter }}</td>
+            <td colspan="10" style="text-align: left;">Title of the Project: {{ project.title }}</td>
+        </tr>
+        <tr>
+            <td>{{ project.student.rollno }}</td>
+            <td>{{ project.student.name }}</td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.depthOfUnderstanding }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.workDoneAndResults }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.exceptionalWork }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.vivaVoce  }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.presentation }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.report }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.attendance }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.total_score }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h1>Minor Project Examiner Evaluation</h1>
+    <table>
+        <tr>
+            <th>Sl. No.</th>
+            <th>Register Number</th>
+            <th>Name of the Student</th>
+            <th>Depth of Understanding (8 marks)</th>
+            <th>Work done and Results (12 marks)</th>
+            <th>Exceptional Work (6 marks)</th>
+            <th>Viva-Voce (8 marks)</th>
+            <th>Presentation (4 Marks)</th>
+            <th>Report (2 Marks)</th>
+            <th>Total (40 Marks)</th>
+        </tr>
+        {% for project in projects %}
+        <tr>
+            <td rowspan="2">{{ forloop.counter }}</td>
+            <td colspan="10" style="text-align: left;">Title of the Project: {{ project.title }}</td>
+        </tr>
+        <tr>
+            <td>{{ project.student.rollno }}</td>
+            <td>{{ project.student.name }}</td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.depthOfUnderstanding }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.workDoneAndResults }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.exceptionalWork }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.vivaVoce  }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.presentation }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.report }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.total_score }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h1>Total Evaluation</h1>
+    <table>
+        <tr>
+            <th>Sl. No.</th>
+            <th>Register Number</th>
+            <th>Name of the Student</th>
+            <th>Guide Marks (Maximum 60)</th>
+            <th>Examiner Marks (Maximum 40)</th>
+            <th>Total Marks (Maximum 100)</th>
+            <th>Satisfactory/
+                Non-Satisfactory</th>
+        </tr>
+        {% for project in projects %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ project.student.rollno }}</td>
+            <td>{{ project.student.name }}</td>
+            <td>
+                {% if project.guide_evaluation %}
+                    {{ project.guide_evaluation.total_score }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.examiner_evaluation %}
+                    {{ project.examiner_evaluation.total_score }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation and project.examiner_evaluation %}
+                    {{ project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" }}
+                {% else %}
+                     N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if project.guide_evaluation and project.examiner_evaluation %}
+                    {% with total_score=project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" %}
+                        {% if total_score >= 50 %}
+                            S
+                        {% else %}
+                            N
+                        {% endif %}
+                    {% endwith %}
+                {% else %}
+                            N/A
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div style="display: flex; justify-content: space-between;">
+        <div style="text-align: left;">
+            <div style="width: 300px; padding-top: 50px;">
+                Signature of the Guuide with Date
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div style="width: 300px; padding-top: 50px;">
+                Signature of the Examiner with Date
+            </div>
+        </div>
+    </div>
+  </div>
+</body>
+<script>
+    function printPage() {
+        window.print();
+    }
+</script>
+</html>
