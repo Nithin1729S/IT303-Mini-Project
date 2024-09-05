@@ -1,28 +1,102 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evaluation Form</title>
+    <link rel="stylesheet" href="../../static/css/style.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="flex flex-col min-h-screen bg-gray-100">
     {% include 'mtechMinorEval/navbar.html' %}
-    <h1>{{ role }} Evaluation Form</h1>
-    <form method="POST" action="">
-        {% csrf_token %}
-        {% for field in form %}
-            {% if field.name == 'project' or field.name == 'guide' or field.name == 'examiner' %}
-                <!-- Render hidden fields for project, guide, and examiner -->
-                {{ field.as_hidden }}
-            {% else %}
-                <label for="{{ field.id_for_label }}">
-                    {{ field.label }}
-                </label>
-                {{ field }}
-                <hr>
+    <a href="{% url 'projectsList' %}" style="color: #4299e1; text-decoration: none; padding-left: 500px;">Go Back</a>
+    <div class="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none">
+        {% if messages %}
+        <div class="mt-4 w-full max-w-md">
+            {% for message in messages %}
+            <div class="flash-message p-4 mb-2">
+                <div class="flex items-center">
+                    {% if message.tags == 'success' %}
+                    <p class="text-green-500">{{ message }}</p>
+                    {% elif message.tags == 'error' %}
+                    <p class="text-red-500">{{ message }}</p>
+                    {% else %}
+                    <p class="text-blue-500">{{ message }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="flex-grow flex items-center justify-center mt-8">
+        <form method="POST" action="" class="bg-white p-6 rounded shadow-md w-full max-w-3xl">
+            {% csrf_token %}
+            <h1 class="text-3xl font-bold mb-6 text-center">{{ role }} Evaluation Form</h1>
+            <span>
+                <b>Student Name:</b> {{project.student}}
+                <br>
+                <b>Student RollNo:</b> {{project.student.rollno}}
+                <br>
+                <b>Project Name:</b> {{project.title}}
+                <br>
+            </span>
+            <hr>
+            <hr>
+            {% if form.errors %}
+                <div role="alert" class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+                    <strong class="font-bold">Please correct the following errors:</strong>
+                    <ul class="list-disc pl-5 mt-2">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endif %}
-        {% endfor %}
-        <input type="submit" value="{% if form.instance.pk %}Update{% else %}Submit{% endif %}">
-    </form>
+            {% for field in form %}
+                {% if field.name == 'project' or field.name == 'guide' or field.name == 'examiner' %}
+                    {{ field.as_hidden }}
+                {% else %}
+                    <div class="mb-4">
+                        <label for="{{ field.id_for_label }}" class="block text-gray-700 font-medium mb-2">
+                            {{ field.label }}
+                            {% if field.field.widget.attrs.max %}
+                                (Max: {{ field.field.widget.attrs.max }})
+                            {% endif %}
+                        </label>
+                        {{ field }}
+                        
+                        {% if field.help_text %}
+                            <p class="text-gray-500 text-sm mt-1">{{ field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                <hr>
+            {% endfor %}
+            <div class="total-marks mb-4">
+                <label class="block text-gray-700 font-medium mb-2">Total Marks
+                    <span>
+                        {% if role == 'Guide'%}
+                <span>(Max: 60)</span>
+                {% endif %}
+                {% if role == 'Examiner' %}
+                <span>(Max: 40)</span>
+                {% endif %}
+                    </span>
+                </label>
+                <span>{{ total_marks }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <input type="submit" value="{% if form.instance.pk %}Update{% else %}Submit{% endif %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            </div>
+        </form>
+    </div>
 </body>
 </html>

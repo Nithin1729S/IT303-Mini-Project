@@ -15,6 +15,7 @@
     <div>Logged in {{request.user.username }}</div>
     <div class="container mx-auto p-6">
         <h1 class="text-3xl font-semibold mb-6 text-center">Projects List</h1>
+        <a href="{% url 'summary' %}" style="color: #4299e1; text-decoration: none;">Click to get Summary</a>
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-200">
                 <thead class="bg-gray-100">
