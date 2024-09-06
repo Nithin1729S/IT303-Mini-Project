@@ -70,6 +70,7 @@
             <th>Total (60 Marks)</th>
         </tr>
         {% for project in projects %}
+        {% if project.guide == faculty %}
         <tr>
             <td rowspan="2">{{ forloop.counter }}</td>
             <td colspan="10" style="text-align: left;">Title of the Project: {{ project.title }}</td>
@@ -78,7 +79,7 @@
             <td>{{ project.student.rollno }}</td>
             <td>{{ project.student.name }}</td>
             <td>
-                {% if project.guide_evaluation %}
+                {% if project.guide_evaluation%}
                     {{ project.guide_evaluation.depthOfUnderstanding }}
                 {% else %}
                     N/A
@@ -134,6 +135,7 @@
                 {% endif %}
             </td>
         </tr>
+        {% endif %}
         {% endfor %}
     </table>
     <h1>Minor Project Examiner Evaluation</h1>
@@ -151,6 +153,7 @@
             <th>Total (40 Marks)</th>
         </tr>
         {% for project in projects %}
+        {% if project.examiner == faculty %}
         <tr>
             <td rowspan="2">{{ forloop.counter }}</td>
             <td colspan="10" style="text-align: left;">Title of the Project: {{ project.title }}</td>
@@ -208,9 +211,10 @@
                 {% endif %}
             </td>
         </tr>
+        {% endif %}
         {% endfor %}
     </table>
-    <h1>Total Evaluation</h1>
+    <!-- <h1>Total Evaluation</h1>
     <table>
         <tr>
             <th>Sl. No.</th>
@@ -263,12 +267,12 @@
             </td>
         </tr>
         {% endfor %}
-    </table>
+    </table> -->
 
     <div style="display: flex; justify-content: space-between;">
         <div style="text-align: left;">
             <div style="width: 300px; padding-top: 50px;">
-                Signature of the Guuide with Date
+                Signature of the Guide with Date
             </div>
         </div>
         <div style="text-align: right;">

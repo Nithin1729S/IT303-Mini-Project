@@ -86,13 +86,8 @@ def evaluate(request, pk):
 
 @login_required(login_url='login')
 def summary(request):
-    user = request.user
-    userEmail = user.email
-    userProfile = get_object_or_404(Profile, email=userEmail)
-    faculty = get_object_or_404(Faculty, profile=userProfile)
     projects = Project.objects.select_related('student', 'guide', 'examiner')\
-                              .prefetch_related('guide_evaluation', 'examiner_evaluation')\
-                              .filter(Q(guide=faculty) | Q(examiner=faculty))
+                              .prefetch_related('guide_evaluation', 'examiner_evaluation')
     context = {
         'projects': projects,
     }
@@ -109,5 +104,6 @@ def generate_pdf(request):
                               .filter(Q(guide=faculty) | Q(examiner=faculty))
     context = {
         'projects': projects,
+        'faculty':faculty
     }
     return render(request,'mtechMinorEval/generate-pdf-summary.html', context)
