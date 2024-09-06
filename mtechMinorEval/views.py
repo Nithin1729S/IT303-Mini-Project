@@ -7,6 +7,7 @@ from .models import *
 from .forms import ExaminerEvaluationForm, GuideEvaluationForm
 from users.models import *
 from weasyprint import HTML, CSS
+from django.db.models import Q
 from django.template.loader import render_to_string
 
 def home(request):
@@ -85,8 +86,13 @@ def evaluate(request, pk):
 
 @login_required(login_url='login')
 def summary(request):
+    user = request.user
+    userEmail = user.email
+    userProfile = get_object_or_404(Profile, email=userEmail)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
     projects = Project.objects.select_related('student', 'guide', 'examiner')\
-                              .prefetch_related('guide_evaluation', 'examiner_evaluation')
+                              .prefetch_related('guide_evaluation', 'examiner_evaluation')\
+                              .filter(Q(guide=faculty) | Q(examiner=faculty))
     context = {
         'projects': projects,
     }
@@ -94,8 +100,13 @@ def summary(request):
 
 @login_required(login_url='login')
 def generate_pdf(request):
+    user = request.user
+    userEmail = user.email
+    userProfile = get_object_or_404(Profile, email=userEmail)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
     projects = Project.objects.select_related('student', 'guide', 'examiner')\
-                              .prefetch_related('guide_evaluation', 'examiner_evaluation')
+                              .prefetch_related('guide_evaluation', 'examiner_evaluation')\
+                              .filter(Q(guide=faculty) | Q(examiner=faculty))
     context = {
         'projects': projects,
     }
