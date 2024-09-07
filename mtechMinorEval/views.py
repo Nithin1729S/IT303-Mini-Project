@@ -106,4 +106,15 @@ def generate_pdf(request):
         'projects': projects,
         'faculty':faculty
     }
+    
+    # Check if the user wants to download the PDF
+    if 'download' in request.GET:
+        html_string = render_to_string('mtechMinorEval/generate-pdf-summary.html', context)
+        pdf_file = HTML(string=html_string).write_pdf()
+
+        # Return the PDF as an HTTP response
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="evaluation_summary.pdf"'
+        return response
+    
     return render(request,'mtechMinorEval/generate-pdf-summary.html', context)
