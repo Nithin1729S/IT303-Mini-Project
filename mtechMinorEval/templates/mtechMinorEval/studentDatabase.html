@@ -84,8 +84,10 @@
 <body>
 
     <h1>Student Database</h1>
-    <div> <a href="{% url 'admin-panel' %}">Go Back</a> </div>
-
+    <div style="display: flex; justify-content: space-between; align-items: center;"></div>
+        <a href="{% url 'admin-panel' %}" style="background-color:  rgb(0, 162, 255); color: white; padding: 0.5rem 1rem; border-radius: 0.25rem;">Go Back</a>
+        <a href="#" style="background-color: rgb(0, 162, 255); color: white; padding: 0.5rem 1rem; border-radius: 0.25rem;">Add New Student</a>
+    </div>
     <table>
         <thead>
             <tr>

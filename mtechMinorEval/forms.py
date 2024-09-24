@@ -130,7 +130,7 @@ class GuideEvaluationForm(ModelForm):
             instance.save()
         return instance
     
-class ProjectEditForm(forms.ModelForm):
+class ProjectEditForm(ModelForm):
     class Meta:
         model = Project
-        fields = ['title', 'desc', 'src_link', 'examiner', 'guide', 'deadline']
+        fields='__all__'

@@ -10,7 +10,7 @@ from users.models import *
 from weasyprint import HTML, CSS
 from django.db.models import Q
 from django.template.loader import render_to_string
-
+from .forms import ProjectEditForm
 def home(request):
     return render(request,'mtechMinorEval/home.html')
 
@@ -162,9 +162,12 @@ def projectAllotment(request):
 
 def editProject(request,pk):
     project = Project.objects.get(id=pk)
+    form=ProjectEditForm(instance=project)
     context={
         'project':project
     }
+    if request.method == 'POST':
+        pass
     return render(request,'mtechMinorEval/editProject.html', context)
 
 def studentDatabase(request):

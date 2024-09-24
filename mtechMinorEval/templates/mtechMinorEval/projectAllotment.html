@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <title>Project Allotment</title>
     <style>
         body {
@@ -78,7 +79,12 @@
 <body>
 
     <h1>Project Allotment</h1>
-    <div> <a href="{% url 'admin-panel' %}">Go Back</a> </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'admin-panel' %}" style="background-color:  rgb(0, 162, 255); color: white; padding: 0.5rem 1rem; border-radius: 0.25rem;">Go Back</a>
+        <a href="#" style="background-color: rgb(0, 162, 255); color: white; padding: 0.5rem 1rem; border-radius: 0.25rem;">Add New Project</a>
+    </div>
+    
+    
     <table>
         <thead>
             <tr>
