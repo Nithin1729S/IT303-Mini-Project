@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
+    
 </head>
 <body>
     <div class="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none">
@@ -47,13 +48,23 @@
         </div>
     </nav>
 
-    <h1>Welcome to the Admin Panel</h1>
-    <a href="{% url 'project-allotment' %}" style="color: blue; text-decoration: underline;">Project Allotment</a>
-    <br>
-    <hr>
-    <a href="{% url 'student-database' %}" style="color: blue; text-decoration: underline;">Student Database</a>
-    <br>
-    <hr>
-    <a href="{% url 'faculty-database' %}" style="color: blue; text-decoration: underline;">Faculty Database</a>
+    
+    <div style="text-align: center;"> 
+        <h1 style="color: #333; margin-bottom: 40px; font-size: 2.5em; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);">Welcome to the Admin Panel</h1>
+
+        <a href="{% url 'project-allotment' %}" style="display: inline-block; background-color: #3498db; color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 1.2em; margin: 10px 0; transition: background-color 0.3s ease, transform 0.3s ease;">
+            Project Allotment
+        </a>
+        <hr style="border: none; height: 2px; background-color: #ccc; margin: 20px auto; width: 60%;">
+        
+        <a href="{% url 'student-database' %}" style="display: inline-block; background-color: #3498db; color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 1.2em; margin: 10px 0; transition: background-color 0.3s ease, transform 0.3s ease;">
+            Student Database
+        </a>
+        <hr style="border: none; height: 2px; background-color: #ccc; margin: 20px auto; width: 60%;">
+        
+        <a href="{% url 'faculty-database' %}" style="display: inline-block; background-color: #3498db; color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 1.2em; margin: 10px 0; transition: background-color 0.3s ease, transform 0.3s ease;">
+            Faculty Database
+        </a>
+    </div>
 </body>
 </html>
