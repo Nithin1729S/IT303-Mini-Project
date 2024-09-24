@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required,user_passes_test
 # Create your views here.
 from .models import *
 from .forms import ExaminerEvaluationForm, GuideEvaluationForm
@@ -118,3 +119,35 @@ def generate_pdf(request):
         return response
     
     return render(request,'mtechMinorEval/generate-pdf-summary.html', context)
+
+def adminLogin(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            if user.is_superuser:
+                login(request, user)
+                messages.success(request, "Admin successfully logged in")
+                return redirect('admin-panel') 
+            else:
+                messages.error(request, "You are not an admin of this module")
+                return redirect('login')  
+        else:
+            messages.error(request, "You don't have an account in this module. Register !")
+            return redirect('register')
+
+    return render(request, 'mtechMinorEval/adminLogin.html')
+
+@login_required  # Require login for the content page
+@user_passes_test(lambda u: u.is_superuser)
+def adminPanel(request):
+        context={}
+        return render(request,'mtechMinorEval/adminPanel.html', context)
+
+
+def adminLogout(request):
+    logout(request)  # This logs out the user
+    messages.success(request, "Admin successfully logged out")
+    return redirect('admin-login')  # Redirect to the login page after logout
+

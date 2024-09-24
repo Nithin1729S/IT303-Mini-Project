@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <div class="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none">
+        {% if messages %}
+        <div class="mt-4 w-full max-w-md">
+            {% for message in messages %}
+            <div class="flash-message bg-white shadow-lg rounded-lg p-4 mb-2 pointer-events-auto">
+                <div class="flex items-center">
+                    {% if message.tags == 'success' %}
+                    <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% elif message.tags == 'error' %}
+                    <svg class="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% else %}
+                    <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% endif %}
+                    <p class="text-gray-800">{{ message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <link rel="stylesheet" href="../../static/css/style.min.css">
+    <nav style="background-color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 24px;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <a href="{% url 'projectsList' %}" style="font-size: 1.25rem; font-weight: bold; color: #2d3748;">Admin Panel</a>
+            <div style="margin-left: auto;">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'admin-logout' %}" style="color: #4299e1; text-decoration: none;">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" style="color: #4299e1; text-decoration: none;">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <h1>Welcome to the Admin Panel</h1>
+</body>
+</html>

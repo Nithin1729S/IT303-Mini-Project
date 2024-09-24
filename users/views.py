@@ -71,6 +71,7 @@ def loginUser(request):
                 profile = Profile.objects.get(user=user)
                 if profile.role == 'faculty':
                     login(request, user)
+                    messages.success(request, f'{username} logged in successfully !')
                     return redirect('projectsList')
                 else:
                     messages.error(request, "You do not have permission to access this area")
@@ -84,6 +85,6 @@ def loginUser(request):
 def logoutUser(request):
     username = request.user.username if request.user.is_authenticated else 'User'
     logout(request)
-    messages.error(request,f"{username} was successfully logged out ")
+    messages.success(request,f"{username} was successfully logged out ")
     return redirect('login')
 
