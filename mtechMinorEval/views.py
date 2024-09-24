@@ -142,7 +142,9 @@ def adminLogin(request):
 @login_required  # Require login for the content page
 @user_passes_test(lambda u: u.is_superuser)
 def adminPanel(request):
-        context={}
+        projects = Project.objects.all() 
+        print(projects)
+        context={'projects':projects}
         return render(request,'mtechMinorEval/adminPanel.html', context)
 
 
@@ -151,3 +153,44 @@ def adminLogout(request):
     messages.success(request, "Admin successfully logged out")
     return redirect('admin-login')  # Redirect to the login page after logout
 
+def projectAllotment(request):
+    projects=Project.objects.all()
+    context={
+        'projects':projects
+    }
+    return render(request,'mtechMinorEval/projectAllotment.html', context)
+
+def editProject(request,pk):
+    project = Project.objects.get(id=pk)
+    context={
+        'project':project
+    }
+    return render(request,'mtechMinorEval/editProject.html', context)
+
+def studentDatabase(request):
+    students=Student.objects.all()
+    context={
+        'students':students
+    }
+    return render(request,'mtechMinorEval/studentDatabase.html', context)
+
+def facultyDatabase(request):
+    facultys=Faculty.objects.all()
+    context={
+        'facultys':facultys
+    }
+    return render(request,'mtechMinorEval/facultyDatabase.html', context)
+
+def editStudent(request,pk):
+    student=Student.objects.get(id=pk)
+    context={
+        'student':student
+    }
+    return render(request,'mtechMinorEval/editStudent.html', context)
+
+def editFaculty(request,pk):
+    faculty=Faculty.objects.get(id=pk)
+    context={
+        'faculty':faculty
+    }
+    return render(request,'mtechMinorEval/editFaculty.html', context)

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Allotment</title>
+</head>
+<body>
+    {% for project in projects %}
+        <li>
+            <strong>Title:</strong> {{ project.title }}<br>
+            <strong>Description:</strong> {{ project.desc }}<br>
+            <strong>Source Link:</strong> <a href="{{ project.src_link }}">{{ project.src_link }}</a><br>
+            <strong>Student:</strong> {{ project.student.name }}<br>
+            <strong>Submitted At:</strong> {{ project.submitted_at }}<br>
+            <strong>Examiner:</strong> {{ project.examiner.name }}<br>
+            <strong>Guide:</strong> {{ project.guide.name }}<br>
+            <strong>Deadline:</strong> {{ project.deadline }}
+            <hr><hr>
+        </li>
+        {% endfor %}
+</body>
+</html>

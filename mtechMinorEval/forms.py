@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django.forms.widgets import NumberInput
 from django import forms
-from .models import ExaminerEvaluation,GuideEvaluation
+from .models import ExaminerEvaluation,GuideEvaluation,Project
 class ExaminerEvaluationForm(ModelForm):
     class Meta:
         model=ExaminerEvaluation
@@ -129,3 +129,8 @@ class GuideEvaluationForm(ModelForm):
         if commit:
             instance.save()
         return instance
+    
+class ProjectEditForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['title', 'desc', 'src_link', 'examiner', 'guide', 'deadline']

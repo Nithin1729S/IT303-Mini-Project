@@ -9,4 +9,10 @@ urlpatterns=[
     path('admin-panel/',views.adminPanel,name='admin-panel'),
     path('admin-login/',views.adminLogin,name='admin-login'),
     path('admin-logout/', views.adminLogout, name='admin-logout'),
+    path('project-allotment/', views.projectAllotment, name='project-allotment'),
+    path('project-edit/<str:pk>', views.editProject, name='project-edit'),
+    path('student-edit/<str:pk>', views.editStudent, name='student-edit'),
+    path('faculty-edit/<str:pk>', views.editFaculty, name='faculty-edit'),
+    path('student-database/', views.studentDatabase, name='student-database'),
+    path('faculty-database/', views.facultyDatabase, name='faculty-database'),
 ]
