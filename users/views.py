@@ -108,7 +108,7 @@ def loginUser(request):
                     message = f'Hello {profile.user.username},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
                     from_email = os.getenv("EMAIL") 
                     recipient_list = [email]
-                    #send_mail(subject, message, from_email, recipient_list)
+                    send_mail(subject, message, from_email, recipient_list)
                     print(message)
                     messages.success(request, f'{email} logged in successfully!')
                     return redirect('projectsList')
@@ -137,6 +137,7 @@ def forgot_password(request):
         if Faculty.objects.filter(email=email).exists():
             print(Faculty.objects.filter(email=email))
             otp = get_random_string(length=6, allowed_chars='0123456789')
+            print(otp)
             try:
                 send_mail(
                     'Your OTP for Password Reset',
