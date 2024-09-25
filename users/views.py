@@ -55,32 +55,26 @@ def register(request):
 def loginUser(request):
     if request.user.is_authenticated:
         return redirect('projectsList')
-    
-    if request.method=='POST':
-        username=request.POST['username']
-        password=request.POST['password']
-
-        try:
-            user=User.objects.get(username=username)
-        except User.DoesNotExist:
-            messages.error(request,"Username does not exist")
-
-        user=authenticate(request,username=username,password=password)
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             try:
                 profile = Profile.objects.get(user=user)
                 if profile.role == 'faculty':
                     login(request, user)
-                    messages.success(request, f'{username} logged in successfully !')
+                    messages.success(request, f'{email} logged in successfully!')
                     return redirect('projectsList')
                 else:
-                    messages.error(request, "You do not have permission to access this area")
+                    messages.error(request, "You do not have permission to access this area.")
             except Profile.DoesNotExist:
-                messages.error(request, "Profile not found for the user")
+                messages.error(request, "Profile not found for the user.")
         else:
-            messages.error(request, "Username or password is incorrect")
+            messages.error(request, "Email or password is incorrect.")
+    return render(request, 'users/login.html')
 
-    return render(request,'users/login.html')
+
 
 def logoutUser(request):
     username = request.user.username if request.user.is_authenticated else 'User'

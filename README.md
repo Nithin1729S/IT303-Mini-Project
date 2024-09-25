@@ -16,20 +16,20 @@ Create a super user to view the admin panel
 
 ## Faculty Login Details
 
-| Username   | Password   |
-|------------|------------|
-| Faculty_1  | viratkohli  |
-| Faculty_2  | viratkohli  |
-| Faculty_3  | viratkohli  |
-| Faculty_4  | viratkohli  |
-| Faculty_5  | viratkohli  |
+| Username                | Password    |
+|-------------------------|-------------|
+| faculty1@gmail.com      | viratkohli  |
+| faculty2@gmail.com      | viratkohli  |
+| faculty3@gmail.com      | viratkohli  |
+| faculty4@gmail.com      | viratkohli  |
+| faculty5@gmail.com      | viratkohli  |
 
 ## Student Login Details
 
-| Username   | Password   |
-|------------|------------|
-| Student_1  | viratkohli  |
-| Student_2  | viratkohli  |
-| Student_3  | viratkohli  |
-| Student_4  | viratkohli  |
-| Student_5  | viratkohli  |
+| Username                | Password    |
+|-------------------------|-------------|
+| student1@gmail.com      | viratkohli  |
+| student2@gmail.com      | viratkohli  |
+| student3@gmail.com      | viratkohli  |
+| student4@gmail.com      | viratkohli  |
+| student5@gmail.com      | viratkohli  |
