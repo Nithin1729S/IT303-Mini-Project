@@ -30,7 +30,7 @@ def projectsList(request):
         projects = guide_projects.union(examiner_projects)
     else:
         logout(request,user)
-    context = {'projects': projects}
+    context = {'projects': projects,'faculty':faculty}
     return render(request, 'mtechMinorEval/projectsList.html', context=context)
 
 
@@ -240,8 +240,7 @@ def editStudent(request, pk):
 
 
 
-@login_required(login_url='admin-login')
-@user_passes_test(lambda u: u.is_superuser)
+@login_required
 def editFaculty(request, pk):
     faculty=Faculty.objects.get(id=pk)
     form=FacultyEditForm(instance=faculty)
@@ -251,7 +250,10 @@ def editFaculty(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Faculty updated successfully!')
-            return redirect('faculty-database')  # Redirect to the appropriate URL after saving
+            if request.user.is_superuser:
+                return redirect('faculty-database')  # Superuser redirect
+            else:
+                return redirect('projectsList')
         else:
             messages.error(request, 'Please correct the errors below.')
     

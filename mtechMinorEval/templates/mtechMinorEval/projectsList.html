@@ -40,6 +40,7 @@
     </div>
     
     <div>Logged in {{request.user.username }}</div>
+    <div> <a href="{% url 'faculty-edit' faculty.id %}">Edit Profile</a></div>
     <div class="container mx-auto p-6">
         <h1 class="text-3xl font-semibold mb-6 text-center">Projects List</h1>
         <a href="{% url 'generate-pdf' %}" style="color: #4299e1; text-decoration: none;">Click to get generate PDF</a>

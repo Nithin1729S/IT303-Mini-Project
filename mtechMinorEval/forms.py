@@ -137,29 +137,29 @@ class ProjectEditForm(ModelForm):
 
 
 class StudentEditForm(forms.ModelForm):
-    username = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput, required=False)
 
     class Meta:
         model = Student
-        fields = ['name', 'email', 'rollno']  
+        fields = ['name', 'email', 'rollno']
 
     def __init__(self, *args, **kwargs):
         student = kwargs.get('instance')
         super(StudentEditForm, self).__init__(*args, **kwargs)
-        
+
         if student and student.profile and student.profile.user:
-            self.fields['username'].initial = student.profile.user.username
-            self.fields['password'].initial = '' 
+            # Populate password field with an empty value
+            self.fields['password'].initial = ''
 
     def save(self, commit=True):
         student = super(StudentEditForm, self).save(commit=False)
         user = student.profile.user
-        user.username = self.cleaned_data['username']
+        # Set the username to the student's name
+        user.username = student.name  
         password = self.cleaned_data['password']
         if password:
-            user.set_password(password)  
-        
+            user.set_password(password)
+
         if commit:
             user.save()
             student.save()
@@ -176,39 +176,39 @@ class StudentEditForm(forms.ModelForm):
                 raise forms.ValidationError('This email is already in use.')
         return email
 
-    
 
 class FacultyEditForm(forms.ModelForm):
-    username = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput, required=False)
 
     class Meta:
         model = Faculty
-        fields = ['name', 'email', 'facultyID']  
+        fields = ['name', 'email', 'facultyID']
 
     def __init__(self, *args, **kwargs):
         faculty = kwargs.get('instance')
         super(FacultyEditForm, self).__init__(*args, **kwargs)
-        
+
         if faculty and faculty.profile and faculty.profile.user:
-            self.fields['username'].initial = faculty.profile.user.username
-            self.fields['password'].initial = ''  
+            # Populate password field with an empty value
+            self.fields['password'].initial = ''
 
     def save(self, commit=True):
         faculty = super(FacultyEditForm, self).save(commit=False)
         user = faculty.profile.user
-        user.username = self.cleaned_data['username']
+        # Set the username to the faculty's name
+        user.username = faculty.name  
         password = self.cleaned_data['password']
         if password:
-            user.set_password(password)  
+            user.set_password(password)
+
         if commit:
             user.save()
             faculty.save()
         return faculty
-    
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        faculty_instance = self.instance   
+        faculty_instance = self.instance
         if faculty_instance.pk and faculty_instance.profile and faculty_instance.profile.user:
             if User.objects.filter(email=email).exclude(id=faculty_instance.profile.user.id).exists():
                 raise forms.ValidationError('This email is already in use.')
@@ -216,3 +216,4 @@ class FacultyEditForm(forms.ModelForm):
             if User.objects.filter(email=email).exists():
                 raise forms.ValidationError('This email is already in use.')
         return email
+

@@ -31,9 +31,15 @@ def register(request):
     if request.method == 'POST':
         form = ExtendedUserCreationForm(request.POST)
         if form.is_valid():
+            email = form.cleaned_data.get('email')
+            
+            # Check if email already exists in the User model
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'This email is already registered. Please try logging in.')
+                return render(request, 'users/register.html', {'form': form})
+            
             try:
                 user = form.save()
-                email = form.cleaned_data.get('email')
                 role = 'faculty'
                 username = form.cleaned_data.get('username')
                 profile = Profile.objects.create(user=user, email=email, role=role)
@@ -43,15 +49,11 @@ def register(request):
                 return redirect('login')
             
             except IntegrityError as e:
-                if 'users_profile.email' in str(e):
-                    messages.error(request, 'This email is already registered. Please try logging in.')
-                else:
-                    messages.error(request, 'An unexpected error occurred. Please try again.')
+                messages.error(request, 'An unexpected error occurred. Please try again.')
 
         else:
             for field, errors in form.errors.items():
                 for error in errors:
-                    print(f"Validation error in {field}: {error}") 
                     if field == 'username' and 'already exists' in error.lower():
                         messages.error(request, 'This username is already taken. Please choose another one.')
                     elif field == 'email' and 'already exists' in error.lower():
