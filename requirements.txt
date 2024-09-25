@@ -13,11 +13,9 @@ decorator==5.1.1
 Django==5.1
 django-appconf==1.0.6
 django-browser-reload==1.15.0
-django-compressor==4.5.1
 django-tailwind==3.8.0
 fonttools==4.53.1
 future==1.0.0
-geocoder==1.38.1
 html5lib==1.1
 idna==3.8
 Jinja2==3.1.4
@@ -32,6 +30,7 @@ pyphen==0.16.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 python-slugify==8.0.4
+pytz==2024.2
 PyYAML==6.0.2
 ratelim==0.1.6
 rcssmin==1.1.2

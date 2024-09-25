@@ -9,12 +9,13 @@ from django import forms
 from users.models import Profile
 import random
 import re,os,socket,platform
+import pytz
 from datetime import datetime
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from dotenv import load_dotenv
 load_dotenv()
-import geocoder
+
 
 
 class ExtendedUserCreationForm(UserCreationForm):
@@ -113,9 +114,8 @@ def loginUser(request):
                     login(request, user)
                     hostname = socket.gethostname()
                     ip_address = socket.gethostbyname(hostname)
-                    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    g=geocoder.ip('me')
-                    location=g.latlng
+                    timezone = pytz.timezone('Asia/Kolkata')
+                    current_time = datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S')
                     subject = 'Login Notification'
                     message = f'Hello {profile.user.username},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
                     from_email = os.getenv("EMAIL") 
