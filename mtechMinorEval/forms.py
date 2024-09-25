@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django.forms.widgets import NumberInput
 from django import forms
-from .models import ExaminerEvaluation,GuideEvaluation,Project
+from .models import ExaminerEvaluation,GuideEvaluation,Project,Student,Faculty
 class ExaminerEvaluationForm(ModelForm):
     class Meta:
         model=ExaminerEvaluation
@@ -133,4 +133,14 @@ class GuideEvaluationForm(ModelForm):
 class ProjectEditForm(ModelForm):
     class Meta:
         model = Project
+        fields='__all__'
+
+class StudentEditForm(ModelForm):
+    class Meta:
+        model=Student
+        fields='__all__'
+
+class FacultyEditForm(ModelForm):
+    class Meta:
+        model=Faculty
         fields='__all__'
