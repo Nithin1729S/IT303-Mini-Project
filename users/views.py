@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+from django.db import IntegrityError
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile, Student, Faculty
@@ -7,49 +8,62 @@ from django.contrib import messages
 from django import forms
 from users.models import Profile
 
-# Extended registration form to include email and role selection
 class ExtendedUserCreationForm(UserCreationForm):
     ROLE_CHOICES = (
         ('student', 'Student'),
         ('faculty', 'Faculty'),
     )
-    email = forms.EmailField(required=True)  # Add the email field
-    role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.RadioSelect)
-
+    email = forms.EmailField(required=True) 
+    role = forms.CharField(widget=forms.HiddenInput(), initial='faculty')  
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2', 'role']  # Add email field
+        fields = ['username', 'email', 'password1', 'password2'] 
 
     def save(self, commit=True):
         user = super(ExtendedUserCreationForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']  # Set the email field for the User model
+        user.email = self.cleaned_data['email']  
         if commit:
             user.save()
         return user
+
 
 def register(request):
     if request.method == 'POST':
         form = ExtendedUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            email = form.cleaned_data.get('email')
-            role = form.cleaned_data.get('role')
-            username= form.cleaned_data.get('username')
+            try:
+                user = form.save()
+                email = form.cleaned_data.get('email')
+                role = 'faculty'
+                username = form.cleaned_data.get('username')
+                profile = Profile.objects.create(user=user, email=email, role=role)
+                Faculty.objects.create(profile=profile, email=email, name=username)
 
-            profile = Profile.objects.create(user=user, email=email, role=role)
-            if role == 'student':
-                Student.objects.create(profile=profile, email=email,name=username)
-            elif role == 'faculty':
-                Faculty.objects.create(profile=profile, email=email,name=username)
+                messages.success(request, 'Account created successfully!')
+                return redirect('login')
+            
+            except IntegrityError as e:
+                if 'users_profile.email' in str(e):
+                    messages.error(request, 'This email is already registered. Please try logging in.')
+                else:
+                    messages.error(request, 'An unexpected error occurred. Please try again.')
 
-            messages.success(request, 'Account created successfully!')
-            return redirect('login')
         else:
-            messages.error(request, 'There was an error creating your account.')
+            for field, errors in form.errors.items():
+                for error in errors:
+                    print(f"Validation error in {field}: {error}") 
+                    if field == 'username' and 'already exists' in error.lower():
+                        messages.error(request, 'This username is already taken. Please choose another one.')
+                    elif field == 'email' and 'already exists' in error.lower():
+                        messages.error(request, 'This email is already registered. Please try logging in.')
+                    else:
+                        messages.error(request, f"{field}: {error}") 
+
     else:
         form = ExtendedUserCreationForm()
 
     return render(request, 'users/register.html', {'form': form})
+
 
 
 def loginUser(request):
