@@ -35,6 +35,10 @@ class ExtendedUserCreationForm(UserCreationForm):
             user.save()
         return user
 
+def generate_otp():
+    """Generate a random 6-digit OTP"""
+    return random.randint(100000, 999999)
+    
 
 def register(request):
     if request.method == 'POST':
@@ -53,31 +57,25 @@ def register(request):
                 messages.error(request, 'Email cannot contain numbers.')
                 return render(request, 'users/register.html', {'form': form})
 
+            # Check if the email is already registered
             if User.objects.filter(email=email).exists():
                 messages.error(request, 'This email is already registered. Please try logging in.')
                 return render(request, 'users/register.html', {'form': form})
-            
-            try:
-                user = form.save()
-                role = 'faculty'
-                profile = Profile.objects.create(user=user, email=email, role=role)
-                Faculty.objects.create(profile=profile, email=email, name=username)
 
-                messages.success(request, 'Account created successfully!')
-                return redirect('login')
-            
-            except IntegrityError as e:
-                messages.error(request, 'An unexpected error occurred. Please try again.')
+            # Generate OTP and send it via email
+            otp = generate_otp()
+            request.session['email'] = email
+            request.session['otp'] = otp
+            request.session['form_data'] = request.POST  
 
-        else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    if field == 'username' and 'already exists' in error.lower():
-                        messages.error(request, 'This username is already taken. Please choose another one.')
-                    elif field == 'email' and 'already exists' in error.lower():
-                        messages.error(request, 'This email is already registered. Please try logging in.')
-                    else:
-                        messages.error(request, f"{field}: {error}") 
+            subject = 'Email OTP Verification'
+            message = f'Your OTP for registration is: {otp}'
+            from_email = os.getenv('MAIL')
+            recipient_list = [email]
+
+            #send_mail(subject, message, from_email, recipient_list)
+            messages.info(request, 'OTP sent to your email. Please verify.')
+            return redirect('verify_otp')
 
     else:
         form = ExtendedUserCreationForm()
@@ -108,7 +106,7 @@ def loginUser(request):
                     message = f'Hello {profile.user.username},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
                     from_email = os.getenv("EMAIL") 
                     recipient_list = [email]
-                    send_mail(subject, message, from_email, recipient_list)
+                    #send_mail(subject, message, from_email, recipient_list)
                     print(message)
                     messages.success(request, f'{email} logged in successfully!')
                     return redirect('projectsList')
@@ -181,3 +179,37 @@ def reset_password(request, otp):
             messages.error(request, 'Invalid OTP. Please try again.')
 
     return render(request, 'users/reset_password.html', {'otp': otp})
+
+
+def verify_otp(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        session_otp = request.session.get('otp')
+
+        if entered_otp == str(session_otp):  # OTP matches
+            form_data = request.session.get('form_data')
+            email = request.session.get('email')
+
+            try:
+                form = ExtendedUserCreationForm(form_data)
+                if form.is_valid():
+                    user = form.save()
+                    role = 'faculty'
+                    profile = Profile.objects.create(user=user, email=email, role=role)
+                    Faculty.objects.create(profile=profile, email=email, name=form.cleaned_data.get('username'))
+
+                    # Clear session data
+                    del request.session['otp']
+                    del request.session['email']
+                    del request.session['form_data']
+
+                    messages.success(request, 'Account created successfully!')
+                    return redirect('login')
+
+            except IntegrityError:
+                messages.error(request, 'An error occurred. Please try again.')
+
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+
+    return render(request, 'users/verify_otp.html')
