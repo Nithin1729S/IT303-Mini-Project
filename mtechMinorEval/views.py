@@ -4,7 +4,6 @@ from django.db import transaction
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test
-# Create your views here.
 from .models import *
 from .forms import ExaminerEvaluationForm, GuideEvaluationForm
 from users.models import *
@@ -12,8 +11,11 @@ from weasyprint import HTML, CSS
 from django.db.models import Q
 from django.template.loader import render_to_string
 from .forms import ProjectEditForm,StudentEditForm,FacultyEditForm
+
+
 def home(request):
     return render(request,'mtechMinorEval/home.html')
+
 
 @login_required(login_url='login')
 def projectsList(request):
@@ -30,6 +32,7 @@ def projectsList(request):
         logout(request,user)
     context = {'projects': projects}
     return render(request, 'mtechMinorEval/projectsList.html', context=context)
+
 
 @login_required(login_url='login')
 def evaluate(request, pk):
@@ -86,6 +89,7 @@ def evaluate(request, pk):
     context = {'form': form, 'role': role,'total_marks':total_marks,'project':project}
     return render(request, 'mtechMinorEval/projectEvaluation.html', context=context)
 
+
 @login_required(login_url='login')
 def summary(request):
     projects = Project.objects.select_related('student', 'guide', 'examiner')\
@@ -94,6 +98,8 @@ def summary(request):
         'projects': projects,
     }
     return render(request, 'mtechMinorEval/summary.html', context)
+
+
 
 @login_required(login_url='login')
 def generate_pdf(request):
@@ -121,6 +127,8 @@ def generate_pdf(request):
     
     return render(request,'mtechMinorEval/generate-pdf-summary.html', context)
 
+
+
 def adminLogin(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -140,7 +148,9 @@ def adminLogin(request):
 
     return render(request, 'mtechMinorEval/adminLogin.html')
 
-@login_required  # Require login for the content page
+
+
+@login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
 def adminPanel(request):
         projects = Project.objects.all() 
@@ -149,11 +159,18 @@ def adminPanel(request):
         return render(request,'mtechMinorEval/adminPanel.html', context)
 
 
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def adminLogout(request):
     logout(request)  # This logs out the user
     messages.success(request, "Admin successfully logged out")
     return redirect('admin-login')  # Redirect to the login page after logout
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def projectAllotment(request):
     projects=Project.objects.all()
     context={
@@ -161,6 +178,10 @@ def projectAllotment(request):
     }
     return render(request,'mtechMinorEval/projectAllotment.html', context)
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def studentDatabase(request):
     students=Student.objects.all()
     context={
@@ -168,6 +189,10 @@ def studentDatabase(request):
     }
     return render(request,'mtechMinorEval/studentDatabase.html', context)
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def facultyDatabase(request):
     facultys=Faculty.objects.all()
     context={
@@ -175,6 +200,10 @@ def facultyDatabase(request):
     }
     return render(request,'mtechMinorEval/facultyDatabase.html', context)
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def editProject(request,pk):
     project = Project.objects.get(id=pk)
     form=ProjectEditForm(instance=project)
@@ -186,6 +215,10 @@ def editProject(request,pk):
         pass
     return render(request,'mtechMinorEval/editProject.html', context)
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def editStudent(request, pk):
     student = Student.objects.get(id=pk)
     form = StudentEditForm(instance=student)
@@ -195,7 +228,7 @@ def editStudent(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Student updated successfully!')
-            return redirect('student-database')  # Redirect to the appropriate URL after saving
+            return redirect('student-database') 
         else:
             messages.error(request, 'Please correct the errors below.')
     
@@ -205,6 +238,10 @@ def editStudent(request, pk):
     }
     return render(request, 'mtechMinorEval/editStudent.html', context)
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def editFaculty(request, pk):
     faculty=Faculty.objects.get(id=pk)
     form=FacultyEditForm(instance=faculty)
@@ -224,6 +261,10 @@ def editFaculty(request, pk):
     }
     return render(request, 'mtechMinorEval/editFaculty.html', context)
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def deleteProject(request,pk):
     project=Project.objects.get(id=pk)
     context={
@@ -234,6 +275,10 @@ def deleteProject(request,pk):
         return redirect('project-allotment')
     return render(request,'mtechMinorEval/delete.html',context)
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def deleteStudent(request,pk):
     student=Student.objects.get(id=pk)
     profile=student.profile
@@ -249,6 +294,10 @@ def deleteStudent(request,pk):
             return redirect('student-database')
     return render(request,'mtechMinorEval/delete.html',context)
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def deleteFaculty(request,pk):
     faculty=Faculty.objects.get(id=pk)
     profile=faculty.profile
@@ -264,6 +313,10 @@ def deleteFaculty(request,pk):
             return redirect('faculty-database')
     return render(request,'mtechMinorEval/delete.html',context)
 
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def addNewProject(request):
     if request.method == 'POST':
         form = ProjectEditForm(request.POST)
@@ -277,6 +330,9 @@ def addNewProject(request):
     return render(request, 'mtechMinorEval/editProject.html', context)
     
 
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def addNewStudent(request):
     if request.method == 'POST':
         form = StudentEditForm(request.POST)
@@ -298,6 +354,9 @@ def addNewStudent(request):
     return render(request, 'mtechMinorEval/editStudent.html', context)
 
 
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def addNewFaculty(request):
     if request.method == 'POST':
         form = FacultyEditForm(request.POST)
