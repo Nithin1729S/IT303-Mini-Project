@@ -206,3 +206,33 @@ def editFaculty(request,pk):
     if request.method == 'POST':
         pass
     return render(request,'mtechMinorEval/editFaculty.html', context)
+
+def deleteProject(request,pk):
+    project=Project.objects.get(id=pk)
+    context={
+        'project':project
+    }
+    if(request.method=='POST'):
+        project.delete()
+        return redirect('admin-panel')
+    return render(request,'mtechMinorEval/delete.html',context)
+
+def deleteStudent(request,pk):
+    student=Student.objects.get(id=pk)
+    context={
+        'student': student
+    }
+    if(request.method=='POST'):
+        student.delete()
+        return redirect('admin-panel')
+    return render(request,'mtechMinorEval/delete.html',context)
+
+def deleteFaculty(request,pk):
+    faculty=Faculty.objects.get(id=pk)
+    context={
+        'faculty': faculty
+    }
+    if(request.method=='POST'):
+        faculty.delete()
+        return redirect('admin-panel')
+    return render(request,'mtechMinorEval/delete.html',context)

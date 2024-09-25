@@ -15,4 +15,7 @@ urlpatterns=[
     path('faculty-edit/<str:pk>', views.editFaculty, name='faculty-edit'),
     path('student-database/', views.studentDatabase, name='student-database'),
     path('faculty-database/', views.facultyDatabase, name='faculty-database'),
+    path('faculty-delete/<str:pk>', views.deleteFaculty, name='faculty-delete'),
+    path('project-delete/<str:pk>', views.deleteProject, name='project-delete'),
+    path('student-delete/<str:pk>', views.deleteStudent, name='student-delete'),
 ]
