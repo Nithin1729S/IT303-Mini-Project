@@ -50,6 +50,7 @@
             <div class="mb-4">
                 <input type="password" name="password" placeholder="Enter Password" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required/>
             </div>
+            <div>Forgot Password ?<a href="{% url 'forgot-password' %}" style="color: #4299e1; text-decoration: none;"> Forgot Password </a><hr></div>
             <div>Don't have an account ?<a href="{% url 'register' %}" style="color: #4299e1; text-decoration: none;"> Register</a><hr></div>
             <div>Admin of this module ?<a href="{% url 'admin-login' %}" style="color: #4299e1; text-decoration: none;"> Admin Login </a><hr></div>
             <div class="text-center">

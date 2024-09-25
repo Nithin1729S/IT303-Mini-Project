@@ -12,6 +12,12 @@ in the main folder open another terminal
 Create a super user to view the admin panel
 `python manage.py createsuperuser`
 
+
+Create a .env file in home folder and type your credentials
+
+EMAIL = 'youremailaddress'
+PASSWD = 'yourapppassword'
+
 # Login Details
 
 ## Faculty Login Details
@@ -33,3 +39,5 @@ Create a super user to view the admin panel
 | student3@gmail.com      | viratkohli  |
 | student4@gmail.com      | viratkohli  |
 | student5@gmail.com      | viratkohli  |
+
+

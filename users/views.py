@@ -7,6 +7,9 @@ from .models import Profile, Student, Faculty
 from django.contrib import messages
 from django import forms
 from users.models import Profile
+import random
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
 
 class ExtendedUserCreationForm(UserCreationForm):
     ROLE_CHOICES = (
@@ -98,3 +101,55 @@ def logoutUser(request):
     messages.success(request,f"{username} was successfully logged out ")
     return redirect('login')
 
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        print(f"Received email: {email}") 
+        print(Faculty.objects.filter(email=email))
+        if Faculty.objects.filter(email=email).exists():
+            print(Faculty.objects.filter(email=email))
+            otp = get_random_string(length=6, allowed_chars='0123456789')
+            try:
+                send_mail(
+                    'Your OTP for Password Reset',
+                    f'Your OTP is {otp}',
+                    'from@example.com',
+                    [email],
+                    fail_silently=False,
+                )
+                request.session['otp'] = otp
+                request.session['email'] = email
+                messages.success(request, 'An OTP has been sent to your email.')
+                return redirect('reset-password', otp=otp)
+            except Exception as e:
+                 print(f"Error sending email: {e}")  
+                 messages.error(request, 'Failed to send OTP. Please try again.')
+        else:
+            messages.error(request, 'Email not registered as faculty.')
+
+    return render(request, 'users/forgot_password.html')
+
+
+def reset_password(request, otp):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        new_password = request.POST.get('new_password')
+
+        # Verify OTP
+        if entered_otp == request.session.get('otp'):
+            email = request.session.get('email')
+            try:
+                faculty = Faculty.objects.get(email=email)
+                user = faculty.profile.user  
+                user.set_password(new_password) 
+                user.save()
+                
+                messages.success(request, 'Your password has been updated successfully!')
+                return redirect('login') 
+            except Faculty.DoesNotExist:
+                messages.error(request, 'Faculty not found.')
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+
+    return render(request, 'users/reset_password.html', {'otp': otp})
