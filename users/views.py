@@ -8,8 +8,14 @@ from django.contrib import messages
 from django import forms
 from users.models import Profile
 import random
+import re,os,socket,platform
+from datetime import datetime
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
+from dotenv import load_dotenv
+load_dotenv()
+import geocoder
+
 
 class ExtendedUserCreationForm(UserCreationForm):
     ROLE_CHOICES = (
@@ -35,8 +41,18 @@ def register(request):
         form = ExtendedUserCreationForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
-            
-            # Check if email already exists in the User model
+            username = form.cleaned_data.get('username')
+
+            # Check if the email is valid
+            if not email.endswith('@nitk.edu.in'):
+                messages.error(request, 'Email must end with @nitk.edu.in.')
+                return render(request, 'users/register.html', {'form': form})
+
+            # Check if the email contains any numbers
+            if re.search(r'\d', email):
+                messages.error(request, 'Email cannot contain numbers.')
+                return render(request, 'users/register.html', {'form': form})
+
             if User.objects.filter(email=email).exists():
                 messages.error(request, 'This email is already registered. Please try logging in.')
                 return render(request, 'users/register.html', {'form': form})
@@ -44,7 +60,6 @@ def register(request):
             try:
                 user = form.save()
                 role = 'faculty'
-                username = form.cleaned_data.get('username')
                 profile = Profile.objects.create(user=user, email=email, role=role)
                 Faculty.objects.create(profile=profile, email=email, name=username)
 
@@ -71,6 +86,7 @@ def register(request):
 
 
 
+
 def loginUser(request):
     if request.user.is_authenticated:
         return redirect('projectsList')
@@ -83,6 +99,17 @@ def loginUser(request):
                 profile = Profile.objects.get(user=user)
                 if profile.role == 'faculty':
                     login(request, user)
+                    hostname = socket.gethostname()
+                    ip_address = socket.gethostbyname(hostname)
+                    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    g=geocoder.ip('me')
+                    location=g.latlng
+                    subject = 'Login Notification'
+                    message = f'Hello {profile.user.username},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
+                    from_email = os.getenv("EMAIL") 
+                    recipient_list = [email]
+                    #send_mail(subject, message, from_email, recipient_list)
+                    print(message)
                     messages.success(request, f'{email} logged in successfully!')
                     return redirect('projectsList')
                 else:
