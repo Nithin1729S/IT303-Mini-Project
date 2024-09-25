@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
+from django.db import transaction
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test
@@ -214,25 +215,89 @@ def deleteProject(request,pk):
     }
     if(request.method=='POST'):
         project.delete()
-        return redirect('admin-panel')
+        return redirect('project-allotment')
     return render(request,'mtechMinorEval/delete.html',context)
 
 def deleteStudent(request,pk):
     student=Student.objects.get(id=pk)
+    profile=student.profile
+    user=profile.user
     context={
         'student': student
     }
-    if(request.method=='POST'):
-        student.delete()
-        return redirect('admin-panel')
+    with transaction.atomic():
+        if(request.method=='POST'):
+            student.delete()
+            profile.delete()
+            user.delete()
+            return redirect('student-database')
     return render(request,'mtechMinorEval/delete.html',context)
 
 def deleteFaculty(request,pk):
     faculty=Faculty.objects.get(id=pk)
+    profile=faculty.profile
+    user=profile.user
     context={
         'faculty': faculty
     }
-    if(request.method=='POST'):
-        faculty.delete()
-        return redirect('admin-panel')
+    with transaction.atomic():
+        if(request.method=='POST'):
+            faculty.delete()
+            profile.delete()
+            user.delete()
+            return redirect('faculty-database')
     return render(request,'mtechMinorEval/delete.html',context)
+
+def addNewProject(request):
+    if request.method == 'POST':
+        form = ProjectEditForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('project-allotment')
+    else:
+        form = ProjectEditForm()
+
+    context = {'form': form}
+    return render(request, 'mtechMinorEval/editProject.html', context)
+    
+
+def addNewStudent(request):
+    if request.method == 'POST':
+        form = StudentEditForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                username = form.cleaned_data.get('username')  # assuming username is included in form
+                email = form.cleaned_data.get('email')
+                password = form.cleaned_data.get('password')  # assuming password is included in form
+                user = User.objects.create_user(username=username, email=email, password=password)
+                profile = Profile.objects.create(user=user, email=email, role='student')
+                student = Student.objects.create(profile=profile, name=form.cleaned_data.get('name'), 
+                                                 email=email, rollno=form.cleaned_data.get('rollno'))
+                
+                return redirect('student-database')
+    else:
+        form = StudentEditForm()
+
+    context = {'form': form}
+    return render(request, 'mtechMinorEval/editStudent.html', context)
+
+
+def addNewFaculty(request):
+    if request.method == 'POST':
+        form = FacultyEditForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                username = form.cleaned_data.get('username')  # assuming username is included in form
+                email = form.cleaned_data.get('email')
+                password = form.cleaned_data.get('password')  # assuming password is included in form
+                user = User.objects.create_user(username=username, email=email, password=password)
+                profile = Profile.objects.create(user=user, email=email, role='faculty')
+                faculty = Faculty.objects.create(profile=profile, name=form.cleaned_data.get('name'), 
+                                                 email=email, facultyID=form.cleaned_data.get('facultyID'))
+                
+                return redirect('faculty-database')
+    else:
+        form = FacultyEditForm()
+
+    context = {'form': form}
+    return render(request, 'mtechMinorEval/editFaculty.html', context)

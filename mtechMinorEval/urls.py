@@ -18,4 +18,7 @@ urlpatterns=[
     path('faculty-delete/<str:pk>', views.deleteFaculty, name='faculty-delete'),
     path('project-delete/<str:pk>', views.deleteProject, name='project-delete'),
     path('student-delete/<str:pk>', views.deleteStudent, name='student-delete'),
+    path('add-new-project/',views.addNewProject,name='add-new-project'),
+    path('add-new-student/',views.addNewStudent,name='add-new-student'),
+    path('add-new-faculty/',views.addNewFaculty,name='add-new-faculty'),
 ]

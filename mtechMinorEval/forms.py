@@ -1,6 +1,7 @@
 from django.forms import ModelForm
 from django.forms.widgets import NumberInput
 from django import forms
+from django.contrib.auth.models import User
 from .models import ExaminerEvaluation,GuideEvaluation,Project,Student,Faculty
 class ExaminerEvaluationForm(ModelForm):
     class Meta:
@@ -135,12 +136,32 @@ class ProjectEditForm(ModelForm):
         model = Project
         fields='__all__'
 
-class StudentEditForm(ModelForm):
+class StudentEditForm(forms.ModelForm):
+    # Additional fields for the User model
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
+    
     class Meta:
-        model=Student
-        fields='__all__'
+        model = Student
+        fields = ['name', 'email', 'rollno']  # These are Student model fields
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('This email is already in use.')
+        return email
 
 class FacultyEditForm(ModelForm):
+    # Additional fields for the User model
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
+    
     class Meta:
-        model=Faculty
-        fields='__all__'
+        model = Faculty
+        fields = ['name', 'email', 'facultyID']  # These are Student model fields
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('This email is already in use.')
+        return email
