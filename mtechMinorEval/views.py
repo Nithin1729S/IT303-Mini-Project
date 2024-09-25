@@ -160,17 +160,6 @@ def projectAllotment(request):
     }
     return render(request,'mtechMinorEval/projectAllotment.html', context)
 
-def editProject(request,pk):
-    project = Project.objects.get(id=pk)
-    form=ProjectEditForm(instance=project)
-    context={
-        'project':project,
-        'form':form
-    }
-    if request.method == 'POST':
-        pass
-    return render(request,'mtechMinorEval/editProject.html', context)
-
 def studentDatabase(request):
     students=Student.objects.all()
     context={
@@ -184,6 +173,17 @@ def facultyDatabase(request):
         'facultys':facultys
     }
     return render(request,'mtechMinorEval/facultyDatabase.html', context)
+
+def editProject(request,pk):
+    project = Project.objects.get(id=pk)
+    form=ProjectEditForm(instance=project)
+    context={
+        'project':project,
+        'form':form
+    }
+    if request.method == 'POST':
+        pass
+    return render(request,'mtechMinorEval/editProject.html', context)
 
 def editStudent(request,pk):
     student=Student.objects.get(id=pk)
