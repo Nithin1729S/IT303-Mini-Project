@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeOut {
+            0%{
+                opacity: 1;
+            }
+            100%{
+                opacity: 0;
+            }
+        }
+        .flash-message{
+            opacity: 1;
+            animation: fadeOut 1.5s ease-out 2s forwards;
+        }
+    </style>
 </head>
 <body class="flex flex-col min-h-screen bg-gray-100">
     <div class="fixed top-0 left-1/2 flex justify-center z-50 pointer-events-none"></div>
