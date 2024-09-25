@@ -50,14 +50,14 @@ class ExaminerEvaluationForm(ModelForm):
         super().__init__(*args, **kwargs)
         instance = kwargs.get('instance')
         if instance:
-            # If we're editing an existing instance, populate the initial data
+            
             for field in self.fields:
                 self.fields[field].initial = getattr(instance, field)
         for name,field in self.fields.items():
             field.widget.attrs.update({'class':'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'})
     def save(self, commit=True):
         instance = super().save(commit=False)
-        if self.instance.pk is None:  # This is a new evaluation
+        if self.instance.pk is None:  
             instance.project = self.initial['project']
             instance.examiner = self.initial['examiner']
         if commit:
@@ -123,7 +123,7 @@ class GuideEvaluationForm(ModelForm):
             field.widget.attrs.update({'class':'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'})
     def save(self, commit=True):
         instance = super().save(commit=False)
-        if self.instance.pk is None:  # This is a new evaluation
+        if self.instance.pk is None:  
             instance.project = self.initial['project']
             instance.guide = self.initial['guide']
         if commit:
@@ -142,7 +142,7 @@ class StudentEditForm(forms.ModelForm):
 
     class Meta:
         model = Student
-        fields = ['name', 'email', 'rollno']  # Fields from the Student model
+        fields = ['name', 'email', 'rollno']  
 
     def __init__(self, *args, **kwargs):
         student = kwargs.get('instance')
@@ -168,10 +168,14 @@ class StudentEditForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         student_instance = self.instance
-        if User.objects.filter(email=email).exclude(id=student_instance.profile.user.id).exists():
-            raise forms.ValidationError('This email is already in use.')
-        
+        if student_instance.pk and student_instance.profile and student_instance.profile.user:
+            if User.objects.filter(email=email).exclude(id=student_instance.profile.user.id).exists():
+                raise forms.ValidationError('This email is already in use.')
+        else:
+            if User.objects.filter(email=email).exists():
+                raise forms.ValidationError('This email is already in use.')
         return email
+
     
 
 class FacultyEditForm(forms.ModelForm):
@@ -201,11 +205,14 @@ class FacultyEditForm(forms.ModelForm):
             user.save()
             faculty.save()
         return faculty
-
+    
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        faculty_instance = self.instance
-        if User.objects.filter(email=email).exclude(id=faculty_instance.profile.user.id).exists():
-            raise forms.ValidationError('This email is already in use.')
-        
+        faculty_instance = self.instance   
+        if faculty_instance.pk and faculty_instance.profile and faculty_instance.profile.user:
+            if User.objects.filter(email=email).exclude(id=faculty_instance.profile.user.id).exists():
+                raise forms.ValidationError('This email is already in use.')
+        else:
+            if User.objects.filter(email=email).exists():
+                raise forms.ValidationError('This email is already in use.')
         return email
