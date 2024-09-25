@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test
 from .models import *
-from .forms import ExaminerEvaluationForm, GuideEvaluationForm
+from .forms import ExaminerEvaluationForm, GuideEvaluationForm, ProfileEditForm
 from users.models import *
 from weasyprint import HTML, CSS
 from django.db.models import Q
@@ -216,50 +216,69 @@ def editProject(request,pk):
     return render(request,'mtechMinorEval/editProject.html', context)
 
 
-
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
 def editStudent(request, pk):
     student = Student.objects.get(id=pk)
-    form = StudentEditForm(instance=student)
-    
+    profile = student.profile 
+    form =StudentEditForm(instance=student)
+    profile_form = ProfileEditForm(instance=profile) 
+
     if request.method == 'POST':
         form = StudentEditForm(request.POST, instance=student)
-        if form.is_valid():
-            form.save()
+        profile_form = ProfileEditForm(request.POST, instance=profile) 
+
+        if form.is_valid() and profile_form.is_valid(): 
+            form.save()     
+            profile_instance = profile_form.save(commit=False)  
+            user = profile.user  
+            user.email = profile_instance.email  
+            user.save()  
+            profile_instance.save()  
             messages.success(request, 'Student updated successfully!')
-            return redirect('student-database') 
+            return redirect('student-database')  
         else:
             messages.error(request, 'Please correct the errors below.')
-    
+
     context = {
         'student': student,
-        'form': form
+        'form': form,
+        'profile_form': profile_form  
     }
     return render(request, 'mtechMinorEval/editStudent.html', context)
 
 
-
 @login_required
 def editFaculty(request, pk):
-    faculty=Faculty.objects.get(id=pk)
-    form=FacultyEditForm(instance=faculty)
-    
+    faculty = Faculty.objects.get(id=pk)
+    profile = faculty.profile 
+    form = FacultyEditForm(instance=faculty)
+    profile_form = ProfileEditForm(instance=profile) 
+
     if request.method == 'POST':
         form = FacultyEditForm(request.POST, instance=faculty)
-        if form.is_valid():
-            form.save()
+        profile_form = ProfileEditForm(request.POST, instance=profile) 
+
+        if form.is_valid() and profile_form.is_valid(): 
+            form.save()     
+            profile_instance = profile_form.save(commit=False)  
+            user = profile.user  
+            user.email = profile_instance.email  
+            user.save()  
+            profile_instance.save()  
+
             messages.success(request, 'Faculty updated successfully!')
             if request.user.is_superuser:
-                return redirect('faculty-database')  # Superuser redirect
+                return redirect('faculty-database')  
             else:
                 return redirect('projectsList')
         else:
             messages.error(request, 'Please correct the errors below.')
-    
+
     context = {
         'faculty': faculty,
-        'form': form
+        'form': form,
+        'profile_form': profile_form  
     }
     return render(request, 'mtechMinorEval/editFaculty.html', context)
 

@@ -98,6 +98,8 @@ def register(request):
 
 
 def loginUser(request):
+    if request.user.is_superuser:
+        return redirect('admin-panel')
     if request.user.is_authenticated:
         return redirect('projectsList')
     if request.method == 'POST':

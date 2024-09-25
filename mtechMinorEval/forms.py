@@ -2,7 +2,9 @@ from django.forms import ModelForm
 from django.forms.widgets import NumberInput
 from django import forms
 from django.contrib.auth.models import User
-from .models import ExaminerEvaluation,GuideEvaluation,Project,Student,Faculty
+from .models import ExaminerEvaluation,GuideEvaluation,Project,Student,Faculty,Profile
+
+
 class ExaminerEvaluationForm(ModelForm):
     class Meta:
         model=ExaminerEvaluation
@@ -134,6 +136,12 @@ class ProjectEditForm(ModelForm):
     class Meta:
         model = Project
         fields='__all__'
+
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['email']  # This allows editing the email in Profile
 
 
 class StudentEditForm(forms.ModelForm):
