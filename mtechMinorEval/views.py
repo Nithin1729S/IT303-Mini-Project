@@ -186,27 +186,43 @@ def editProject(request,pk):
         pass
     return render(request,'mtechMinorEval/editProject.html', context)
 
-def editStudent(request,pk):
-    student=Student.objects.get(id=pk)
-    form=StudentEditForm(instance=student)
-    context={
-        'student':student,
-        'form':form
-    }
+def editStudent(request, pk):
+    student = Student.objects.get(id=pk)
+    form = StudentEditForm(instance=student)
+    
     if request.method == 'POST':
-        pass
-    return render(request,'mtechMinorEval/editStudent.html', context)
+        form = StudentEditForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Student updated successfully!')
+            return redirect('student-database')  # Redirect to the appropriate URL after saving
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    
+    context = {
+        'student': student,
+        'form': form
+    }
+    return render(request, 'mtechMinorEval/editStudent.html', context)
 
-def editFaculty(request,pk):
+def editFaculty(request, pk):
     faculty=Faculty.objects.get(id=pk)
     form=FacultyEditForm(instance=faculty)
-    context={
-        'faculty':faculty,
-        'form':form
-    }
+    
     if request.method == 'POST':
-        pass
-    return render(request,'mtechMinorEval/editFaculty.html', context)
+        form = FacultyEditForm(request.POST, instance=faculty)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Faculty updated successfully!')
+            return redirect('faculty-database')  # Redirect to the appropriate URL after saving
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    
+    context = {
+        'faculty': faculty,
+        'form': form
+    }
+    return render(request, 'mtechMinorEval/editFaculty.html', context)
 
 def deleteProject(request,pk):
     project=Project.objects.get(id=pk)

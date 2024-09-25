@@ -117,7 +117,6 @@ class GuideEvaluationForm(ModelForm):
         super().__init__(*args, **kwargs)
         instance = kwargs.get('instance')
         if instance:
-            # If we're editing an existing instance, populate the initial data
             for field in self.fields:
                 self.fields[field].initial = getattr(instance, field)
         for name,field in self.fields.items():
@@ -136,32 +135,77 @@ class ProjectEditForm(ModelForm):
         model = Project
         fields='__all__'
 
+
 class StudentEditForm(forms.ModelForm):
-    # Additional fields for the User model
     username = forms.CharField(max_length=150)
-    password = forms.CharField(widget=forms.PasswordInput)
-    
+    password = forms.CharField(widget=forms.PasswordInput, required=False)
+
     class Meta:
         model = Student
-        fields = ['name', 'email', 'rollno']  # These are Student model fields
+        fields = ['name', 'email', 'rollno']  # Fields from the Student model
+
+    def __init__(self, *args, **kwargs):
+        student = kwargs.get('instance')
+        super(StudentEditForm, self).__init__(*args, **kwargs)
+        
+        if student and student.profile and student.profile.user:
+            self.fields['username'].initial = student.profile.user.username
+            self.fields['password'].initial = '' 
+
+    def save(self, commit=True):
+        student = super(StudentEditForm, self).save(commit=False)
+        user = student.profile.user
+        user.username = self.cleaned_data['username']
+        password = self.cleaned_data['password']
+        if password:
+            user.set_password(password)  
+        
+        if commit:
+            user.save()
+            student.save()
+        return student
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        student_instance = self.instance
+        if User.objects.filter(email=email).exclude(id=student_instance.profile.user.id).exists():
             raise forms.ValidationError('This email is already in use.')
+        
         return email
-
-class FacultyEditForm(ModelForm):
-    # Additional fields for the User model
-    username = forms.CharField(max_length=150)
-    password = forms.CharField(widget=forms.PasswordInput)
     
+
+class FacultyEditForm(forms.ModelForm):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput, required=False)
+
     class Meta:
         model = Faculty
-        fields = ['name', 'email', 'facultyID']  # These are Student model fields
+        fields = ['name', 'email', 'facultyID']  
+
+    def __init__(self, *args, **kwargs):
+        faculty = kwargs.get('instance')
+        super(FacultyEditForm, self).__init__(*args, **kwargs)
+        
+        if faculty and faculty.profile and faculty.profile.user:
+            self.fields['username'].initial = faculty.profile.user.username
+            self.fields['password'].initial = ''  
+
+    def save(self, commit=True):
+        faculty = super(FacultyEditForm, self).save(commit=False)
+        user = faculty.profile.user
+        user.username = self.cleaned_data['username']
+        password = self.cleaned_data['password']
+        if password:
+            user.set_password(password)  
+        if commit:
+            user.save()
+            faculty.save()
+        return faculty
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        faculty_instance = self.instance
+        if User.objects.filter(email=email).exclude(id=faculty_instance.profile.user.id).exists():
             raise forms.ValidationError('This email is already in use.')
+        
         return email
