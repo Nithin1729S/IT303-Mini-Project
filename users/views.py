@@ -41,6 +41,7 @@ def generate_otp():
     return random.randint(100000, 999999)
 
 def send_login_email(to_faculty,recipient_list):
+    "Send login email to faculty"
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     ip_address = s.getsockname()[0]
@@ -53,11 +54,13 @@ def send_login_email(to_faculty,recipient_list):
     print(message)
 
 def send_faculty_otp(subject,message,recipient_list):
+    "Send otp to faculty"
     from_email = os.getenv('MAIL')  
     print(message)
     #send_mail(subject, message, from_email, recipient_list,fail_silently=False)
 
 def register(request):
+    "Function to register a new faculty"
     if request.method == 'POST':
         form = ExtendedUserCreationForm(request.POST)
         if form.is_valid():
@@ -112,6 +115,7 @@ def register(request):
 
 
 def loginUser(request):
+    "Function to login a faculty"
     if request.user.is_superuser:
         return redirect('admin-panel')
     if request.user.is_authenticated:
@@ -139,6 +143,7 @@ def loginUser(request):
 
 
 def login_otp(request):
+    "Login via otp"
     if request.method == 'POST':
         email = request.POST.get('email')
         otp = generate_otp()
@@ -158,6 +163,7 @@ def login_otp(request):
     return render(request, 'users/login_otp.html')
 
 def verify_otp_login(request):
+    "OTP Verification for login via otp"
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
         session_otp = request.session.get('otp')
@@ -182,6 +188,7 @@ def verify_otp_login(request):
 
 
 def logoutUser(request):
+    "Logout Faculty"
     username = request.user.username if request.user.is_authenticated else 'User'
     logout(request)
     messages.success(request,f"{username} was successfully logged out ")
@@ -189,6 +196,7 @@ def logoutUser(request):
 
 
 def forgot_password(request):
+    "Forgot password to reset password"
     if request.method == 'POST':
         email = request.POST.get('email')
         print(f"Received email: {email}") 
@@ -214,6 +222,7 @@ def forgot_password(request):
 
 
 def reset_password(request, otp):
+    "Reset password after comparing otp"
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
         new_password = request.POST.get('new_password')
@@ -239,6 +248,7 @@ def reset_password(request, otp):
 
 
 def verify_otp(request):
+    "Verification of OTP for account registration "
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
         session_otp = request.session.get('otp')
