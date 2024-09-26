@@ -1,1 +1,42 @@
 *.env
+env/
+# Python files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+env/
+
+# Django database
+db.sqlite3
+
+# Django migrations
+*/migrations/*.pyc
+
+# Local settings
+local_settings.py
+
+# Secrets
+.env
+secrets.json
+
+# Editor configurations
+.vscode/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Static and media files
+/staticfiles/
+/media/
+
+# Node modules (if using npm)
+node_modules/
+
+# Build files
+/build/
+/dist/
