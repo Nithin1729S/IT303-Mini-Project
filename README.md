@@ -18,6 +18,13 @@ Create a .env file in home folder and type your credentials
 EMAIL = 'youremailaddress'
 PASSWD = 'yourapppassword'
 
+
+Create new admin
+
+python manage.py createsuperuser
+
+Admin login
+http://127.0.0.1:8000/admin-login/
 # Login Details
 
 ## Faculty Login Details
