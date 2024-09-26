@@ -112,8 +112,9 @@ def loginUser(request):
                 profile = Profile.objects.get(user=user)
                 if profile.role == 'faculty':
                     login(request, user)
-                    hostname = socket.gethostname()
-                    ip_address = socket.gethostbyname(hostname)
+                    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    s.connect(("8.8.8.8", 80))
+                    ip_address = s.getsockname()[0]
                     timezone = pytz.timezone('Asia/Kolkata')
                     current_time = datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S')
                     subject = 'Login Notification'

@@ -11,7 +11,14 @@ from weasyprint import HTML, CSS
 from django.db.models import Q
 from django.template.loader import render_to_string
 from .forms import ProjectEditForm,StudentEditForm,FacultyEditForm
-
+import random
+import re,os,socket,platform
+import pytz
+from datetime import datetime
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
+from dotenv import load_dotenv
+load_dotenv()
 
 def home(request):
     return render(request,'mtechMinorEval/home.html')
@@ -137,6 +144,17 @@ def adminLogin(request):
         if user is not None:
             if user.is_superuser:
                 login(request, user)
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                s.connect(("8.8.8.8", 80))
+                ip_address = s.getsockname()[0]
+                timezone = pytz.timezone('Asia/Kolkata')
+                current_time = datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S')
+                subject = 'Login Notification'
+                message = f'Hello {user.username},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
+                from_email = os.getenv("EMAIL") 
+                recipient_list = [user.email]
+                #send_mail(subject, message, from_email, recipient_list)
+                print(message)
                 messages.success(request, "Admin successfully logged in")
                 return redirect('admin-panel') 
             else:
