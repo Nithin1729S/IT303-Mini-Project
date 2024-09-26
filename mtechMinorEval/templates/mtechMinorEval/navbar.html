@@ -2,12 +2,19 @@
 <link rel="stylesheet" href="../../static/css/style.min.css">
 <nav style="background-color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 24px;">
     <div style="max-width: 1200px; margin: 0 auto; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-        <a href="{% url 'projectsList' %}" style="font-size: 1.25rem; font-weight: bold; color: #2d3748;">MTech IT Minor Project Evaluation</a>
+        <a href="{% url 'projectsList' %}" style="display: flex; align-items: center; gap: 10px;">
+            <img src="https://scontent.fixe4-1.fna.fbcdn.net/v/t39.30808-6/301998093_452050050278265_740798320161057717_n.png?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=-ps_FpQri7cQ7kNvgHH2WVy&_nc_ht=scontent.fixe4-1.fna&_nc_gid=Au2Ih_ybY0qA2LEBt_QgL1z&oh=00_AYC-fWesLULYWD0SYOPRZ2CBJRpTrTCjl5719EbOIy0fDg&oe=66FAF3E0" alt="Logo" style="height: 40px; width: 40px;">
+            <span style="font-size: 1.25rem; font-weight: bold; color: #2d3748;">MTech IT Minor Project Evaluation</span>
+        </a>
         <div style="margin-left: auto;">
             {% if user.is_authenticated %}
                 <a href="{% url 'logout' %}" style="color: #4299e1; text-decoration: none;">Logout</a>
             {% else %}
-                <a href="{% url 'login' %}" style="color: #4299e1; text-decoration: none;">Login</a>
+                <a href="{% url 'login' %}" style="color: #fff; text-decoration: none;">
+                    <button style="width: 68px; height: 36px; border-radius: 4px; background-color: #4299e1;">
+                        Login
+                    </button>
+                </a>
             {% endif %}
         </div>
     </div>
