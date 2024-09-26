@@ -16,8 +16,6 @@ from django.utils.crypto import get_random_string
 from dotenv import load_dotenv
 load_dotenv()
 
-
-
 class ExtendedUserCreationForm(UserCreationForm):
     ROLE_CHOICES = (
         ('student', 'Student'),
@@ -36,10 +34,28 @@ class ExtendedUserCreationForm(UserCreationForm):
             user.save()
         return user
 
+
+
 def generate_otp():
     """Generate a random 6-digit OTP"""
     return random.randint(100000, 999999)
-    
+
+def send_login_email(to_faculty,recipient_list):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip_address = s.getsockname()[0]
+    timezone = pytz.timezone('Asia/Kolkata')
+    current_time = datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S')
+    from_email = os.getenv("EMAIL") 
+    subject = 'Login Notification'
+    message = f'Hello {to_faculty},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
+    #send_mail(subject, message, from_email, recipient_list)
+    print(message)
+
+def send_faculty_otp(subject,message,recipient_list):
+    from_email = os.getenv('MAIL')  
+    print(message)
+    #send_mail(subject, message, from_email, recipient_list,fail_silently=False)
 
 def register(request):
     if request.method == 'POST':
@@ -69,13 +85,10 @@ def register(request):
             request.session['otp'] = otp
             request.session['form_data'] = request.POST  # Save form data in session
 
-            # Send OTP email
             subject = 'Email OTP Verification'
             message = f'Your OTP for registration is: {otp}'
-            from_email = 'your-email@domain.com'  # Replace with your email
             recipient_list = [email]
-            print(message)
-            #send_mail(subject, message, from_email, recipient_list)
+            send_faculty_otp(subject,message,recipient_list)
             messages.info(request, 'OTP sent to your email. Please verify.')
 
             return redirect('verify_otp')
@@ -112,17 +125,8 @@ def loginUser(request):
                 profile = Profile.objects.get(user=user)
                 if profile.role == 'faculty':
                     login(request, user)
-                    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                    s.connect(("8.8.8.8", 80))
-                    ip_address = s.getsockname()[0]
-                    timezone = pytz.timezone('Asia/Kolkata')
-                    current_time = datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S')
-                    subject = 'Login Notification'
-                    message = f'Hello {profile.user.username},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
-                    from_email = os.getenv("EMAIL") 
                     recipient_list = [email]
-                    #send_mail(subject, message, from_email, recipient_list)
-                    print(message)
+                    send_login_email(profile.user.username,recipient_list)
                     messages.success(request, f'{email} logged in successfully!')
                     return redirect('projectsList')
                 else:
@@ -132,7 +136,6 @@ def loginUser(request):
         else:
             messages.error(request, "Email or password is incorrect.")
     return render(request, 'users/login.html')
-
 
 
 def login_otp(request):
@@ -147,11 +150,8 @@ def login_otp(request):
         # Send the OTP to the user's email
         subject = 'Your OTP for Login'
         message = f'Your OTP for login is {otp}. It is valid for 5 minutes.'
-        from_email = os.getenv("MAIL")
         recipient_list = [email]
-        print(message)
-        #send_mail(subject, message, from_email, recipient_list)
-
+        send_faculty_otp(subject,message,recipient_list)
         messages.success(request, 'OTP sent to your email.')
         return redirect('verify_otp_login')
 
@@ -162,11 +162,14 @@ def verify_otp_login(request):
         entered_otp = request.POST.get('otp')
         session_otp = request.session.get('otp')
         email = request.session.get('email')
-
+        
         if entered_otp == str(session_otp):
             try:
                 user = User.objects.get(email=email)
+                profile = Profile.objects.get(user=user)
                 login(request, user,backend='users.backends.EmailBackend')
+                recipient_list = [email]
+                send_login_email(profile.user.username,recipient_list)
                 messages.success(request, 'Logged in successfully with OTP!')
                 return redirect('projectsList')
             except User.DoesNotExist:
@@ -193,16 +196,10 @@ def forgot_password(request):
         if Faculty.objects.filter(email=email).exists():
             print(Faculty.objects.filter(email=email))
             otp = get_random_string(length=6, allowed_chars='0123456789')
-            print(otp)
             try:
-                send_mail(
-                    'Your OTP for Password Reset',
-                    f'Your OTP is {otp}',
-                    'from@example.com',
-                    [email],
-                    fail_silently=False,
-                )
-                
+                subject="Your OTP for Password Reset",
+                message=f'Your OTP is {otp}'
+                send_faculty_otp(subject,message,[email])
                 request.session['otp'] = otp
                 request.session['email'] = email
                 messages.success(request, 'An OTP has been sent to your email.')

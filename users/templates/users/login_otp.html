@@ -1,6 +1,72 @@
-<form method="POST">
-    {% csrf_token %}
-    <label for="email">Enter your email:</label>
-    <input type="email" name="email" required>
-    <button type="submit">Send OTP</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body{
+            background: url('https://thenitklife.weebly.com/uploads/3/0/5/6/30562859/2863786_orig.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            height: 105vh;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://thenitklife.weebly.com/uploads/3/0/5/6/30562859/2863786_orig.jpg') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(8px); /* Adjust the blur radius as needed */
+            z-index: -1; /* Keep the background behind the content */
+        }
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <!-- Flash Messages -->
+    <div class="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-md mt-4 z-50">
+        {% if messages %}
+        <div class="w-full">
+            {% for message in messages %}
+            <div class="flash-message bg-white shadow-lg rounded-lg p-4 mb-4">
+                <div class="flex items-center">
+                    {% if message.tags == 'success' %}
+                    <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% elif message.tags == 'error' %}
+                    <svg class="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% else %}
+                    <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% endif %}
+                    <p class="text-gray-800">{{ message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- OTP Form -->
+    <form method="POST" class="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+        {% csrf_token %}
+        <label for="email" class="block text-gray-700 font-semibold mb-2">Enter your email:</label>
+        <input type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
+        <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors">
+            Send OTP
+        </button>
+    </form>
+</body>
+</html>
