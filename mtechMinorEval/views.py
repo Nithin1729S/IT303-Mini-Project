@@ -377,13 +377,23 @@ def addNewStudent(request):
         form = StudentEditForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
-                username = form.cleaned_data.get('username')  # assuming username is included in form
+                name = form.cleaned_data.get('name')  # Use the name from the form
                 email = form.cleaned_data.get('email')
-                password = form.cleaned_data.get('password')  # assuming password is included in form
-                user = User.objects.create_user(username=username, email=email, password=password)
+                password = form.cleaned_data.get('password')
+
+                # Create the User object
+                user = User.objects.create_user(username=name, email=email, password=password)
+
+                # Create the Profile object
                 profile = Profile.objects.create(user=user, email=email, role='student')
-                student = Student.objects.create(profile=profile, name=form.cleaned_data.get('name'), 
-                                                 email=email, rollno=form.cleaned_data.get('rollno'))
+
+                # Create the Student object
+                student = Student.objects.create(
+                    profile=profile,
+                    name=name,  # Use the same name for the Student model
+                    email=email,
+                    rollno=form.cleaned_data.get('rollno')
+                )
                 
                 return redirect('student-database')
     else:
@@ -394,6 +404,7 @@ def addNewStudent(request):
 
 
 
+
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
 def addNewFaculty(request):
@@ -401,13 +412,28 @@ def addNewFaculty(request):
         form = FacultyEditForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
-                username = form.cleaned_data.get('username')  # assuming username is included in form
+                # Extract fields from the form
+                name = form.cleaned_data.get('name')  # Ensure username is included in the form
                 email = form.cleaned_data.get('email')
-                password = form.cleaned_data.get('password')  # assuming password is included in form
-                user = User.objects.create_user(username=username, email=email, password=password)
+                password = form.cleaned_data.get('password')  # Assuming password is included in the form
+                
+                # Ensure username is provided
+                if not name:
+                    raise ValueError("Username must be provided")
+
+                # Create the User object
+                user = User.objects.create_user(username=name, email=email, password=password)
+                
+                # Create the Profile object
                 profile = Profile.objects.create(user=user, email=email, role='faculty')
-                faculty = Faculty.objects.create(profile=profile, name=form.cleaned_data.get('name'), 
-                                                 email=email, facultyID=form.cleaned_data.get('facultyID'))
+
+                # Create the Faculty object
+                faculty = Faculty.objects.create(
+                    profile=profile,
+                    name=form.cleaned_data.get('name'),
+                    email=email,
+                    facultyID=form.cleaned_data.get('facultyID')
+                )
                 
                 return redirect('faculty-database')
     else:
@@ -415,3 +441,4 @@ def addNewFaculty(request):
 
     context = {'form': form}
     return render(request, 'mtechMinorEval/editFaculty.html', context)
+
