@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from users.views import loginUser,register,forgot_password,reset_password,verify_otp
+from users.views import loginUser,register,forgot_password,reset_password,verify_otp,verify_otp_login,login_otp
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
@@ -25,5 +25,7 @@ urlpatterns = [
     path('forgot-password/', forgot_password, name='forgot-password'),
     path('reset-password/<str:otp>/', reset_password, name='reset-password'),
     path('verify-otp/', verify_otp, name='verify_otp'),
+    path('login-otp/', login_otp, name='login_otp'),
+    path('verify-otp-login/', verify_otp_login, name='verify_otp_login'),
     path('',include('mtechMinorEval.urls'))  #to allow urls from mtechMinorEval be valid
 ]

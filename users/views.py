@@ -135,6 +135,49 @@ def loginUser(request):
 
 
 
+def login_otp(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        otp = generate_otp()
+
+        # Store OTP and email in session for now
+        request.session['otp'] = otp
+        request.session['email'] = email
+
+        # Send the OTP to the user's email
+        subject = 'Your OTP for Login'
+        message = f'Your OTP for login is {otp}. It is valid for 5 minutes.'
+        from_email = os.getenv("MAIL")
+        recipient_list = [email]
+        print(message)
+        #send_mail(subject, message, from_email, recipient_list)
+
+        messages.success(request, 'OTP sent to your email.')
+        return redirect('verify_otp_login')
+
+    return render(request, 'users/login_otp.html')
+
+def verify_otp_login(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        session_otp = request.session.get('otp')
+        email = request.session.get('email')
+
+        if entered_otp == str(session_otp):
+            try:
+                user = User.objects.get(email=email)
+                login(request, user,backend='users.backends.EmailBackend')
+                messages.success(request, 'Logged in successfully with OTP!')
+                return redirect('projectsList')
+            except User.DoesNotExist:
+                messages.error(request, 'No user found with this email.')
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+
+    return render(request, 'users/verify_otp_login.html')
+
+
+
 def logoutUser(request):
     username = request.user.username if request.user.is_authenticated else 'User'
     logout(request)
