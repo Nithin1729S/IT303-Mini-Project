@@ -150,6 +150,14 @@ class StudentEditForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ['name', 'email', 'rollno','cgpa']
+        widgets={
+            'cgpa':forms.NumberInput(
+                attrs={
+                    'min':0.0,
+                    'max':10.0
+                }
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         student = kwargs.get('instance')

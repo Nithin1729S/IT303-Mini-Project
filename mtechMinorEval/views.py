@@ -380,7 +380,7 @@ def addNewStudent(request):
                 name = form.cleaned_data.get('name')  # Use the name from the form
                 email = form.cleaned_data.get('email')
                 password = form.cleaned_data.get('password')
-
+                cgpa=form.cleaned_data.get('cgpa')
                 # Create the User object
                 user = User.objects.create_user(username=name, email=email, password=password)
 
@@ -392,7 +392,8 @@ def addNewStudent(request):
                     profile=profile,
                     name=name,  # Use the same name for the Student model
                     email=email,
-                    rollno=form.cleaned_data.get('rollno')
+                    rollno=form.cleaned_data.get('rollno'),
+                    cgpa=cgpa
                 )
                 
                 return redirect('student-database')
