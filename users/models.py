@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Profile(models.Model):
     ROLE_CHOICES = (
@@ -21,6 +22,10 @@ class Student(models.Model):
     name=models.CharField(max_length=255,null=True,blank=True)
     email=models.EmailField(max_length=200,unique=True,null=True,blank=True)
     rollno=models.CharField(max_length=200,null=True,blank=True)
+    cgpa = models.DecimalField(max_digits=4, decimal_places=2,null=True,blank=True,validators=[
+        MinValueValidator(0.0),
+        MaxValueValidator(10.0)
+    ])    
     def __str__(self):
         return f"{self.name}"
 

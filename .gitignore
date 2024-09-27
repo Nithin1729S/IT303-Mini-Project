@@ -4,7 +4,7 @@ env/
 __pycache__/
 *.py[cod]
 *.pyo
-
+*.pyc
 # Virtual environments
 venv/
 env/
@@ -14,7 +14,10 @@ db.sqlite3
 
 # Django migrations
 */migrations/*.pyc
+*/migrations/
 
+users/migrations
+mtechMinorEval/migrations
 # Local settings
 local_settings.py
 

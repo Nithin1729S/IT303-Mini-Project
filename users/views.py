@@ -280,3 +280,10 @@ def verify_otp(request):
             messages.error(request, 'Invalid OTP. Please try again.')
 
     return render(request, 'users/verify_otp.html')
+
+def student_profile_view(request,pk):
+    student=Student.objects.get(id=pk)
+    context={
+        'student':student
+    }
+    return render(request,'users/student_profile.html',context)

@@ -149,7 +149,7 @@ class StudentEditForm(forms.ModelForm):
 
     class Meta:
         model = Student
-        fields = ['name', 'email', 'rollno']
+        fields = ['name', 'email', 'rollno','cgpa']
 
     def __init__(self, *args, **kwargs):
         student = kwargs.get('instance')

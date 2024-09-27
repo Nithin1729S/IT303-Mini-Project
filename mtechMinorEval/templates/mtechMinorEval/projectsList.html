@@ -60,7 +60,7 @@
                     <tr class="hover:bg-gray-50">
                         <td class="py-2 px-4 border-b">{{ project.title }}</td>
                         <td class="py-2 px-4 border-b">{{ project.student.rollno }}</td>
-                        <td class="py-2 px-4 border-b">{{ project.student.name }}</td>
+                        <td class="py-2 px-4 border-b"><a href="{% url 'student-profile' project.student.id %}" >{{ project.student.name }}</a></td>
                         {% if project.guide.name == request.user.username %}
                         <td class="py-2 px-4 border-b">Guide</td>
                         {% else %}
