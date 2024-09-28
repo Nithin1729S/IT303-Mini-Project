@@ -21,7 +21,7 @@ class Student(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, limit_choices_to={'role': 'student'})
     name=models.CharField(max_length=255,null=True,blank=True)
     email=models.EmailField(max_length=200,unique=True,null=True,blank=True)
-    rollno=models.CharField(max_length=200,null=True,blank=True)
+    rollno=models.CharField(max_length=200,unique=True,null=True,blank=True)
     cgpa = models.DecimalField(max_digits=4, decimal_places=2,null=True,blank=True,validators=[
         MinValueValidator(0.0),
         MaxValueValidator(10.0)
@@ -33,6 +33,6 @@ class Faculty(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, limit_choices_to={'role': 'faculty'})
     name=models.CharField(max_length=255,null=True,blank=True)
     email=models.EmailField(max_length=200,unique=True,null=True,blank=True)
-    facultyID=models.CharField(max_length=200,null=True,blank=True)
+    facultyID=models.CharField(max_length=200,unique=True,null=True,blank=True)
     def __str__(self):
         return f"{self.name}"
