@@ -1,3 +1,5 @@
+import requests
+
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.db import IntegrityError
@@ -23,7 +25,7 @@ class ExtendedUserCreationForm(UserCreationForm):
         ('faculty', 'Faculty'),
     )
     email = forms.EmailField(required=True) 
-    role = forms.CharField(widget=forms.HiddenInput(), initial='faculty')  
+    role = forms.CharField(widget=forms.HiddenInput(), initial='faculty')
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2'] 
@@ -59,7 +61,7 @@ def send_login_email(to_faculty,recipient_list):
     from_email = os.getenv("EMAIL") 
     subject = 'Login Notification'
     message = f'Hello {to_faculty},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
-    #send_mail(subject, message, from_email, recipient_list)
+    send_mail(subject, message, from_email, recipient_list)
     print(message)
 
 def send_faculty_otp(subject,message,recipient_list):
@@ -73,18 +75,30 @@ def register(request):
     if request.method == 'POST':
         form = ExtendedUserCreationForm(request.POST)
         if form.is_valid():
+            recaptcha_response = request.POST.get('g-recaptcha-response')
+            data = {
+                'secret': '6LeenVEqAAAAAC01Gp9B4M72_8jRXdgFeWjeL8EQ',
+                'response': recaptcha_response
+            }
+            r = requests.post('https://www.google.com/recaptcha/api/siteverify', data = data)
+            result = r.json()
+
+            if not result['success']:
+                    message.error(request, 'Invalid reCAPTCHA. Please try again.')
+                    return  redirect('register')
+
             email = form.cleaned_data.get('email')
             username = form.cleaned_data.get('username')
 
             # Check if the email is valid
-            if not email.endswith('@nitk.edu.in'):
-                messages.error(request, 'Email must end with @nitk.edu.in.')
-                return render(request, 'users/register.html', {'form': form})
+            # if not email.endswith('@nitk.edu.in'):
+            #     messages.error(request, 'Email must end with @nitk.edu.in.')
+            #     return render(request, 'users/register.html', {'form': form})
 
             # Check if the email contains any numbers
-            if re.search(r'\d', email):
-                messages.error(request, 'Email cannot contain numbers.')
-                return render(request, 'users/register.html', {'form': form})
+            # if re.search(r'\d', email):
+            #     messages.error(request, 'Email cannot contain numbers.')
+            #     return render(request, 'users/register.html', {'form': form})
 
             # Check if the email is already registered
             if User.objects.filter(email=email).exists():
@@ -125,22 +139,54 @@ def register(request):
 
 
 def loginUser(request):
-    "Function to login a faculty"
+    "Function to login a faculty with reCAPTCHA verification"
+    
     if request.user.is_superuser:
         return redirect('admin-panel')
     if request.user.is_authenticated:
         return redirect('projectsList')
+
     if request.method == 'POST':
+        # Fetch the reCAPTCHA response from the POST data
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        data = {
+            'secret': '6LeenVEqAAAAAC01Gp9B4M72_8jRXdgFeWjeL8EQ',  # Your reCAPTCHA secret key
+            'response': recaptcha_response
+        }
+
+        try:
+            # Send a request to Google's reCAPTCHA API to verify the response
+            r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+
+            # Check if the request was successful
+            if r.status_code != 200:
+                messages.error(request, 'Failed to verify reCAPTCHA. Please try again.')
+                return redirect('login')
+
+            result = r.json()
+
+            # Check if reCAPTCHA verification was successful
+            if not result.get('success'):
+                messages.error(request, 'Invalid reCAPTCHA. Please try again.')
+                return redirect('login')
+
+        except requests.exceptions.RequestException as e:
+            # Handle network-related errors
+            messages.error(request, f"reCAPTCHA verification failed: {str(e)}")
+            return redirect('login')
+
+        # Proceed with the login logic if CAPTCHA was successful
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(request, email=email, password=password)
+
         if user is not None:
             try:
                 profile = Profile.objects.get(user=user)
                 if profile.role == 'faculty':
                     login(request, user)
                     recipient_list = [email]
-                    send_login_email(profile.user.username,recipient_list)
+                    send_login_email(profile.user.username, recipient_list)
                     messages.success(request, f'{email} logged in successfully!')
                     return redirect('projectsList')
                 else:
@@ -149,8 +195,8 @@ def loginUser(request):
                 messages.error(request, "Profile not found for the user.")
         else:
             messages.error(request, "Email or password is incorrect.")
-    return render(request, 'users/login.html')
 
+    return render(request, 'users/login.html')
 
 def login_otp(request):
     "Login via otp"
