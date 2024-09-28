@@ -8,6 +8,7 @@ from django.contrib import messages
 from django import forms
 from users.models import Profile
 import random
+from django.utils import timezone
 import re,os,socket,platform
 import pytz
 from datetime import datetime
@@ -223,6 +224,11 @@ def forgot_password(request):
 
 def reset_password(request, otp):
     "Reset password after comparing otp"
+    
+    # Initialize the resend OTP timestamp if it does not exist
+    if 'resend_otp_time' not in request.session:
+        request.session['resend_otp_time'] = timezone.now().timestamp()
+
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
         new_password = request.POST.get('new_password')
@@ -243,7 +249,13 @@ def reset_password(request, otp):
         else:
             messages.error(request, 'Invalid OTP. Please try again.')
 
-    return render(request, 'users/reset_password.html', {'otp': otp})
+    # Check if 10 seconds have passed for OTP resend
+    if timezone.now().timestamp() - request.session['resend_otp_time'] >= 10:
+        can_resend = True
+    else:
+        can_resend = False
+
+    return render(request, 'users/reset_password.html', {'otp': otp, 'can_resend': can_resend})
 
 
 
@@ -287,3 +299,20 @@ def student_profile_view(request,pk):
         'student':student
     }
     return render(request,'users/student_profile.html',context)
+
+
+def resend_otp(request):
+    "Resend OTP if requested"
+    email = request.session.get('email')
+    if email:
+        otp = get_random_string(length=6, allowed_chars='0123456789')
+        subject = "Your OTP for Password Reset"
+        message = f'Your OTP is {otp}'
+        send_faculty_otp(subject, message, [email])
+        request.session['otp'] = otp
+        request.session['resend_otp_time'] = timezone.now().timestamp() 
+        messages.success(request, 'A new OTP has been sent to your email.')
+    else:
+        messages.error(request, 'Unable to resend OTP. Please try again.')
+
+    return redirect('reset-password', otp=request.session.get('otp'))
