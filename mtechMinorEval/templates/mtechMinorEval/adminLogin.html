@@ -92,7 +92,7 @@
                 <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
                     <div class="g-recaptcha mb-4" data-sitekey="6LeenVEqAAAAAB1FwcXtRB2NqcWUfMAzOpeCMr8P"></div>
                 </div>
-                
+
                 <div style="text-align: center;">
                 <button class="btn btn--main" type="submit" style="display: inline-block; margin: 20px;">
                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
@@ -113,90 +113,3 @@
   </body>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </html>
-
-<!-- 
- {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .flash-message {
-            animation: slideInOut 5s ease-in-out forwards;
-            opacity: 0;
-            transform: translateY(-100%);
-        }
-        @keyframes slideInOut {
-            0% { opacity: 0; transform: translateY(-100%); }
-            10% { opacity: 1; transform: translateY(0); }
-            90% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-100%); }
-        }
-        body{
-            background: url('https://thenitklife.weebly.com/uploads/3/0/5/6/30562859/2863786_orig.jpg') no-repeat center center fixed;
-            background-size: cover;
-            position: relative;
-            height: 105vh;
-        }
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://thenitklife.weebly.com/uploads/3/0/5/6/30562859/2863786_orig.jpg') no-repeat center center fixed;
-            background-size: cover;
-            filter: blur(8px); /* Adjust the blur radius as needed */
-            z-index: -1; /* Keep the background behind the content */
-        }
-        body > * {
-            position: relative;
-            z-index: 1;
-        }
-    </style>
-    </style>
-</head>
-<body class="flex flex-col min-h-screen bg-gray-100">
-    <div class="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none">
-        {% if messages %}
-        <div class="mt-4 w-full max-w-md">
-            {% for message in messages %}
-            <div class="flash-message bg-white shadow-lg rounded-lg p-4 mb-2 pointer-events-auto">
-                <div class="flex items-center">
-                    {% if message.tags == 'success' %}
-                    <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {% elif message.tags == 'error' %}
-                    <svg class="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {% else %}
-                    <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {% endif %}
-                    <p class="text-gray-800">{{ message }}</p>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-    <div class="flex-grow flex items-center justify-center">
-        <form  method="POST" class="bg-white p-6 rounded shadow-md w-full max-w-sm">
-            {% csrf_token %}
-            <h2 class="text-2xl font-semibold text-center mb-6">Admin Login</h2>
-            <div class="mb-4">
-                <input type="text" name="username" placeholder="Username" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required/>
-            </div>
-            <div class="mb-4">
-                <input type="password" name="password" placeholder="Enter Password" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required/>
-            </div>
-            <div class="text-center">
-                <input type="submit" value="Login" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 cursor-pointer"/>
-            </div>
-            <div>Not an admin ?<a href="{% url 'login' %}" style="color: #4299e1; text-decoration: none;"> Login </a></div>
-        </form>
-
-    </div>
-</body>
-</html> -->
