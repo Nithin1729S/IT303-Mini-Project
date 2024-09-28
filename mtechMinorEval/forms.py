@@ -135,7 +135,10 @@ class GuideEvaluationForm(ModelForm):
 class ProjectEditForm(ModelForm):
     class Meta:
         model = Project
-        fields='__all__'
+        fields = ['title', 'desc', 'src_link', 'student', 'examiner', 'guide', 'deadline']
+        widgets = {
+            'deadline': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
 
 
 class ProfileEditForm(forms.ModelForm):
