@@ -63,106 +63,53 @@
         {% endif %}
     </div>
     <main class="auth layout">
-      <div class="container">
-        <div class="layout__box">
-          <div class="layout__boxHeader">
-            <div class="layout__boxTitle">
-              <h3>Login</h3>
+        <div class="container">
+          <div class="layout__box">
+            <div class="layout__boxHeader">
+              <div class="layout__boxTitle">
+                <h3>Login</h3>
+              </div>
             </div>
-          </div>
-          <div class="layout__body">
-
-            <form class="form" action="{% url 'login' %}" method="POST">
+            <div class="layout__body">
+      
+              <form class="form" action="{% url 'login' %}" method="POST">
                 {% csrf_token %}
-              <div class="form__group form__group">
-                <label for="room_name">Email</label>
-                <input id="username" name="email" type="text" placeholder="faculty@nitk.edu.in" />
-              </div>
-              <div class="form__group">
-                <label for="password">Password</label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-                />
-              </div>
-
-              <button class="btn btn--main" type="submit">
-                <svg
-                  version="1.1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 32 32"
-                >
-                  <title>lock</title>
-                  <path
-                    d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z"
-                  ></path>
-                  <path
-                    d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z"
-                  ></path>
-                </svg>
-
-                Login
-              </button>
-            </form>
-
-            <div class="auth__action">
+                <div class="form__group form__group">
+                  <label for="room_name">Email</label>
+                  <input id="username" name="email" type="text" placeholder="faculty@nitk.edu.in" />
+                </div>
+                <div class="form__group">
+                  <label for="password">Password</label>
+                  <input id="password" name="password" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+                </div>
+      
+                <!-- Added margin between password field and captcha -->
+                <div class="g-recaptcha mb-4" data-sitekey="6LeenVEqAAAAAB1FwcXtRB2NqcWUfMAzOpeCMr8P" style="margin-top: 20px;"></div>
+      
+                <!-- Centering the login button using inline CSS -->
+                <button class="btn btn--main" type="submit" style="display: block; margin: 20px auto;">
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                    <title>lock</title>
+                    <path d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z"></path>
+                    <path d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z"></path>
+                  </svg>
+                  Login
+                </button>
+              </form>
+      
+              <div class="auth__action">
                 <div class="auth__links">
                   <p>Haven't signed up yet? <a href="{% url 'register' %}" class="btn btn--link">Sign Up</a></p>
                   <p>Forgot Password? <a href="{% url 'forgot-password' %}" class="btn btn--link">Forgot Password</a></p>
                 </div>
                 <p class="auth__admin">Admin of this module? <a href="{% url 'admin-login' %}" class="btn btn--link">Admin Login</a></p>
               </div>
-              
+      
+            </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+      
   </body>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </html>
-<!-- 
-</head>
-<body class="flex flex-col min-h-screen bg-gray-100">
-   
-    <div class="flex-grow flex items-center justify-center">
-        <form action="{% url 'login' %}" method="POST" class="bg-white p-6 rounded shadow-md w-full max-w-sm">
-            {% csrf_token %}
-            <h2 class="text-2xl font-semibold text-center mb-6" style="align-items: flex-start;">Login</h2>
-            <h4 style="font-weight: 500; padding-bottom: 6px;">Email:</h4>
-            <div class="mb-4">
-                <input type="text" name="email" placeholder="Enter Email" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required/>
-            </div>
-            <h4 style="font-weight: 500; padding-bottom: 6px;">Password:</h4>
-            <div class="mb-4">
-                <input type="password" name="password" placeholder="Enter Password" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required/>
-            </div>
-            
-            <!-- reCAPTCHA -->
-            <div class="g-recaptcha mb-4" data-sitekey="6LeenVEqAAAAAB1FwcXtRB2NqcWUfMAzOpeCMr8P"></div>
-
-            
-            <div class="text-center" style="padding-top: 10px;">
-                <input type="submit" value="Login" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 cursor-pointer"/>
-            </div>
-            <div class="mt-6 space-y-2 text-center">
-                <div>
-                    <a href="{% url 'login_otp' %}" class="text-blue-500 hover:underline">Login via OTP</a>
-                </div>
-                <div>
-                    <a href="{% url 'forgot-password' %}" class="text-blue-500 hover:underline">Forgot Password?</a>
-                </div>
-                <div>
-                    <span>Don't have an account? <a href="{% url 'register' %}" class="text-blue-500 hover:underline">Register</a></span>
-                </div>
-                <div>
-                    <span>Admin of this module? <a href="{% url 'admin-login' %}" class="text-blue-500 hover:underline">Admin Login</a></span>
-                </div>
-            </div>
-        </form>
-    </div>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-</body>
-</html> -->
