@@ -3,7 +3,7 @@ from django.forms.widgets import NumberInput
 from django import forms
 from django.contrib.auth.models import User
 from .models import ExaminerEvaluation,GuideEvaluation,Project,Student,Faculty,Profile
-
+from django.core.exceptions import ValidationError
 
 class ExaminerEvaluationForm(ModelForm):
     class Meta:
@@ -140,6 +140,15 @@ class ProjectEditForm(ModelForm):
             'deadline': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+        examiner = cleaned_data.get("examiner")
+        guide = cleaned_data.get("guide")
+
+        # Ensure the examiner and guide are different
+        if examiner == guide:
+            raise forms.ValidationError("The examiner and guide must be different.")
+        return cleaned_data
 
 class ProfileEditForm(forms.ModelForm):
     class Meta:
