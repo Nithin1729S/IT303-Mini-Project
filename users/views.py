@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.db import IntegrityError
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile, Student, Faculty
 from django.contrib import messages
 from django import forms
+from mtechMinorEval.models import Project
 from users.models import Profile
 import random
 from django.utils import timezone
@@ -305,9 +306,14 @@ def verify_otp(request):
     return render(request, 'users/verify_otp.html')
 
 def student_profile_view(request,pk):
+    user = request.user
+    userEmail = user.email
+    userProfile = get_object_or_404(Profile, email=userEmail)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
     student=Student.objects.get(id=pk)
     context={
-        'student':student
+        'student':student,
+        'faculty':faculty
     }
     return render(request,'users/student_profile.html',context)
 

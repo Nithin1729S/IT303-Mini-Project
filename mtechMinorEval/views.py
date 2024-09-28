@@ -16,7 +16,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def home(request):
-    return render(request,'mtechMinorEval/home.html')
+    user = request.user
+    userEmail = user.email
+    userProfile = get_object_or_404(Profile, email=userEmail)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
+    return render(request,'mtechMinorEval/home.html',{'faculty':faculty})
 
 @login_required(login_url='login')
 def projectsList(request):
@@ -86,7 +90,7 @@ def evaluate(request, pk):
             getattr(evaluation_instance, 'report', 0) +
             getattr(evaluation_instance, 'attendance', 0)
         )
-    context = {'form': form, 'role': role,'total_marks':total_marks,'project':project}
+    context = {'form': form, 'role': role,'total_marks':total_marks,'project':project,'faculty':faculty}
     return render(request, 'mtechMinorEval/projectEvaluation.html', context=context)
 
 
