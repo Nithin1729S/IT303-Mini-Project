@@ -11,6 +11,10 @@ class ExaminerEvaluationForm(ModelForm):
         exclude=[]
         fields=['datetime_from','datetime_to','depthOfUnderstanding','workDoneAndResults','exceptionalWork','vivaVoce','presentation','report','comments']
         widgets={
+            
+            'datetime_from': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
+            'datetime_to': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
+        
             'depthOfUnderstanding':forms.NumberInput(
                 attrs={
                     'min':0,
@@ -72,6 +76,8 @@ class GuideEvaluationForm(ModelForm):
         exclude=[]
         fields=['datetime_from','datetime_to','depthOfUnderstanding','workDoneAndResults','exceptionalWork','vivaVoce','presentation','report','attendance','comments']
         widgets={
+            'datetime_from': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
+            'datetime_to': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
             'depthOfUnderstanding':forms.NumberInput(
                 attrs={
                     'min':0,
