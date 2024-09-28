@@ -214,17 +214,25 @@ def facultyDatabase(request):
 
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
-def editProject(request,pk):
+def editProject(request, pk):
     "Edit a particular project details"
-    project = Project.objects.get(id=pk)
-    form=ProjectEditForm(instance=project)
-    context={
-        'project':project,
-        'form':form
-    }
+    project = get_object_or_404(Project, id=pk) 
     if request.method == 'POST':
-        pass
-    return render(request,'mtechMinorEval/editProject.html', context)
+        form = ProjectEditForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Project details updated successfully.')
+            return redirect('project-allotment') 
+        else:
+            messages.error(request, 'There was an error updating the project.')
+    else:
+        form = ProjectEditForm(instance=project)
+    
+    context = {
+        'project': project,
+        'form': form
+    }
+    return render(request, 'mtechMinorEval/editProject.html', context)
 
 
 @login_required(login_url='admin-login')
