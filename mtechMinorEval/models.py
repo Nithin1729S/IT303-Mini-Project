@@ -5,6 +5,7 @@ from users.models import Profile,Student,Faculty
 from django.core.validators import FileExtensionValidator,MinValueValidator, MaxValueValidator
 import uuid
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 class Project(models.Model):
     id = models.UUIDField(default=uuid.uuid4,unique=True,primary_key=True,editable=False)
@@ -23,6 +24,10 @@ class Project(models.Model):
         # Ensure the examiner and guide are different entities
         if self.examiner == self.guide:
             raise ValidationError("The examiner and guide must be different.")
+        
+        if self.deadline and self.deadline <= timezone.now():
+            raise ValidationError("The deadline must be a future date and time.")
+
 
     def save(self, *args, **kwargs):
         # Call the model's clean method before saving to ensure validation

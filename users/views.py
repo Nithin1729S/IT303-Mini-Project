@@ -8,8 +8,10 @@ from django.contrib import messages
 from django import forms
 from users.models import Profile
 import random
+from django.utils import timezone
 import re,os,socket,platform
 import pytz
+import threading
 from datetime import datetime
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
@@ -27,6 +29,14 @@ class ExtendedUserCreationForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2'] 
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username:
+            # Remove spaces from the username
+            username = username.replace(" ", "")
+            self.cleaned_data['username'] = username  # Update cleaned_data
+        return username
+    
     def save(self, commit=True):
         user = super(ExtendedUserCreationForm, self).save(commit=False)
         user.email = self.cleaned_data['email']  
@@ -50,14 +60,15 @@ def send_login_email(to_faculty,recipient_list):
     from_email = os.getenv("EMAIL") 
     subject = 'Login Notification'
     message = f'Hello {to_faculty},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
-    #send_mail(subject, message, from_email, recipient_list)
+    email_thread = threading.Thread(target=send_mail, args=(subject, message, from_email, recipient_list))
+    email_thread.start()    
     print(message)
 
 def send_faculty_otp(subject,message,recipient_list):
     "Send otp to faculty"
     from_email = os.getenv('MAIL')  
     print(message)
-    #send_mail(subject, message, from_email, recipient_list,fail_silently=False)
+    send_mail(subject, message, from_email, recipient_list,fail_silently=False)
 
 def register(request):
     "Function to register a new faculty"
@@ -91,7 +102,8 @@ def register(request):
             subject = 'Email OTP Verification'
             message = f'Your OTP for registration is: {otp}'
             recipient_list = [email]
-            send_faculty_otp(subject,message,recipient_list)
+            #send_faculty_otp(subject,message,recipient_list)
+            print(message)
             messages.info(request, 'OTP sent to your email. Please verify.')
 
             return redirect('verify_otp')
@@ -223,6 +235,11 @@ def forgot_password(request):
 
 def reset_password(request, otp):
     "Reset password after comparing otp"
+    
+    # Initialize the resend OTP timestamp if it does not exist
+    if 'resend_otp_time' not in request.session:
+        request.session['resend_otp_time'] = timezone.now().timestamp()
+
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
         new_password = request.POST.get('new_password')
@@ -243,7 +260,13 @@ def reset_password(request, otp):
         else:
             messages.error(request, 'Invalid OTP. Please try again.')
 
-    return render(request, 'users/reset_password.html', {'otp': otp})
+    # Check if 10 seconds have passed for OTP resend
+    if timezone.now().timestamp() - request.session['resend_otp_time'] >= 10:
+        can_resend = True
+    else:
+        can_resend = False
+
+    return render(request, 'users/reset_password.html', {'otp': otp, 'can_resend': can_resend})
 
 
 
@@ -287,3 +310,20 @@ def student_profile_view(request,pk):
         'student':student
     }
     return render(request,'users/student_profile.html',context)
+
+
+def resend_otp(request):
+    "Resend OTP if requested"
+    email = request.session.get('email')
+    if email:
+        otp = get_random_string(length=6, allowed_chars='0123456789')
+        subject = "Your OTP for Password Reset"
+        message = f'Your OTP is {otp}'
+        send_faculty_otp(subject, message, [email])
+        request.session['otp'] = otp
+        request.session['resend_otp_time'] = timezone.now().timestamp() 
+        messages.success(request, 'A new OTP has been sent to your email.')
+    else:
+        messages.error(request, 'Unable to resend OTP. Please try again.')
+
+    return redirect('reset-password', otp=request.session.get('otp'))
