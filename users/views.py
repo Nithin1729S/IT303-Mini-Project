@@ -28,6 +28,14 @@ class ExtendedUserCreationForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2'] 
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username:
+            # Remove spaces from the username
+            username = username.replace(" ", "")
+            self.cleaned_data['username'] = username  # Update cleaned_data
+        return username
+    
     def save(self, commit=True):
         user = super(ExtendedUserCreationForm, self).save(commit=False)
         user.email = self.cleaned_data['email']  
@@ -92,7 +100,8 @@ def register(request):
             subject = 'Email OTP Verification'
             message = f'Your OTP for registration is: {otp}'
             recipient_list = [email]
-            send_faculty_otp(subject,message,recipient_list)
+            #send_faculty_otp(subject,message,recipient_list)
+            print(message)
             messages.info(request, 'OTP sent to your email. Please verify.')
 
             return redirect('verify_otp')
