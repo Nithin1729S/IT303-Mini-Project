@@ -60,15 +60,15 @@ def send_login_email(to_faculty,recipient_list):
     from_email = os.getenv("EMAIL") 
     subject = 'Login Notification'
     message = f'Hello {to_faculty},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
-    email_thread = threading.Thread(target=send_mail, args=(subject, message, from_email, recipient_list))
-    email_thread.start()    
+    # email_thread = threading.Thread(target=send_mail, args=(subject, message, from_email, recipient_list))
+    # email_thread.start()    
     print(message)
 
 def send_faculty_otp(subject,message,recipient_list):
     "Send otp to faculty"
     from_email = os.getenv('MAIL')  
     print(message)
-    send_mail(subject, message, from_email, recipient_list,fail_silently=False)
+    #send_mail(subject, message, from_email, recipient_list,fail_silently=False)
 
 def register(request):
     "Function to register a new faculty"
