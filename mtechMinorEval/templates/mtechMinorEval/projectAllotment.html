@@ -142,8 +142,8 @@
             {% for project in projects %}
             <tr>
                 <td>{{ project.title }}</td>
-                <td>{{ project.desc }}</td>
-                <td><a href="{{ project.src_link }}" target="_blank">{{ project.src_link }}</a></td>
+                <td>{{ project.desc|truncatechars:30  }}</td>
+                <td><a href="{{ project.src_link }}" target="_blank">{{ project.src_link|truncatechars:30 }}</a></td>
                 <td>{{ project.student.name }}</td>
                 <td>{{ project.submitted_at }}</td>
                 <td>{{ project.examiner.name }}</td>

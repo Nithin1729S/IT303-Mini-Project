@@ -5,6 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body{
+            background: url('https://thenitklife.weebly.com/uploads/3/0/5/6/30562859/2863786_orig.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            height: 105vh;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://thenitklife.weebly.com/uploads/3/0/5/6/30562859/2863786_orig.jpg') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(8px); /* Adjust the blur radius as needed */
+            z-index: -1; /* Keep the background behind the content */
+        }
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
+        @keyframes fadeOut {
+            0%{
+                opacity: 1;
+            }
+            100%{
+                opacity: 0;
+            }
+        }
+        .flash-message{
+            opacity: 1;
+            animation: fadeOut 1.5s ease-out 2s forwards;
+        }
+    </style>
 </head>
 <body class="flex flex-col min-h-screen bg-gray-100">
     <div class="fixed top-0 left-1/2 flex justify-center z-50 pointer-events-none"></div>
@@ -34,34 +70,42 @@
 
             <!-- Username -->
             <div class="mb-4">
-                {{ form.username.label_tag }}
-                {{ form.username }}
+                <label for="username" class="font-medium pb-1 block">Username:</label>
+                <input type="text" name="username" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your username">
             </div>
+            
 
             <!-- Email -->
             <div class="mb-4">
-                {{ form.email.label_tag }}
-                {{ form.email }}
+                <label for="email" class="font-medium pb-1 block">Email:</label>
+                <input type="email" name="email" id="id_email" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email">
             </div>
 
             <!-- Password -->
             <div class="mb-4">
-                {{ form.password1.label_tag }}
-                {{ form.password1 }}
+                <label for="password1" class="font-medium pb-1 block">Password:</label>
+                <input type="password" name="password1" id="password_1" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter password">
             </div>
 
             <!-- Confirm Password -->
             <div class="mb-4">
-                {{ form.password2.label_tag }}
-                {{ form.password2 }}
+                <label for="password2" class="font-medium pb-1 block">Confirm Password:</label>
+                <input type="password" name="password2" id="password_2" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Confirm password">
             </div>
 
-           
-            {{ form.role }}
-            
+            <!-- Role (if applicable) -->
+            <div class="mb-4">
+                {{ form.role }}
+            </div>
 
+            <!-- Submit Button -->
             <div class="text-center">
                 <input type="submit" value="Register" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 cursor-pointer"/>
+            </div>
+
+            <!-- Already have an account? Link -->
+            <div class="mt-6 text-center">
+                <span>Already have an account? <a href="{% url 'login' %}" class="text-blue-500 hover:underline">Login</a></span>
             </div>
         </form>
     </div>

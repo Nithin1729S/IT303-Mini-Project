@@ -4,25 +4,35 @@ from django.dispatch import receiver
 from users.models import Profile,Student,Faculty
 from django.core.validators import FileExtensionValidator,MinValueValidator, MaxValueValidator
 import uuid
-
+from django.core.exceptions import ValidationError
 
 class Project(models.Model):
     id = models.UUIDField(default=uuid.uuid4,unique=True,primary_key=True,editable=False)
     title=models.CharField(max_length=255)
     desc=models.TextField(null=True,blank=True)
     src_link=models.CharField(max_length=2000,null=True,blank=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='projects')
+    student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='projects')
     submitted_at = models.DateTimeField(auto_now_add=True)
     examiner = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='examiner_projects')
     guide = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='guide_projects')
     deadline=models.DateTimeField(null=True,blank=True)
     def __str__(self):
         return f"{self.title}"
+    def clean(self):
+        super().clean()
+        # Ensure the examiner and guide are different entities
+        if self.examiner == self.guide:
+            raise ValidationError("The examiner and guide must be different.")
+
+    def save(self, *args, **kwargs):
+        # Call the model's clean method before saving to ensure validation
+        self.clean()
+        super().save(*args, **kwargs)
     
 
 class GuideEvaluation(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='guide_evaluation')
-    guide = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+    guide = models.ForeignKey(Faculty, on_delete=models.SET_NULL,null=True,blank=True)
     datetime_from=models.DateTimeField(null=True,blank=True)
     datetime_to=models.DateTimeField(null=True,blank=True)
     # Example metrics specific to Guide
@@ -46,7 +56,7 @@ class GuideEvaluation(models.Model):
     
 class ExaminerEvaluation(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='examiner_evaluation')
-    examiner = models.ForeignKey(Faculty, on_delete=models.CASCADE, limit_choices_to={'profile__role': 'faculty'})
+    examiner = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True,blank=True,limit_choices_to={'profile__role': 'faculty'})
     datetime_from=models.DateTimeField(null=True,blank=True)
     datetime_to=models.DateTimeField(null=True,blank=True)
     # Example metrics specific to Examiner

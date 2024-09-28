@@ -2,7 +2,9 @@ from django.forms import ModelForm
 from django.forms.widgets import NumberInput
 from django import forms
 from django.contrib.auth.models import User
-from .models import ExaminerEvaluation,GuideEvaluation,Project,Student,Faculty
+from .models import ExaminerEvaluation,GuideEvaluation,Project,Student,Faculty,Profile
+from django.core.exceptions import ValidationError
+
 class ExaminerEvaluationForm(ModelForm):
     class Meta:
         model=ExaminerEvaluation
@@ -133,7 +135,25 @@ class GuideEvaluationForm(ModelForm):
 class ProjectEditForm(ModelForm):
     class Meta:
         model = Project
-        fields='__all__'
+        fields = ['title', 'desc', 'src_link', 'student', 'examiner', 'guide', 'deadline']
+        widgets = {
+            'deadline': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        examiner = cleaned_data.get("examiner")
+        guide = cleaned_data.get("guide")
+
+        # Ensure the examiner and guide are different
+        if examiner == guide:
+            raise forms.ValidationError("The examiner and guide must be different.")
+        return cleaned_data
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['email']  # This allows editing the email in Profile
 
 
 class StudentEditForm(forms.ModelForm):
@@ -141,7 +161,15 @@ class StudentEditForm(forms.ModelForm):
 
     class Meta:
         model = Student
-        fields = ['name', 'email', 'rollno']
+        fields = ['name', 'email', 'rollno','cgpa']
+        widgets={
+            'cgpa':forms.NumberInput(
+                attrs={
+                    'min':0.0,
+                    'max':10.0
+                }
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         student = kwargs.get('instance')
