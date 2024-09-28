@@ -7,6 +7,8 @@
     <title>Evaluation Form</title>
     <link rel="stylesheet" href="../../static/css/style.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static  'styles/style.css' %}" />
 </head>
 <body class="flex flex-col min-h-screen bg-gray-100">
     {% include 'mtechMinorEval/navbar.html' %}
@@ -42,8 +44,7 @@
                 <br>
                 <b>Project Name:</b> {{project.title}}
                 <br>
-                <b>Project PPT Link:</b> <a href="{{ project.src_link }}" target="_blank">Link</a>
-                <br>
+                <b>Project PPT Link:</b> <a href="{{ project.src_link }}" target="_blank" class="text-blue-500 hover:text-red-500 hover:underline">Link</a>                <br>
             </span>
             <hr>
             <hr>
