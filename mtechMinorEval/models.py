@@ -32,7 +32,7 @@ class Project(models.Model):
 
 class GuideEvaluation(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='guide_evaluation')
-    guide = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+    guide = models.ForeignKey(Faculty, on_delete=models.SET_NULL,null=True,blank=True)
     datetime_from=models.DateTimeField(null=True,blank=True)
     datetime_to=models.DateTimeField(null=True,blank=True)
     # Example metrics specific to Guide
@@ -56,7 +56,7 @@ class GuideEvaluation(models.Model):
     
 class ExaminerEvaluation(models.Model):
     project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='examiner_evaluation')
-    examiner = models.ForeignKey(Faculty, on_delete=models.CASCADE, limit_choices_to={'profile__role': 'faculty'})
+    examiner = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True,blank=True,limit_choices_to={'profile__role': 'faculty'})
     datetime_from=models.DateTimeField(null=True,blank=True)
     datetime_to=models.DateTimeField(null=True,blank=True)
     # Example metrics specific to Examiner
