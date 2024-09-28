@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from .models import *
 from .forms import ExaminerEvaluationForm, GuideEvaluationForm, ProfileEditForm
 from users.models import *
+import requests
 from weasyprint import HTML, CSS
 from django.db.models import Q
 from django.template.loader import render_to_string
@@ -138,6 +139,28 @@ def generate_pdf(request):
 def adminLogin(request):
     "Function to allow module adminstrator to log in"
     if request.method == 'POST':
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        data = {
+            'secret': '6LeenVEqAAAAAC01Gp9B4M72_8jRXdgFeWjeL8EQ',  
+            'response': recaptcha_response
+        }
+        try:
+            r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+
+            if r.status_code != 200:
+                messages.error(request, 'Failed to verify reCAPTCHA. Please try again.')
+                return redirect('admin-login')
+
+            result = r.json()
+
+            if not result.get('success'):
+                messages.error(request, 'Invalid reCAPTCHA. Please try again.')
+                return redirect('admin-login')
+
+        except requests.exceptions.RequestException as e:
+            messages.error(request, f"reCAPTCHA verification failed: {str(e)}")
+            return redirect('login')
+        
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
