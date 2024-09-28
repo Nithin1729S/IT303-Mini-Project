@@ -35,9 +35,9 @@
         </form>
         <nav class="header__menu">
           <!-- Not Logged In -->
-          <a href="{% url 'login' %}">
-            <img src=" {% static './assets/avatar.svg' %}" />
-            <p>Account</p>
+          <a href="{% url 'admin-login' %}">
+            <img src=" {% static './assets/admin.svg' %}" />
+            <p>Admin Login</p>
           </a>
         </nav>
       </div>
@@ -84,25 +84,38 @@
                 </div>
       
                 <!-- Added margin between password field and captcha -->
-                <div class="g-recaptcha mb-4" data-sitekey="6LeenVEqAAAAAB1FwcXtRB2NqcWUfMAzOpeCMr8P" style="margin-top: 20px;"></div>
+                <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+                    <div class="g-recaptcha mb-4" data-sitekey="6LeenVEqAAAAAB1FwcXtRB2NqcWUfMAzOpeCMr8P"></div>
+                </div>
+                  
       
                 <!-- Centering the login button using inline CSS -->
-                <button class="btn btn--main" type="submit" style="display: block; margin: 20px auto;">
-                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                    <title>lock</title>
-                    <path d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z"></path>
-                    <path d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z"></path>
-                  </svg>
-                  Login
-                </button>
+                <div style="text-align: center;">
+                <button class="btn btn--main" type="submit" style="display: inline-block; margin: 20px;">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                      <title>lock</title>
+                      <path d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z"></path>
+                      <path d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z"></path>
+                    </svg>
+                    Login
+                  </button>
+                  <button class="btn btn--main" type="submit" style="display: inline-block; margin: 20px;">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                      <title>lock</title>
+                      <path d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z"></path>
+                      <path d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z"></path>
+                    </svg>
+                    Login via OTP
+                  </button>
+                </div>
               </form>
       
               <div class="auth__action">
                 <div class="auth__links">
-                  <p>Haven't signed up yet? <a href="{% url 'register' %}" class="btn btn--link">Sign Up</a></p>
                   <p>Forgot Password? <a href="{% url 'forgot-password' %}" class="btn btn--link">Forgot Password</a></p>
+                  <p>Haven't signed up yet? <a href="{% url 'register' %}" class="btn btn--link">Sign Up</a></p>
+
                 </div>
-                <p class="auth__admin">Admin of this module? <a href="{% url 'admin-login' %}" class="btn btn--link">Admin Login</a></p>
               </div>
       
             </div>
