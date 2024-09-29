@@ -192,8 +192,9 @@ def adminLogin(request):
 def adminPanel(request):
         "Gives a panel to admin listing all databases to perform CRUD operations on."
         projects = Project.objects.all() 
-        print(projects)
-        context={'projects':projects}
+        students = Student.objects.all() 
+        facultys = Faculty.objects.all() 
+        context={'projects':projects,'students':students,'facultys':facultys}
         return render(request,'mtechMinorEval/adminPanel.html', context)
 
 

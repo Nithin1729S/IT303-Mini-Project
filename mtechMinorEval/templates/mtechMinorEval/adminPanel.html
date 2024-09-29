@@ -1,4 +1,251 @@
-{% load static %}
+{% extends "mtechMinorEval/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <main class="content">
+
+        {% include 'mtechMinorEval/navigation.html' %}
+
+        <!-- <div class="preloader bg-soft flex-column justify-content-center align-items-center">
+            <img class="loader-element animate__animated animate__jackInTheBox" src="/static/assets/img/brand/light.svg" height="60" alt="Volt logo">
+        </div> -->
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <div class="btn-toolbar dropdown">
+                <!-- <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fas fa-plus mr-2"></span>New Task
+                </button> -->
+                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-tasks"></span>New Task</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cloud-upload-alt"></span>Upload Files</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-user-shield"></span>Preview Security</a>
+                    <div role="separator" class="dropdown-divider"></div>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger"></span>Upgrade to Pro</a>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline-primary">Share</button>
+                <button type="button" class="btn btn-sm btn-outline-primary">Export</button>
+            </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+            <!-- <div class="col-12 mb-4">
+                <div class="card bg-yellow-alt shadow-sm">
+                    <div class="card-header d-flex flex-row align-items-center flex-0">
+                        <div class="d-block">
+                            <div class="h5 font-weight-normal mb-2">Sales Value</div>
+                            <h2 class="h3">$10,567</h2>
+                            <div class="small mt-2"> 
+                                <span class="font-weight-bold mr-2">Yesterday</span>                              
+                                <span class="fas fa-angle-up text-success"></span>                                   
+                                <span class="text-success font-weight-bold">10.57%</span>
+                            </div>
+                        </div>
+                        <div class="d-flex ml-auto">
+                            <a href="#" class="btn btn-secondary text-dark btn-sm mr-2">Month</a>
+                            <a href="#" class="btn btn-primary btn-sm mr-3">Week</a>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="col-12 col-sm-6 col-xl-4 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-body">
+                        <div class="row d-block d-xl-flex align-items-center">
+                            <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                                <div class="icon icon-shape icon-md icon-shape-blue rounded mr-4 mr-sm-0"><span class="fas fa-user-graduate"></span></div>
+                                <div class="d-sm-none">
+                                    <h2 class="h5">Students</h2>
+                                    <h3 class="mb-1">{{ students.count }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-7 px-xl-0">
+                                <div class="d-none d-sm-block">
+                                    <h2 class="h5">Students</h2>
+                                    <h3 class="mb-1">{{ students.count }}</h3>
+                                </div>
+                                <small>July 15 - Dec 06 ,  <span class="icon icon-small"><span class="fas fa-calendar-alt"></span></span> Odd Semester </small> 
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-4 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-body">
+                        <div class="row d-block d-xl-flex align-items-center">
+                            <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                                <div class="icon icon-shape icon-md icon-shape-secondary rounded mr-4"><span class="fas fa-chalkboard-teacher"></span></div>
+                                <div class="d-sm-none">
+                                    <h2 class="h5">Facultys</h2>
+                                    <h3 class="mb-1">{{ facultys.count }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-7 px-xl-0">
+                                <div class="d-none d-sm-block">
+                                    <h2 class="h5">Facultys</h2>
+                                    <h3 class="mb-1">{{ facultys.count }}</h3>
+                                </div>
+                                <small>July 15 - Dec 06 ,  <span class="icon icon-small"><span class="fas fa-calendar-alt"></span></span> Odd Semester </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-4 mb-4">
+                <div class="card border-light shadow-sm">
+                    <div class="card-body">
+                        <div class="row d-block d-xl-flex align-items-center">
+                            <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                                <div class="icon icon-shape icon-md icon-shape-secondary rounded mr-4"><span class="fas fa-tasks"></span></div>
+                                <div class="d-sm-none">
+                                    <h2 class="h5">Projects</h2>
+                                    <h3 class="mb-1">{{ projects.count }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-7 px-xl-0">
+                                <div class="d-none d-sm-block">
+                                    <h2 class="h5">Projects</h2>
+                                    <h3 class="mb-1">{{ projects.count }}</h3>
+                                </div>
+                                <small>July 15 - Dec 06,  <span class="icon icon-small"><span class="fas fa-calendar-alt"></span></span> Odd Semester </small>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-xl-8 mb-4">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="card border-light shadow-sm">
+                            <div class="card-header">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                    <h2 class="h5">Page visits</h2>
+                                    </div>
+                                    <!-- <div class="col text-right">
+                                        <a href="#" class="btn btn-sm btn-secondary">See all</a>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-items-center table-flush">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col">Page name</th>
+                                        <th scope="col">Page Views</th>
+                                        <th scope="col">Page Value</th>
+                                        <th scope="col">Bounce rate</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            /admin/index.html
+                                        </th>
+                                        <td>
+                                            3,225
+                                        </td>
+                                        <td>
+                                            $20
+                                        </td>
+                                        <td>
+                                            <span class="fas fa-arrow-up text-danger mr-3"></span> 42,55%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            /admin/forms.html
+                                        </th>
+                                        <td>
+                                            2,987
+                                        </td>
+                                        <td>
+                                            0
+                                        </td>
+                                        <td>
+                                            <span class="fas fa-arrow-down text-success mr-3"></span> 43,52%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            /admin/util.html
+                                        </th>
+                                        <td>
+                                            2,844
+                                        </td>
+                                        <td>
+                                        294
+                                        </td>
+                                        <td>
+                                            <span class="fas fa-arrow-down text-success mr-3"></span> 32,35%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            /admin/validation.html
+                                        </th>
+                                        <td>
+                                            2,050
+                                        </td>
+                                        <td>
+                                            $147
+                                        </td>
+                                        <td>
+                                            <span class="fas fa-arrow-up text-danger mr-3"></span> 50,87%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            /admin/modals.html
+                                        </th>
+                                        <td>
+                                            1,483
+                                        </td>
+                                        <td>
+                                            $19
+                                        </td>
+                                        <td>
+                                            <span class="fas fa-arrow-down text-success mr-3"></span> 32,24%
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
+
+        {% include 'mtechMinorEval/footer.html' %}
+
+    </main>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
+
+
+<!-- {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,4 +320,4 @@
         </a>
     </div>
 </body>
-</html>
+</html> -->
