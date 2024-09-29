@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.conf import settings
+from django.conf.urls.static import static
 from users.views import loginUser,register,forgot_password,reset_password,verify_otp,verify_otp_login,login_otp,student_profile_view
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
@@ -29,4 +32,4 @@ urlpatterns = [
     path('verify-otp-login/', verify_otp_login, name='verify_otp_login'),
     path('student-profile/<str:pk>',student_profile_view,name='student-profile'),
     path('',include('mtechMinorEval.urls'))  #to allow urls from mtechMinorEval be valid
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

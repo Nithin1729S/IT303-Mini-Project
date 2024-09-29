@@ -15,7 +15,6 @@ from django.utils import timezone
 import re,os,socket,platform
 import pytz
 import threading
-# from sms import send_sms 
 from datetime import datetime
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
@@ -64,12 +63,7 @@ def send_login_email(to_faculty,recipient_list):
     from_email = os.getenv("EMAIL") 
     subject = 'Login Notification'
     message = f'Hello {to_faculty},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
-#     send_sms(
-#     message,
-#     None,
-#     ['+441134960000'],
-#     fail_silently=False
-# )
+
     # email_thread = threading.Thread(target=send_mail, args=(subject, message, from_email, recipient_list))
     # email_thread.start()    
     print(message)

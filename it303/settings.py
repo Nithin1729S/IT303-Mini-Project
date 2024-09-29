@@ -131,6 +131,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'users/media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -140,3 +143,6 @@ AUTHENTICATION_BACKENDS = [
     'users.backends.EmailBackend',  # Replace 'yourapp' with your app name
     'django.contrib.auth.backends.ModelBackend',  # Keep the default backend
 ]
+
+SMS_BACKEND = 'sms.backends.console.SmsBackend'
+
