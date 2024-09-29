@@ -27,16 +27,21 @@ def home(request):
 def projectsList(request):
     "Lists the Projects to which the faculty is a guide or a mentor to and can be run by only logged in users."
     user = request.user
-    userEmail = user.email
-    userProfile = get_object_or_404(Profile, email=userEmail)
-    projects = []
-    if userProfile.role == 'faculty':
-        faculty = get_object_or_404(Faculty, profile=userProfile)
-        guide_projects = Project.objects.filter(guide=faculty)
-        examiner_projects = Project.objects.filter(examiner=faculty)
-        projects = guide_projects.union(examiner_projects)
+    if user.is_superuser:
+        return redirect('admin-panel')
+    if user.is_authenticated:
+        userEmail = user.email
+        userProfile = get_object_or_404(Profile, email=userEmail)
+        projects = []
+        if userProfile.role == 'faculty':
+            faculty = get_object_or_404(Faculty, profile=userProfile)
+            guide_projects = Project.objects.filter(guide=faculty)
+            examiner_projects = Project.objects.filter(examiner=faculty)
+            projects = guide_projects.union(examiner_projects)
+        else:
+            logout(request,user)
     else:
-        logout(request,user)
+        return redirect('login')
     context = {'projects': projects,'faculty':faculty}
     return render(request, 'mtechMinorEval/projectsList.html', context=context)
 
