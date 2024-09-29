@@ -92,6 +92,7 @@ class Faculty(models.Model):
     ]
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, limit_choices_to={'role': 'faculty'},related_name='Faculty')
     name=models.CharField(max_length=255,null=True,blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     phone_regex = RegexValidator(
         regex=r'^\+?1?\d{9,15}$',
         message="Phone number must be in the format: '+999999999'. Up to 15 digits allowed."
@@ -104,6 +105,17 @@ class Faculty(models.Model):
     )
     email=models.EmailField(max_length=200,unique=True,null=True,blank=True)
     facultyID=models.CharField(max_length=200,unique=True,null=True,blank=True)
+    address = models.TextField(max_length=200,blank=True, null=True)
+    pincode_regex = RegexValidator(
+        regex=r'^\d{6}$',
+        message="Pincode must be a 6-digit number."
+    )
+    pincode = models.CharField(
+        validators=[pincode_regex],
+        max_length=6,
+        blank=True,
+        null=True
+    )
     profile_image=models.ImageField(upload_to='pics',default='faculty.svg')
     gender = models.CharField(
         max_length=3,

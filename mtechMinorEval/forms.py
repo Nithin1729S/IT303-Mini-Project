@@ -214,7 +214,67 @@ class FacultyEditForm(forms.ModelForm):
 
     class Meta:
         model = Faculty
-        fields = ['name', 'email', 'facultyID']
+        fields = ['name', 'email', 'facultyID','phone_number','profile_image','gender','nationality','country','date_of_birth','address','pincode']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'name',
+                'placeholder': 'Enter your name',
+                'required': 'true'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control', 
+                'id': 'email',
+                'placeholder': 'Enter your email',
+                'required': 'true'
+            }),
+            'phone_number': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'phone_number',
+                'placeholder': '+91 1234567890',
+                'required': 'true'
+            }),
+            'gender': forms.Select(attrs={
+                'class': 'form-select mb-0', 
+                'id': 'gender',
+                'aria-label': 'Gender select example'
+            }),
+            'nationality': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'nationality',
+                'placeholder': 'Enter your nationality',
+            }),
+            'country': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'country',
+                'placeholder': 'Enter your country',
+            }),
+            'address': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'address',
+                'placeholder': 'Enter your address',
+            }),
+            'facultyID': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'facultyID',
+                'placeholder': 'Enter your faculty ID',
+            }),
+            'pincode': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'pincode',
+                'placeholder': 'Enter your Pincode',
+            }),
+            'date_of_birth': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'date_of_birth',
+                'placeholder': 'dd/mm/yy',
+                'data-datepicker':''
+            }),
+            'profile_image': forms.FileInput(attrs={
+                'class': 'form-control-file',
+                'id': 'profile_image'
+            }),
+        }
 
     def __init__(self, *args, **kwargs):
         faculty = kwargs.get('instance')

@@ -310,10 +310,11 @@ def editFaculty(request, pk):
     profile_form = ProfileEditForm(instance=profile) 
 
     if request.method == 'POST':
-        form = FacultyEditForm(request.POST, instance=faculty)
+        form = FacultyEditForm(request.POST,request.FILES, instance=faculty)
         profile_form = ProfileEditForm(request.POST, instance=profile) 
 
         if form.is_valid() and profile_form.is_valid(): 
+            print(form)
             form.save()     
             profile_instance = profile_form.save(commit=False)  
             user = profile.user  
