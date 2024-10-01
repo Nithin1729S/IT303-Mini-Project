@@ -40,3 +40,6 @@ node_modules/
 # Build files
 /build/
 /dist/
+
+client.json
+token.json

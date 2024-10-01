@@ -7,10 +7,23 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test
 from .models import *
 from .forms import ExaminerEvaluationForm, GuideEvaluationForm, ProfileEditForm
+from google.auth.transport.requests import Request
 from users.models import *
 import requests
 from weasyprint import HTML, CSS
 from django.db.models import Q
+import json
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from django.http import JsonResponse
+import os
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import redirect
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from django.template.loader import render_to_string
 from .forms import ProjectEditForm,StudentEditForm,FacultyEditForm
 from users.views import send_login_email
@@ -638,3 +651,54 @@ def addNewFaculty(request):
     context = {'form': form}
     return render(request, 'mtechMinorEval/addNewFaculty.html', context)
 
+
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+CLIENT_SECRET_FILE = 'mtechMinorEval/static/client.json'
+
+def export_faculty_project_to_google_sheet(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
+    try:
+        creds = None
+        token_path = 'token.json'
+        if os.path.exists(token_path):
+            creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
+                creds = flow.run_local_server(port=0)
+            with open(token_path, 'w') as token:
+                token.write(creds.to_json())
+        
+        service = build('sheets', 'v4', credentials=creds)
+        sheet_data = [['Project Name', 'Student Rollno', 'Student Name', 'Student Email', 'Role']]
+        profile = request.user.Profile
+        projects = Project.objects.filter(guide__profile=profile) | Project.objects.filter(examiner__profile=profile)
+        for project in projects:
+            role_label = "Guide" if project.guide.profile == profile else "Examiner"
+            sheet_data.append([
+                project.title,
+                project.student.rollno,
+                project.student.name,
+                project.student.email,
+                role_label,
+            ])
+        body = {
+            'properties': {'title': 'Project Data'},
+            'sheets': [{
+                'data': [{
+                    'rowData': [{'values': [{'userEnteredValue': {'stringValue': str(cell)}} for cell in row]} for row in sheet_data]
+                }]
+            }]
+        }
+
+        spreadsheet = service.spreadsheets().create(body=body).execute()
+        sheet_id = spreadsheet.get('spreadsheetId')
+        return redirect(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
+
+    except HttpError as err:
+        print(f"An error occurred: {err}")
+        return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)

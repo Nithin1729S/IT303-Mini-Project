@@ -21,4 +21,5 @@ urlpatterns=[
     path('add-new-project/',views.addNewProject,name='add-new-project'),
     path('add-new-student/',views.addNewStudent,name='add-new-student'),
     path('add-new-faculty/',views.addNewFaculty,name='add-new-faculty'),
+    path('export-faculty-project/', views.export_faculty_project_to_google_sheet, name='faculty-project-export'),
 ]
