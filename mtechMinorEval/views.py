@@ -260,11 +260,31 @@ def adminLogout(request):
 @user_passes_test(lambda u: u.is_superuser)
 def projectAllotment(request):
     "View the projects database."
-    projects=Project.objects.all()
-    context={
-        'projects':projects
+    search_query = request.GET.get('search', '')
+    per_page = request.GET.get('per_page', 5)  # Default to 5 entries per page
+
+    # Filter students based on the search query
+    if search_query:
+        projects= Faculty.objects.filter(
+            Q(title__icontains=search_query) |
+            Q(desc__icontains=search_query) |
+            Q(student__name__icontains=search_query) |
+            Q(student__rollno__icontains=search_query) 
+        )
+    else:
+        projects = Project.objects.all()
+
+    # Pagination
+    paginator = Paginator(projects, per_page)  # Use the per_page value
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'projects': page_obj,
+        'search_query': search_query,
+        'per_page': per_page,
     }
-    return render(request,'mtechMinorEval/projectAllotment.html', context)
+    return render(request, 'mtechMinorEval/projectAllotment.html', context)
 
 
 
@@ -305,11 +325,30 @@ def studentDatabase(request):
 @user_passes_test(lambda u: u.is_superuser)
 def facultyDatabase(request):
     "View the faculty database"
-    facultys=Faculty.objects.all()
-    context={
-        'facultys':facultys
+    search_query = request.GET.get('search', '')
+    per_page = request.GET.get('per_page', 5)  # Default to 5 entries per page
+
+    # Filter students based on the search query
+    if search_query:
+        facultys = Faculty.objects.filter(
+            Q(name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(facultyID__icontains=search_query)
+        )
+    else:
+        facultys = Faculty.objects.all()
+
+    # Pagination
+    paginator = Paginator(facultys, per_page)  # Use the per_page value
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'facultys': page_obj,
+        'search_query': search_query,
+        'per_page': per_page,
     }
-    return render(request,'mtechMinorEval/facultyDatabase.html', context)
+    return render(request, 'mtechMinorEval/facultyDatabase.html', context)
 
 
 
