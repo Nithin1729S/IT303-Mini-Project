@@ -272,11 +272,32 @@ def projectAllotment(request):
 @user_passes_test(lambda u: u.is_superuser)
 def studentDatabase(request):
     "View the student database."
-    students=Student.objects.all()
-    context={
-        'students':students
+    search_query = request.GET.get('search', '')
+    per_page = request.GET.get('per_page', 5)  # Default to 5 entries per page
+
+    # Filter students based on the search query
+    if search_query:
+        students = Student.objects.filter(
+            Q(rollno__icontains=search_query) |
+            Q(name__icontains=search_query) |
+            Q(email__icontains=search_query)
+        )
+    else:
+        students = Student.objects.all()
+
+    # Pagination
+    paginator = Paginator(students, per_page)  # Use the per_page value
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'students': page_obj,
+        'search_query': search_query,
+        'per_page': per_page,
     }
-    return render(request,'mtechMinorEval/studentDatabase.html', context)
+    return render(request, 'mtechMinorEval/studentDatabase.html', context)
+
+
 
 
 

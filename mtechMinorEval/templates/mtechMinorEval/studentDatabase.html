@@ -42,11 +42,18 @@
         <div class="table-settings mb-4">
             <div class="row align-items-center justify-content-between">
                 <div class="col col-md-6 col-lg-3 col-xl-4">
-                    <div class="input-group">
-                        <span class="input-group-text" id="basic-addon2"><span class="fas fa-search"></span></span>
-                        <input type="text" class="form-control" id="exampleInputIconLeft" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2">
-                    </div>
+                    <form method="GET" action="{% url 'student-database' %}" class="w-100">
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon2">
+                                <span class="fas fa-search"></span>
+                            </span>
+                            <input type="text" name="search" class="form-control" id="exampleInputIconLeft" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="{{ search_query }}">
+                        </div>
+                    </form>
                 </div>
+                
+                
+                
                 <div class="col-4 col-md-2 col-xl-1 pl-md-0 text-right">
                     <div class="btn-group">
                         <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -56,22 +63,44 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right">
-                            <span class="dropdown-item font-weight-bold text-dark">Show</span>
-                            <a class="dropdown-item d-flex font-weight-bold" href="#">10 <span class="icon icon-small ml-auto"><span class="fas fa-check"></span></span></a>
-                            <a class="dropdown-item font-weight-bold" href="#">20</a>
-                            <a class="dropdown-item font-weight-bold" href="#">30</a>
+                            <a class="dropdown-item d-flex font-weight-bold {% if per_page == '5' %}active{% endif %}" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=5">
+                                5 
+                                {% if per_page == '5' %}
+                                <span class="icon icon-small ml-auto" >
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item d-flex font-weight-bold {% if per_page == '10' %}active{% endif %}" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=10">
+                                10 
+                                {% if per_page == '10' %}
+                                <span class="icon icon-small ml-auto">
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item d-flex font-weight-bold {% if per_page == '20' %}active{% endif %}" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=20">
+                                20 
+                                {% if per_page == '20' %}
+                                <span class="icon icon-small ml-auto" >
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
                         </div>
+                                                                     
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="card card-body border-light shadow-sm table-wrapper table-responsive pt-0">
+            
+        
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        
-                        <th>Rollno</th>						
+                        <th>Rollno</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Actions</th>
@@ -87,9 +116,11 @@
                             </a>
                         </td>
                         <td>
-                            <span class="font-weight-normal">{{ student.name|truncatechars:30  }}</span>
+                            <span class="font-weight-normal">{{ student.name|truncatechars:30 }}</span>
                         </td>
-                        <td><span class="font-weight-normal">{{ student.email|truncatechars:30 }}</span></td>
+                        <td>
+                            <span class="font-weight-normal">{{ student.email|truncatechars:30 }}</span>
+                        </td>
                         <td>
                             <div class="btn-group">
                                 <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -99,7 +130,9 @@
                                     <span class="sr-only">Toggle Dropdown</span>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{% url 'student-edit' student.id %}"><span class="fas fa-edit mr-2"></span>Edit</a>
+                                    <a class="dropdown-item" href="{% url 'student-edit' student.id %}">
+                                        <span class="fas fa-edit mr-2"></span>Edit
+                                    </a>
                                     <form action="{% url 'student-delete' student.id %}" method="POST" id="delete-form-{{ student.id }}">
                                         {% csrf_token %}
                                         <a class="dropdown-item text-danger" href="#" onclick="submitDeleteForm(this.closest('form'));">
@@ -107,44 +140,47 @@
                                         </a>
                                     </form>
                                 </div>
-                                
                             </div>
                         </td>
                     </tr>
                     {% endfor %}
                     <!-- Item -->
-                                                  
                 </tbody>
             </table>
+        
             <div class="card-footer px-3 border-0 d-flex align-items-center justify-content-between">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination mb-0">
+                        {% if students.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="#">Previous</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ students.previous_page_number }}">Previous</a>
                         </li>
+                        {% endif %}
+                        
+                        {% for num in students.paginator.page_range %}
+                            {% if students.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" href="#">{{ num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+        
+                        {% if students.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="#">1</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ students.next_page_number }}">Next</a>
                         </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">4</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">5</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
+                        {% endif %}
                     </ul>
                 </nav>
-                <div class="font-weight-bold small">Showing <b>5</b> out of <b>25</b> entries</div>
+                <div class="font-weight-bold small">Showing <b>{{ students.start_index }}</b> to <b>{{ students.end_index }}</b> out of <b>{{ students.paginator.count }}</b> entries</div>
+
             </div>
         </div>
+        
 
         {% include 'mtechMinorEval/footer.html' %}
 
