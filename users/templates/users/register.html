@@ -1,4 +1,153 @@
-{% load static %}
+{% extends "mtechMinorEval/base-fullscreen.html" %}
+
+{% block title %} Register {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block body_class %} bg-soft {% endblock body_class %}
+
+{% block content %}
+
+<main>
+  <!-- Section -->
+  <section class="vh-lg-100 d-flex align-items-center">
+      <div class="container">
+          <div class="row justify-content-center form-bg-image" data-background="">
+              <div class="col-12 d-flex align-items-center justify-content-center">
+                  <div class="signin-inner my-3 my-lg-0 bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                      <div class="text-center text-md-center mb-4 mt-md-0">
+                          <h1 class="mb-0 h3">Create an account</h1>
+                      </div>
+                      <form class="form" action="{% url 'register' %}" method="POST">
+                          {% csrf_token %}
+                          <!-- Username Input -->
+                          <div class="form-group mb-4">
+                              <label for="username">Username</label>
+                              <div class="input-group">
+                                  <span class="input-group-text" id="basic-addon1"><span class="fas fa-user"></span></span>
+                                  <input id="username" name="username" type="text" class="form-control" placeholder="Dr. Faculty" required />
+                              </div>
+                          </div>
+                          <!-- Email Input -->
+                          <div class="form-group mb-4">
+                              <label for="email">Your Email</label>
+                              <div class="input-group">
+                                  <span class="input-group-text" id="basic-addon2"><span class="fas fa-envelope"></span></span>
+                                  <input id="email" name="email" type="email" class="form-control" placeholder="faculty@nitk.edu.in" required />
+                              </div>
+                          </div>
+                          <!-- Password Input -->
+                         <!-- Password Input -->
+<div class="form-group mb-4">
+  <label for="password">Your Password</label>
+  <div class="input-group" style="width: 100%;">
+      <span class="input-group-text" id="basic-addon3"><span class="fas fa-unlock-alt"></span></span>
+      <input id="password" name="password1" type="password" class="form-control" 
+             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" 
+             oninput="checkPasswordStrength()" required />
+  </div>
+  <span id="password-strength" style="font-size: 0.7em; color: #1F2937; text-align: left; display: block; margin: 0px; padding: 0px;"></span>
+</div>
+
+<!-- Confirm Password Input -->
+<div class="form-group mb-4">
+  <label for="confirm_password">Confirm Password</label>
+  <div class="input-group" style="width: 100%;">
+      <span class="input-group-text" id="basic-addon4"><span class="fas fa-unlock-alt"></span></span>
+      <input id="confirm_password" name="password2" type="password" class="form-control" 
+             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required />
+  </div>
+  <span id="password-match-message" style="font-size: 0.7em; color: #1F2937; text-align: left; display: block; margin-top: 5px;"></span>
+</div>
+
+                          <!-- Role Selection -->
+                          <div class="mb-4">
+                              {{ form.role }}
+                          </div>
+                          <!-- Google reCAPTCHA -->
+                          <div class="mb-4" style="display: flex; justify-content: center; align-items: center;">
+                              <div class="g-recaptcha" data-sitekey="6LeenVEqAAAAAB1FwcXtRB2NqcWUfMAzOpeCMr8P"></div>
+                          </div>
+                          <!-- Submit Button -->
+                          <div style="text-align: center;">
+                              <button class="btn btn--main" type="submit" style="display: inline-block; margin: 20px;">
+                                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                                      <title>lock</title>
+                                      <path d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z"></path>
+                                      <path d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z"></path>
+                                  </svg>
+                                  Register
+                              </button>
+                          </div>
+                      </form>
+                      <div class="d-flex justify-content-center align-items-center mt-3">
+                          <span class="font-weight-normal">
+                              Already have an account?
+                              <a href="{% url 'login' %}" class="font-weight-bold">Login here</a>
+                          </span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script>
+      function checkPasswordMatch(){
+          var password = document.getElementById('password').value;
+          var confirmPassword = document.getElementById('confirm_password').value;
+          
+          var message = document.getElementById('password-match-message');
+          if(password !== confirmPassword){
+              message.style.color = 'red';
+              message.innerHTML = 'Unmatch';
+          } else {
+              message.style.color = 'green';
+              message.innerHTML = 'Match';
+          }
+      }
+
+      function checkPasswordStrength(){
+          const password = document.getElementById('password').value;
+          const strengthText = document.getElementById('password-strength');
+
+          let strength = 0;
+          
+          if(/[A-Z]/.test(password)) strength++;
+          if(/[a-z]/.test(password)) strength++;
+          if(/[0-9]/.test(password)) strength++;
+          if(/[\W_]/.test(password)) strength++;
+          
+          if(password.length < 8){
+              strengthText.innerHTML = 'Weak';
+              strengthText.style.color = 'red';
+          } else {
+              if(strength <= 2){
+                  strengthText.innerHTML = 'Weak';
+                  strengthText.style.color = 'red';
+              } else if(strength === 3){
+                  strengthText.innerHTML = 'Moderate';
+                  strengthText.style.color = 'orange';
+              } else if(strength >= 4) {
+                  strengthText.innerHTML = 'Strong';
+                  strengthText.style.color = 'green';
+              }
+          }
+      }
+
+      document.getElementById('confirm_password').addEventListener('input', checkPasswordMatch);
+  </script>
+</main>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
+
+<!-- {% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -91,7 +240,7 @@
                 <div class="form__group">
                   <label for="password">Password</label>
                   <input id="password" name="password1" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" oninput="checkPasswordStrength()" />
-                  <p id="password-strength" style="color:#1F2937;"></p> <!-- display password-strength-->
+                  <p id="password-strength" style="color:#1F2937;"></p>
                 </div>
 
                 <div class="form__group form__group">
@@ -132,53 +281,5 @@
       </main>
       
   </body>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <script>
-    function checkPasswordMatch(){
-      var password = document.getElementById('password').value;
-      var confirmPassword = document.getElementById('confirm_password').value;
-      
-      var message = document.getElementById('password-match-message');
-      if(password!==confirmPassword){
-        message.style.color = 'red';
-        message.innerHTML = 'Passwords do not match';
-      }
-      else{
-        message.style.color = 'green';
-        message.innerHTML = 'Passwords match';
-      }
-    }
-    function checkPasswordStrength(){
-      const password = document.getElementById('password').value;
-      const strengthText = document.getElementById('password-strength');
-
-      let strength = 0;
-      
-      if(/[A-Z]/.test(password)) strength++;
-      if(/[a-z]/.test(password)) strength++;
-      if(/[0-9]/.test(password)) strength++;
-      if(/[\W_]/.test(password)) strength++;
-      
-      if(password.length<8){
-        strengthText.innerHTML = 'Weak';
-        strengthText.style.color = 'red';
-      }else{
-        if(strength<=2){
-          strength.innerHTML = 'Weak';
-          strengthText.style.color = 'red';
-        } else if(strength==3){
-          strengthText.innerHTML = 'Moderate';
-          strengthText.style.color = 'orange';
-        } else if(strength>=4) {
-          strengthText.innerHTML = 'Strong';
-          strengthText.style.color = 'green';
-        }
-        
-      }
-        
-
-    }
-    document.getElementById('confirm_password').addEventListener('input', checkPasswordMatch);
-
-  </script>
-</html>
+  
+</html> -->
