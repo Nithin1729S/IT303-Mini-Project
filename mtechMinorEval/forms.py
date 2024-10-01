@@ -11,42 +11,66 @@ class ExaminerEvaluationForm(ModelForm):
         exclude=[]
         fields=['datetime_from','datetime_to','depthOfUnderstanding','workDoneAndResults','exceptionalWork','vivaVoce','presentation','report','comments']
         widgets={
-            'datetime_from': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
-            'datetime_to': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
+            'datetime_from': forms.DateTimeInput(
+                attrs={
+                    'class': 'form-control', 
+                    'id': 'datetime_from',
+                    'type':'datetime-local'
+                }
+            ),
+            'datetime_to': forms.DateTimeInput(
+                attrs={
+                    'class': 'form-control', 
+                    'id': 'datetime_to',
+                    'type':'datetime-local'
+                }
+            ),
             'depthOfUnderstanding':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':8
+                    'max':8,
+                    'class': 'form-control', 
+                    'id': 'depthOfUnderstanding',
                 }
             ),
             'workDoneAndResults':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':12
+                    'max':12,
+                    'class': 'form-control', 
+                    'id': 'workDoneAndResults',
                 }
             ),
             'exceptionalWork':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':6
+                    'max':6,
+                    'class': 'form-control', 
+                    'id': 'exceptionalWork',
                 }
             ),
             'vivaVoce':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':8
+                    'max':8,
+                    'class': 'form-control', 
+                    'id': 'vivaVoce',
                 }
             ),
             'presentation':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':4
+                    'max':4,
+                    'class': 'form-control', 
+                    'id': 'presentation',
                 }
             ),
             'report':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':2
+                    'max':2,
+                    'class': 'form-control', 
+                    'id': 'report',
                 }
             )
         }
@@ -57,8 +81,7 @@ class ExaminerEvaluationForm(ModelForm):
             
             for field in self.fields:
                 self.fields[field].initial = getattr(instance, field)
-        for name,field in self.fields.items():
-            field.widget.attrs.update({'class':'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'})
+       
     def save(self, commit=True):
         instance = super().save(commit=False)
         if self.instance.pk is None:  
@@ -74,50 +97,83 @@ class GuideEvaluationForm(ModelForm):
         exclude=[]
         fields=['datetime_from','datetime_to','depthOfUnderstanding','workDoneAndResults','exceptionalWork','vivaVoce','presentation','report','attendance','comments']
         widgets={
-            'datetime_from': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
-            'datetime_to': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input'}),
+            'datetime_from': forms.DateTimeInput(
+                attrs={
+                        'class': 'form-control', 
+                        'id': 'datetime_from',
+                        'type':'datetime-local'
+                       }
+            ),
+            'datetime_to': forms.DateTimeInput(
+                attrs={
+                        'class': 'form-control', 
+                        'id': 'datetime_to',
+                        'type':'datetime-local'
+                       }
+            ),
             'depthOfUnderstanding':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':12
+                    'max':12,
+                    'class': 'form-control', 
+                    'id': 'depthOfUnderstanding',
                 }
             ),
             'workDoneAndResults':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':18
+                    'max':18,
+                    'class': 'form-control', 
+                    'id': 'workDoneAndResults',
                 }
             ),
             'exceptionalWork':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':6
+                    'max':6,
+                    'class': 'form-control', 
+                    'id': 'exceptionalWork',
                 }
             ),
             'vivaVoce':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':12
+                    'max':12,
+                    'class': 'form-control', 
+                    'id': 'vivaVoce'
                 }
             ),
             'presentation':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':6
+                    'max':6,
+                    'class': 'form-control', 
+                    'id': 'presentation',
                 }
             ),
             'report':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':3
+                    'max':3,
+                    'class': 'form-control', 
+                    'id': 'report',
                 }
             ),
             'attendance':forms.NumberInput(
                 attrs={
                     'min':0,
-                    'max':3
+                    'max':3,
+                    'class': 'form-control', 
+                    'id': 'attendance',
                 }
-            )
+            ),
+            'comments':forms.TextInput(
+                attrs={
+                    'class':'form-control',
+                    'id':'comments'
+                }
+            ),
+            
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -125,8 +181,6 @@ class GuideEvaluationForm(ModelForm):
         if instance:
             for field in self.fields:
                 self.fields[field].initial = getattr(instance, field)
-        for name,field in self.fields.items():
-            field.widget.attrs.update({'class':'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'})
     def save(self, commit=True):
         instance = super().save(commit=False)
         if self.instance.pk is None:  

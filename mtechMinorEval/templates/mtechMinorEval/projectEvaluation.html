@@ -60,13 +60,10 @@
                                         <div class="file-field">
                                             <div class="d-flex justify-content-xl-center ml-xl-3">
                                                 <div class="d-flex">
-                                                    <span class="icon icon-md">
-                                                        <span class="fas fa-paperclip mr-3"></span>
-                                                    </span>
-                                                    {{ form.profile_image }} <!-- Ensure that the input type is correctly rendered by Django -->
                                                     <div class="d-md-block text-left" style="cursor: pointer;">
-                                                        <div class="font-weight-normal text-dark mb-1" style="cursor: pointer;">Choose Image</div>
-                                                        <div class="text-gray small">JPG, GIF or PNG. Max size of 800K</div>
+                                                        <div class="font-weight-normal text-dark mb-1" style="cursor: pointer;">{{ project.student.name }}</div>
+                                                        <div class="text-gray small">{{ project.student.rollno }}</div>
+                                                        <div class="text-gray small">{{ project.student.email }}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -76,65 +73,45 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <div>
-                                    <label for="first_name">Name</label>
-                                    {{ form.name }}
-                                    {% if form.name.errors %}
-                                        <p class="text-danger">{{ form.name.errors }}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div>
-                                    <label for="email">Email</label>
-                                    {{ form.email }}
-                                    {% if form.email.errors %}
-                                        <p class="text-danger">{{ form.email.errors }}</p>
-                                    {% endif %}                                </div>
-                            </div>
-                        </div>
-
-
-
-                        <div class="row align-items-center">
-                            <div class="col-md-6 mb-3">
-                                <label for="birthday">Birthday</label>
+                                <label for="phone">Evaluation Start</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
-                                    {{ form.date_of_birth }}
-                                    {% if form.date_of_birth.errors %}
-                                        <p class="text-danger">{{ form.date_of_birth.errors }}</p>
+                                    <span class="input-group-text"></span>
+                                    {{ form.datetime_from }}
+                                    {% if form.datetime_from.errors %}
+                                        <p class="text-danger">{{ form.datetime_from.errors }}</p>
                                     {% endif %}                                  
                                 </div>
-                                </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="gender">Gender</label>
-                                {{ form.gender }}
-                                {% if form.gender.errors %}
-                                    <p class="text-danger">{{ form.gender.errors }}</p>
-                                {% endif %}
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone">Evaluation End</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"></span>
+                                    {{ form.datetime_to }}
+                                    {% if form.datetime_to.errors %}
+                                        <p class="text-danger">{{ form.datetime_to.errors }}</p>
+                                    {% endif %}                                  
+                                </div>
+                            </div>
+                            
                         </div>
-
-
 
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="degree">Degree</label>
-                                    {{ form.degree }}
-                                    {% if form.degree.errors %}
-                                        <p class="text-danger">{{ form.degree.errors }}</p>
+                                    <label for="degree">Depth Of Understanding</label>
+                                    {{ form.depthOfUnderstanding }}
+                                    {% if form.depthOfUnderstanding.errors %}
+                                        <p class="text-danger">{{ form.depthOfUnderstanding.errors }}</p>
                                     {% endif %}                                
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="phone">Student Roll no</label>
-                                    {{ form.rollno }}
-                                    {% if form.rollno.errors %}
-                                        <p class="text-danger">{{ form.rollno.errors }}</p>
+                                    <label for="phone">Work Done & Results</label>
+                                    {{ form.workDoneAndResults }}
+                                    {% if form.workDoneAndResults.errors %}
+                                        <p class="text-danger">{{ form.workDoneAndResults.errors }}</p>
                                     {% endif %}                                  </div>
                             </div>
                         </div>
@@ -144,19 +121,19 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="branch">Branch</label>
-                                    {{ form.branch }}
-                                    {% if form.branch.errors %}
-                                        <p class="text-danger">{{ form.branch.errors }}</p>
+                                    <label for="branch">Exceptional Work</label>
+                                    {{ form.exceptionalWork }}
+                                    {% if form.exceptionalWork.errors %}
+                                        <p class="text-danger">{{ form.exceptionalWork.errors }}</p>
                                     {% endif %}                                
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="phone">CGPA</label>
-                                    {{ form.cgpa }}
-                                    {% if form.cpga.errors %}
-                                        <p class="text-danger">{{ form.cgpa.errors }}</p>
+                                    <label for="phone">Viva Voce</label>
+                                    {{ form.vivaVoce }}
+                                    {% if form.vivaVoce.errors %}
+                                        <p class="text-danger">{{ form.vivaVoce.errors }}</p>
                                     {% endif %}                                  </div>
                             </div>
                         </div>
@@ -168,79 +145,45 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="mother_tongue">Mother Tongue</label>
-                                    {{ form.mother_tongue }}
-                                    {% if form.mother_tongue.errors %}
-                                        <p class="text-danger">{{ form.mother_tongue.errors }}</p>
+                                    <label for="mother_tongue">Presentation</label>
+                                    {{ form.presentation }}
+                                    {% if form.presentation.errors %}
+                                        <p class="text-danger">{{ form.presentation.errors }}</p>
                                     {% endif %}                                
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="phone">Aadhaar Number</label>
-                                    {{ form.aadhaar_number }}
-                                    {% if form.aadhaar_number.errors %}
-                                        <p class="text-danger">{{ form.aadhaar_number.errors }}</p>
+                                    <label for="phone">Report</label>
+                                    {{ form.report }}
+                                    {% if form.report.errors %}
+                                        <p class="text-danger">{{ form.report.errors }}</p>
                                     {% endif %}                                  </div>
                             </div>
                         </div>
 
 
-
+                    {% if role == 'Guide' %}
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="email">Father's Name</label>
-                                    {{ form.fathersName }}
-                                    {% if form.fathersName.errors %}
-                                        <p class="text-danger">{{ form.fathersName.errors }}</p>
+                                    <label for="email">Attendance</label>
+                                    {{ form.attendance }}
+                                    {% if form.attendance.errors %}
+                                        <p class="text-danger">{{ form.attendance.errors }}</p>
                                     {% endif %}                                
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label for="phone">Nationality</label>
-                                    {{ form.nationality }}
-                                    {% if form.nationality.errors %}
-                                        <p class="text-danger">{{ form.nationality.errors }}</p>
-                                    {% endif %}                                  </div>
-                            </div>
                         </div>
+                    {% endif %}
 
-
-
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label for="email">Phone Number</label>
-                                    {{ form.phone_number}}
-                                    {% if form.phone_number.errors %}
-                                        <p class="text-danger">{{ form.phone_number.errors }}</p>
-                                    {% endif %}                                
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label for="phone">Date of Admission</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
-                                        {{ form.date_of_admission }}
-                                        {% if form.date_of_admission.errors %}
-                                            <p class="text-danger">{{ form.date_of_admission.errors }}</p>
-                                        {% endif %}                                  
-                                    </div>                                 
-                                </div>
-                            </div>
-                        </div>
-                        <h2 class="h5 my-4">Address</h2>
+                        <h2 class="h5 my-4">Remarks</h2>
                         <div class="row">
                             <div class="col-sm-12 mb-3">
                                 <div class="form-group">
-                                    <label for="address">Address</label>
-                                    {{ form.address }}
-                                    {% if form.address.errors %}
-                                        <p class="text-danger">{{ form.address.errors }}</p>
+                                    {{ form.comments }}
+                                    {% if form.comments.errors %}
+                                        <p class="text-danger">{{ form.comments.errors }}</p>
                                     {% endif %}                                  </div>
                             </div>
                             <!-- <div class="col-sm-3 mb-3">
@@ -252,25 +195,7 @@
                                     {% endif %}                                  </div>
                             </div> -->
                         </div>
-                        <div class="row">
-                            <div class="col-sm-4 mb-3">
-                                <div class="form-group">
-                                    <label for="city">Country</label>
-                                    {{ form.country }}
-                                    {% if form.country.errors %}
-                                        <p class="text-danger">{{ form.country.errors }}</p>
-                                    {% endif %}                                  </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label for="zip">ZIP</label>
-                                {{ form.pincode }}
-                                    {% if form.pincode.errors %}
-                                        <p class="text-danger">{{ form.pincode.errors }}</p>
-                                    {% endif %}                                  </div>
-                            </div>
-                        </div>
-                        
+
                         <div class="mt-3">
                             <button type="submit" class="btn btn-primary">Save All</button>
                         </div>
@@ -287,7 +212,7 @@
                             </div>
                         </div>
                     </div>
-                    
+                    <button class="btn btn-primary btn-sm" onclick="openFullscreen()">Full Screen</button>
                 </div>
             </div>
         </div>
@@ -317,7 +242,20 @@
             </div>
         </div>
     </footer>
-
+    <script>
+        var iframe = document.querySelector('iframe');
+        function openFullscreen() {
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.mozRequestFullScreen) { // Firefox
+                iframe.mozRequestFullScreen();
+            } else if (iframe.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) { // IE/Edge
+                iframe.msRequestFullscreen();
+            }
+        }
+    </script>
     </main>
     
 {% endblock content %}

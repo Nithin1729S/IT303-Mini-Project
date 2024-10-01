@@ -1,137 +1,326 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluation Form</title>
-    <link rel="stylesheet" href="../../static/css/style.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}" type="image/x-icon" />
-    <link rel="stylesheet" href="{% static  'styles/style.css' %}" />
-</head>
+{% extends "mtechMinorEval/base_faculty.html" %}
+
+{% block title %} Settings {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+                
+    <main class="content">
+        {% include 'mtechMinorEval/navigation_faculty.html' %}
+        
+       
 
 
-<body class="flex flex-col min-h-screen bg-gray-100">
-    {% include 'mtechMinorEval/navbar.html' %}
-    <a href="{% url 'projectsList' %}" style="color: #4299e1; text-decoration: none; padding-left: 500px;">Go Back</a>
-    <div class="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none">
-        {% if messages %}
-        <div class="mt-4 w-full max-w-md">
-            {% for message in messages %}
-            <div class="flash-message p-4 mb-2">
-                <div class="flex items-center">
-                    {% if message.tags == 'success' %}
-                    <p class="text-green-500">{{ message }}</p>
-                    {% elif message.tags == 'error' %}
-                    <p class="text-red-500">{{ message }}</p>
-                    {% else %}
-                    <p class="text-blue-500">{{ message }}</p>
-                    {% endif %}
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <!-- <div>
+                <button class="btn btn-secondary text-dark mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fas fa-plus mr-2"></span>New
+                </button>
+                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="far fa-file-alt mr-2"></span>Document</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="far fa-comment-dots mr-2"></span>Message</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Product</a>
+                    <div role="separator" class="dropdown-divider"></div>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>Subscription Plan</a>
+                </div>
+            </div> -->
+            <div>
+                <!-- <div class="btn-group">
+                    <button type="button" data-toggle="tooltip" title="Calendar" class="btn btn-primary"><span class="fas fa-calendar-alt"></span></button>
+                </div>
+                <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fas fa-clipboard mr-2"></span>Reports
+                    <span class="icon icon-small ml-1"><span class="fas fa-chevron-down"></span></span>
+                </button>
+                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Products</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-store mr-2"></span>Customers</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cart-arrow-down mr-2"></span>Orders</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-chart-pie mr-2"></span>Console</a>
+                    <div role="separator" class="dropdown-divider"></div>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-success mr-2"></span>All Reports</a>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-10 col-xl-7">
+                <div class="card card-body bg-white border-light shadow-sm mb-4">
+                    <h2 class="h5 mb-4">{{ role }} Evaluation Form</h2>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card card-body bg-white border-light shadow-sm mb-4">
+                                    <h2 class="h5 mb-4">{{project.title}}</h2>
+                                    <div class="d-xl-flex align-items-center">
+                                        <div class="file-field">
+                                            <div class="d-flex justify-content-xl-center ml-xl-3">
+                                                <div class="d-flex">
+                                                    <div class="d-md-block text-left" style="cursor: pointer;">
+                                                        <div class="font-weight-normal text-dark mb-1" style="cursor: pointer;">{{ project.student.name }}</div>
+                                                        <div class="text-gray small">{{ project.student.email }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                                                                
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone">Date of Admission</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
+                                        {{ form.attendance }}
+                                        {% if form.date_of_admission.errors %}
+                                            <p class="text-danger">{{ form.date_of_admission.errors }}</p>
+                                        {% endif %}                                  
+                                    </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="email">Email</label>
+                                    {{ form.depthOfUnderstanding }}
+                                    {% if form.email.errors %}
+                                        <p class="text-danger">{{ form.email.errors }}</p>
+                                    {% endif %}                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row align-items-center">
+                            <div class="col-md-6 mb-3">
+                                <label for="birthday">Birthday</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
+                                  
+                                    {% if form.datetime_from.errors %}
+                                        <p class="text-danger">{{ form.datetime_from.errors }}</p>
+                                    {% endif %}                                  
+                                </div>
+                                </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gender">Gender</label>
+                                {{ form.gender }}
+                                {% if form.gender.errors %}
+                                    <p class="text-danger">{{ form.gender.errors }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="degree">Degree</label>
+                                    {{ form.degree }}
+                                    {% if form.degree.errors %}
+                                        <p class="text-danger">{{ form.degree.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">Student Roll no</label>
+                                    {{ form.rollno }}
+                                    {% if form.rollno.errors %}
+                                        <p class="text-danger">{{ form.rollno.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="branch">Branch</label>
+                                    {{ form.branch }}
+                                    {% if form.branch.errors %}
+                                        <p class="text-danger">{{ form.branch.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">CGPA</label>
+                                    {{ form.cgpa }}
+                                    {% if form.cpga.errors %}
+                                        <p class="text-danger">{{ form.cgpa.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="mother_tongue">Mother Tongue</label>
+                                    {{ form.mother_tongue }}
+                                    {% if form.mother_tongue.errors %}
+                                        <p class="text-danger">{{ form.mother_tongue.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">Aadhaar Number</label>
+                                    {{ form.aadhaar_number }}
+                                    {% if form.aadhaar_number.errors %}
+                                        <p class="text-danger">{{ form.aadhaar_number.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="email">Father's Name</label>
+                                    {{ form.fathersName }}
+                                    {% if form.fathersName.errors %}
+                                        <p class="text-danger">{{ form.fathersName.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">Nationality</label>
+                                    {{ form.nationality }}
+                                    {% if form.nationality.errors %}
+                                        <p class="text-danger">{{ form.nationality.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+
+
+
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="email">Phone Number</label>
+                                    {{ form.phone_number}}
+                                    {% if form.phone_number.errors %}
+                                        <p class="text-danger">{{ form.phone_number.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">Date of Admission</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
+                                        {{ form.datetime_from }}
+                                        {% if form.date_of_admission.errors %}
+                                            <p class="text-danger">{{ form.date_of_admission.errors }}</p>
+                                        {% endif %}                                  
+                                    </div>                                 
+                                </div>
+                            </div>
+                        </div>
+                        <h2 class="h5 my-4">Address</h2>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    {{ form.address }}
+                                    {% if form.address.errors %}
+                                        <p class="text-danger">{{ form.address.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                            <!-- <div class="col-sm-3 mb-3">
+                                <div class="form-group">
+                                    <label for="number">Student Roll No.</label>
+                                    {{ form.rollno }}
+                                    {% if form.rollno.errors %}
+                                        <p class="text-danger">{{ form.rollno.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div> -->
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 mb-3">
+                                <div class="form-group">
+                                    <label for="city">Country</label>
+                                    {{ form.country }}
+                                    {% if form.country.errors %}
+                                        <p class="text-danger">{{ form.country.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="zip">ZIP</label>
+                                {{ form.pincode }}
+                                    {% if form.pincode.errors %}
+                                        <p class="text-danger">{{ form.pincode.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary">Save All</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-    <div style="display: flex;">
-        <div class="flex-grow flex items-center justify-center mt-8">
-            <form method="POST" action="" class="bg-white p-6 rounded shadow-md w-full max-w-3xl">
-                {% csrf_token %}
-                <h1 class="text-3xl font-bold mb-6 text-center">{{ role }} Evaluation Form</h1>
-                <span>
-                    <b>Student Name:</b> {{project.student}}
-                    <br>
-                    <b>Student RollNo:</b> {{project.student.rollno}}
-                    <br>
-                    <b>Project Name:</b> {{project.title}}
-                    <br>
-                    <b>Project PPT Link:</b> <a href="{{ project.src_link }}" target="_blank" class="text-blue-500 hover:text-red-500 hover:underline">Link</a>                <br>
-                </span>
-                <hr>
-                <hr>
-                {% if form.errors %}
-                    <div role="alert" class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
-                        <strong class="font-bold">Please correct the following errors:</strong>
-                        <ul class="list-disc pl-5 mt-2">
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <li>{{ field.label }}: {{ error }}</li>
-                                {% endfor %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-                {% for field in form %}
-                    {% if field.name == 'project' or field.name == 'guide' or field.name == 'examiner' %}
-                        {{ field.as_hidden }}
-                    {% else %}
-                        <div class="mb-4">
-                            <label for="{{ field.id_for_label }}" class="block text-gray-700 font-medium mb-2">
-                                {{ field.label }}
-                                {% if field.field.widget.attrs.max %}
-                                    (Max: {{ field.field.widget.attrs.max }})
-                                {% endif %}
-                            </label>
-                            {{ field }}
-                            
-                            {% if field.help_text %}
-                                <p class="text-gray-500 text-sm mt-1">{{ field.help_text }}</p>
-                            {% endif %}
+            <div class="col-12 col-xl-4">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="card border-light text-center p-0">
+                            <div style="width: 600px; height: 400px;">
+                                <iframe src="{{ project.ppt.url }}" style="width:100%; height:100%;" allowfullscreen></iframe>
+                            </div>
+                            </div>
                         </div>
-                    {% endif %}
-                    <hr>
-                {% endfor %}
-                <div class="total-marks mb-4">
-                    <label class="block text-gray-700 font-medium mb-2">Total Marks
-                        <span>
-                            {% if role == 'Guide'%}
-                    <span>(Max: 60)</span>
-                    {% endif %}
-                    {% if role == 'Examiner' %}
-                    <span>(Max: 40)</span>
-                    {% endif %}
-                        </span>
-                    </label>
-                    <span>{{ total_marks }}</span>
+                    </div>
+                    
                 </div>
-                <div class="flex items-center justify-between">
-                    <input type="submit" 
-                        value="{% if form.instance.pk %}Update{% else %}Submit{% endif %}" 
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
-                        onclick="return confirmSubmission();">
+            </div>
+        </div>
+
+        
+
+        
+    <footer class="footer section py-5">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+                    <p class="mb-0 text-center text-xl-left">
+                        &copy; <a class="text-primary font-weight-normal" href="#" target="_blank">NITK Surathkal</a><a target="_blank" h</a>
+                    </p>
                 </div>
-            </form>
-        </div>
-            <!-- your_template.html -->
-        <div style="width: 600px; height: 400px;">
-            <iframe src="{{ project.ppt.url }}" style="width:100%; height:100%;" allowfullscreen></iframe>
-        </div>
-        <button onclick="openFullscreen()">Full Screen</button>
-    </div>
-    <script>
-        var iframe = document.querySelector('iframe');
-        function openFullscreen() {
-            if (iframe.requestFullscreen) {
-                iframe.requestFullscreen();
-            } else if (iframe.mozRequestFullScreen) { // Firefox
-                iframe.mozRequestFullScreen();
-            } else if (iframe.webkitRequestFullscreen) { // Chrome, Safari and Opera
-                iframe.webkitRequestFullscreen();
-            } else if (iframe.msRequestFullscreen) { // IE/Edge
-                iframe.msRequestFullscreen();
-            }
-        }
-    </script>
 
-</body>
-</html>
+                <div class="col-12 col-lg-6">
+                    <!-- List -->
+                    <ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
+                        <li class="list-inline-item px-0 px-sm-2">
+                            <a target="_blank" 
+                               href="#">MTech IT Minor Project Evaluation Dashboard</a>
+                        </li>
+                    </ul>
+                    <!-- End List -->
+                </div>
+            </div>
+        </div>
+    </footer>
 
-<script>
-    function confirmSubmission() {
-        return confirm("Are you sure you want to submit this form?");
-    }
-    </script>
+    </main>
+    
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
+
+
+
