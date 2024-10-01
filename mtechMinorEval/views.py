@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from django.db import transaction
+from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test
@@ -23,27 +24,70 @@ def home(request):
     faculty = get_object_or_404(Faculty, profile=userProfile)
     return render(request,'mtechMinorEval/home.html',{'faculty':faculty})
 
+
+from django.db.models import Q
+
 @login_required(login_url='login')
 def projectsList(request):
-    "Lists the Projects to which the faculty is a guide or a mentor to and can be run by only logged in users."
     user = request.user
     if user.is_superuser:
         return redirect('admin-panel')
+
     if user.is_authenticated:
         userEmail = user.email
         userProfile = get_object_or_404(Profile, email=userEmail)
-        projects = []
+
         if userProfile.role == 'faculty':
             faculty = get_object_or_404(Faculty, profile=userProfile)
-            guide_projects = Project.objects.filter(guide=faculty)
-            examiner_projects = Project.objects.filter(examiner=faculty)
+
+            # Search functionality: apply search filter before union
+            search_query = request.GET.get('search', '')
+
+            if search_query:
+                guide_projects = Project.objects.filter(
+                    guide=faculty
+                ).filter(
+                    Q(title__icontains=search_query) |
+                    Q(student__name__icontains=search_query) |
+                    Q(student__email__icontains=search_query) |
+                    Q(student__rollno__icontains=search_query)
+                )
+
+                examiner_projects = Project.objects.filter(
+                    examiner=faculty
+                ).filter(
+                    Q(title__icontains=search_query) |
+                    Q(student__name__icontains=search_query) |
+                    Q(student__email__icontains=search_query) |
+                    Q(student__rollno__icontains=search_query)
+                )
+            else:
+                guide_projects = Project.objects.filter(guide=faculty)
+                examiner_projects = Project.objects.filter(examiner=faculty)
+
+            # Union the filtered or unfiltered querysets
             projects = guide_projects.union(examiner_projects)
+
+            # Pagination
+            paginator = Paginator(projects, 5)  # Show 10 projects per page
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+
+            context = {
+                'projects': page_obj,
+                'faculty': faculty,
+                'search_query': search_query,
+                'paginator': paginator,
+            }
+            return render(request, 'mtechMinorEval/projectsList.html', context)
+
         else:
-            logout(request,user)
+            logout(request, user)
+            return redirect('login')
     else:
         return redirect('login')
-    context = {'projects': projects,'faculty':faculty}
-    return render(request, 'mtechMinorEval/projectsList.html', context=context)
+
+
 
 
 @login_required(login_url='login')

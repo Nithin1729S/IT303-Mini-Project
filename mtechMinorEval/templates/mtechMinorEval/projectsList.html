@@ -1,82 +1,164 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}" type="image/x-icon" />
-    <link rel="stylesheet" href="{% static  'styles/style.css' %}" />
-    <title>MTech IT Minor Project</title>
-  </head>
+{% extends "mtechMinorEval/base_faculty.html" %}
 
-  <body>
-    {% include 'mtechMinorEval/navbar.html' %}
-    <div style="position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 50; pointer-events: none;">
-        {% if messages %}
-        <div style="margin-top: 16px; width: 100%; max-width: 28rem;">
-            {% for message in messages %}
-            <div style="background-color: white; box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); border-radius: 0.5rem; padding: 1rem; margin-bottom: 8px; pointer-events: auto;">
-                <div style="display: flex; align-items: center;">
-                    {% if message.tags == 'success' %}
-                    <svg style="width: 1.5rem; height: 1.5rem; margin-right: 0.5rem; color: #10B981;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    {% elif message.tags == 'error' %}
-                    <svg style="width: 1.5rem; height: 1.5rem; margin-right: 0.5rem; color: #EF4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    {% else %}
-                    <svg style="width: 1.5rem; height: 1.5rem; margin-right: 0.5rem; color: #3B82F6;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    {% endif %}
-                    <p style="color: #1F2937;">{{ message }}</p>
+{% block title %} Transactions {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+                
+    <main class="content">
+
+        {% include 'mtechMinorEval/navigation_faculty.html' %}
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <div class="d-block mb-4 mb-md-0">
+                <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+                    <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                        <li class="breadcrumb-item"><a href="#"><span class="fas fa-home"></span></a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Projects</li>
+                    </ol>
+                </nav>
+                <h2 class="h4">All Projects</h2>
+                <p class="mb-0">MTech IT Minor Projects</p>
+            </div>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-primary">Share</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary">Export</button>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        {% endif %}
-    </div>
-    
 
-    <div class="container mx-auto p-6">
-        <h1 class="text-3xl font-semibold mb-6 text-center">Projects List</h1>
-        <a href="{% url 'generate-pdf' %}" style="color: #4299e1; text-decoration: none;">Click to get generate PDF</a>
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-200">
-                <thead class="bg-gray-100">
+        <div class="table-settings mb-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col col-md-6 col-lg-3 col-xl-4">
+                    <form method="GET" action="{% url 'projectsList' %}" class="w-100">
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon2">
+                                <span class="fas fa-search"></span>
+                            </span>
+                            <input type="text" name="search" class="form-control" id="exampleInputIconLeft" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="{{ search_query }}">
+                        </div>
+                    </form>
+                </div>
+                
+                
+                <div class="col-4 col-md-2 col-xl-1 pl-md-0 text-right">
+                    <div class="btn-group">
+                        <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="icon icon-sm icon-gray">
+                                <span class="fas fa-cog"></span>
+                            </span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right">
+                            <span class="dropdown-item font-weight-bold text-dark">Show</span>
+                            <a class="dropdown-item d-flex font-weight-bold" href="#">10 <span class="icon icon-small ml-auto"><span class="fas fa-check"></span></span></a>
+                            <a class="dropdown-item font-weight-bold" href="#">20</a>
+                            <a class="dropdown-item font-weight-bold" href="#">30</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-body border-light shadow-sm table-wrapper table-responsive pt-0">
+            <table class="table table-hover">
+                <thead>
                     <tr>
-                        <th class="py-2 px-4 border-b">Minor Project Name</th>
-                        <th class="py-2 px-4 border-b">Student Roll No</th>
-                        <th class="py-2 px-4 border-b">Student Name</th>
-                        <th class="py-2 px-4 border-b">Role</th>
-                        <th class="py-2 px-4 border-b">Actions</th>
+                        
+                        <th>Project Name</th>						
+                        <th>Student Rollno</th>
+                        <th>Student Name</th>
+                        <th>Student Email</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Item -->
                     {% for project in projects %}
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-2 px-4 border-b">{{ project.title }}</td>
-                        <td class="py-2 px-4 border-b">{{ project.student.rollno }}</td>
-                        <td class="py-2 px-4 border-b"><a href="{% url 'student-profile' project.student.id %}" >{{ project.student.name }}</a></td>
-                        {% if project.guide.name == request.user.username %}
-                        <td class="py-2 px-4 border-b">Guide</td>
-                        {% else %}
-                        <td class="py-2 px-4 border-b">Examiner</td>
-                        {% endif %}
-                        <td class="py-2 px-4 border-b">
-                            <a href="{% url 'evaluate' project.id %}" class="text-blue-500 hover:text-blue-700">Evaluate</a>
+                    <tr>
+                        <td>
+                            <a href="../invoice.html" class="font-weight-bold">
+                                {{ project.title }}
+                            </a>
                         </td>
+                        <td>
+                            <a href="../invoice.html" class="font-weight-bold">
+                                {{ project.student.rollno }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="font-weight-normal">{{ project.student.name|truncatechars:30  }}</span>
+                        </td>
+                        <td><span class="font-weight-normal">{{ project.student.email|truncatechars:30 }}</span></td>
+                        <td>
+                            <a href="{% url 'evaluate' project.id %}" class="btn btn-primary btn-sm">
+                                Evaluate
+                            </a>
+                        </td>
+                        
                     </tr>
                     {% endfor %}
+                    <!-- Item -->
+                                                  
                 </tbody>
             </table>
+            <div class="card-footer px-3 border-0 d-flex align-items-center justify-content-between">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination mb-0">
+                        {% if projects.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ projects.previous_page_number }}&search={{ search_query }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        {% for page_num in projects.paginator.page_range %}
+                        <li class="page-item {% if projects.number == page_num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ page_num }}&search={{ search_query }}">{{ page_num }}</a>
+                        </li>
+                        {% endfor %}
+                        {% if projects.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ projects.next_page_number }}&search={{ search_query }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="font-weight-bold small">Showing <b>{{ projects.start_index }}</b> to <b>{{ projects.end_index }}</b> out of <b>{{ projects.paginator.count }}</b> entries</div>
+            </div>
+            
         </div>
-    </div>
-    <script src="{% static 'js/script.js' %}"></script>
-  </body>
-</html>
+
+        
+    <footer class="footer section py-5">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+                    <p class="mb-0 text-center text-xl-left">
+                        &copy; <a class="text-primary font-weight-normal" href="#" target="_blank">NITK Surathkal</a><a target="_blank" h</a>
+                    </p>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <!-- List -->
+                    <ul class="list-inline list-group-flush list-group-borderless text-center text-xl-right mb-0">
+                        <li class="list-inline-item px-0 px-sm-2">
+                            <a target="_blank" 
+                               href="#">MTech IT Minor Project Evaluation Dashboard</a>
+                        </li>
+                    </ul>
+                    <!-- End List -->
+                </div>
+            </div>
+        </div>
+    </footer>
 
 
+    </main>
 
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
