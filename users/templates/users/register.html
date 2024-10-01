@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}" type="image/x-icon" />
     <link rel="stylesheet" href="{% static 'styles/style.css' %}" />
-    <title>MTech Minot IT</title>
+    <title>MTech Minor IT</title>
   </head>
   <body>
     <header class="header header--loggedIn">
@@ -68,16 +68,15 @@
         {% endif %}
     </div>
     
-    <main class="auth layout">
-        <div class="container">
-          <div class="layout__box">
+    <main class="auth layout" >
+        <div class="container" >
+          <div class="layout__box" style="margin-top: 60px;">
             <div class="layout__boxHeader">
               <div class="layout__boxTitle">
                 <h3>Admin Login</h3>
               </div>
             </div>
             <div class="layout__body">
-      
               <form class="form" action="{% url 'register' %}" method="POST">
                 {% csrf_token %}
                 <div class="form__group form__group">
@@ -90,14 +89,16 @@
                 </div>
 
                 <div class="form__group">
-                    <label for="password">Password</label>
-                    <input id="password" name="password1" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
-                  </div>
+                  <label for="password">Password</label>
+                  <input id="password" name="password1" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" oninput="checkPasswordStrength()" />
+                  <p id="password-strength" style="color:#1F2937;"></p> <!-- display password-strength-->
+                </div>
 
                 <div class="form__group form__group">
                   <label for="room_name">Confirm Password</label>
-                  <input id="password" name="password2" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+                  <input id="confirm_password" name="password2" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
                 </div>
+                <div id="password-match-message" style="padding-top: 0;"></div>
 
                 <div class="mb-4">
                     {{ form.role }}
@@ -132,4 +133,52 @@
       
   </body>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script>
+    function checkPasswordMatch(){
+      var password = document.getElementById('password').value;
+      var confirmPassword = document.getElementById('confirm_password').value;
+      
+      var message = document.getElementById('password-match-message');
+      if(password!==confirmPassword){
+        message.style.color = 'red';
+        message.innerHTML = 'Passwords do not match';
+      }
+      else{
+        message.style.color = 'green';
+        message.innerHTML = 'Passwords match';
+      }
+    }
+    function checkPasswordStrength(){
+      const password = document.getElementById('password').value;
+      const strengthText = document.getElementById('password-strength');
+
+      let strength = 0;
+      
+      if(/[A-Z]/.test(password)) strength++;
+      if(/[a-z]/.test(password)) strength++;
+      if(/[0-9]/.test(password)) strength++;
+      if(/[\W_]/.test(password)) strength++;
+      
+      if(password.length<8){
+        strengthText.innerHTML = 'Weak';
+        strengthText.style.color = 'red';
+      }else{
+        if(strength<=2){
+          strength.innerHTML = 'Weak';
+          strengthText.style.color = 'red';
+        } else if(strength==3){
+          strengthText.innerHTML = 'Moderate';
+          strengthText.style.color = 'orange';
+        } else if(strength>=4) {
+          strengthText.innerHTML = 'Strong';
+          strengthText.style.color = 'green';
+        }
+        
+      }
+        
+
+    }
+    document.getElementById('confirm_password').addEventListener('input', checkPasswordMatch);
+
+  </script>
 </html>
