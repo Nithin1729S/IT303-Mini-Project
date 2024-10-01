@@ -484,5 +484,5 @@ def addNewFaculty(request):
         form = FacultyEditForm()
 
     context = {'form': form}
-    return render(request, 'mtechMinorEval/editFaculty.html', context)
+    return render(request, 'mtechMinorEval/addNewFaculty.html', context)
 
