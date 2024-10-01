@@ -146,3 +146,4 @@ AUTHENTICATION_BACKENDS = [
 
 SMS_BACKEND = 'sms.backends.console.SmsBackend'
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
