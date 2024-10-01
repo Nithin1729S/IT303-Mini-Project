@@ -161,8 +161,14 @@ class ProfileEditForm(forms.ModelForm):
 
 
 class StudentEditForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, required=False)
-
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control', 
+            'id': 'password',
+            'placeholder': 'Enter your password',
+        }), 
+        required=False
+    )
     class Meta:
         model = Student
         fields = ['name', 'email', 'rollno','cgpa','profile_image','phone_number','date_of_birth','address','fathersName','degree','aadhaar_number','mother_tongue','parents_phone_number','nationality','country','branch','date_of_admission','gender','pincode']
@@ -255,6 +261,11 @@ class StudentEditForm(forms.ModelForm):
                 'id': 'pincode',
                 'placeholder': 'Enter your Pincode',
             }),
+            'password': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'password',
+                'placeholder': '********',
+            }),
             'date_of_birth': forms.TextInput(attrs={
                 'class': 'form-control', 
                 'id': 'date_of_birth',
@@ -302,8 +313,14 @@ class StudentEditForm(forms.ModelForm):
 
 
 class FacultyEditForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, required=False)
-
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control', 
+            'id': 'password',
+            'placeholder': 'Enter your password',
+        }), 
+        required=False
+    )
     class Meta:
         model = Faculty
         fields = ['name', 'email', 'facultyID','phone_number','profile_image','gender','nationality','country','date_of_birth','address','pincode']
