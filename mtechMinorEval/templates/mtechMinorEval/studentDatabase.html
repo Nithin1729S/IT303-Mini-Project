@@ -24,6 +24,12 @@
                 </nav>
                 <h2 class="h4">All Students</h2>
                 <p class="mb-0">MTech Minor IT Students</p>
+                <br>
+                <div class="btn-toolbar dropdown">
+                    <a href="{% url 'add-new-student' %}" class="btn btn-primary btn-sm mr-2 ">
+                        <span class="fas fa-plus mr-2"></span>New Student
+                    </a>
+                </div>
             </div>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group">
@@ -93,7 +99,6 @@
                                     <span class="sr-only">Toggle Dropdown</span>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#"><span class="fas fa-eye mr-2"></span>View Details</a>
                                     <a class="dropdown-item" href="{% url 'student-edit' student.id %}"><span class="fas fa-edit mr-2"></span>Edit</a>
                                     <form action="{% url 'student-delete' student.id %}" method="POST" id="delete-form-{{ student.id }}">
                                         {% csrf_token %}

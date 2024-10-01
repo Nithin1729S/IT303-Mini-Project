@@ -165,14 +165,106 @@ class StudentEditForm(forms.ModelForm):
 
     class Meta:
         model = Student
-        fields = ['name', 'email', 'rollno','cgpa']
+        fields = ['name', 'email', 'rollno','cgpa','profile_image','phone_number','date_of_birth','address','fathersName','degree','aadhaar_number','mother_tongue','parents_phone_number','nationality','country','branch','date_of_admission','gender','pincode']
         widgets={
             'cgpa':forms.NumberInput(
                 attrs={
                     'min':0.0,
-                    'max':10.0
+                    'max':10.0,
+                    'class': 'form-control', 
+                    'id': 'cgpa',
+                    'placeholder': 'Enter your CGPA',
                 }
             ),
+            'name': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'name',
+                'placeholder': 'Enter your name',
+                'required': 'true'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control', 
+                'id': 'email',
+                'placeholder': 'Enter your email',
+                'required': 'true'
+            }),
+            'phone_number': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'phone_number',
+                'placeholder': '+91 1234567890',
+                'required': 'true'
+            }),
+            'gender': forms.Select(attrs={
+                'class': 'form-select mb-0', 
+                'id': 'gender',
+                'aria-label': 'Gender select example'
+            }),
+            'nationality': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'nationality',
+                'placeholder': 'Enter your nationality',
+            }),
+            'country': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'country',
+                'placeholder': 'Enter your country',
+            }),
+            'degree': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'degree',
+                'placeholder': 'Enter your Degree',
+            }),
+            'fathersName': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'fathersName',
+                'placeholder': 'Enter your Fathers Name',
+            }),
+            'mother_tongue': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'mother_tongue',
+                'placeholder': 'Enter your mother tongue',
+            }),
+            'aadhaar_number': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'aadhaar_number',
+                'placeholder': 'Enter your Aadhaar number',
+            }),
+            'branch': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'branch',
+                'placeholder': 'Enter your branch',
+            }),
+            'date_of_admission': forms.TextInput(attrs={
+                 'class': 'form-control', 
+                'id': 'date_of_admission',
+                'placeholder': 'dd/mm/yy',
+                'data-datepicker':''
+            }),
+            'address': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'address',
+                'placeholder': 'Enter your address',
+            }),
+            'rollno': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'rollno',
+                'placeholder': 'Enter your Roll number',
+            }),
+            'pincode': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'pincode',
+                'placeholder': 'Enter your Pincode',
+            }),
+            'date_of_birth': forms.TextInput(attrs={
+                'class': 'form-control', 
+                'id': 'date_of_birth',
+                'placeholder': 'dd/mm/yy',
+                'data-datepicker':''
+            }),
+            'profile_image': forms.FileInput(attrs={
+                'class': 'form-control-file',
+                'id': 'profile_image'
+            }),
         }
 
     def __init__(self, *args, **kwargs):

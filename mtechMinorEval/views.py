@@ -278,7 +278,7 @@ def editStudent(request, pk):
     profile_form = ProfileEditForm(instance=profile) 
 
     if request.method == 'POST':
-        form = StudentEditForm(request.POST, instance=student)
+        form = StudentEditForm(request.POST, request.FILES,instance=student)
         profile_form = ProfileEditForm(request.POST, instance=profile) 
 
         if form.is_valid() and profile_form.is_valid(): 
@@ -443,7 +443,7 @@ def addNewStudent(request):
         form = StudentEditForm()
 
     context = {'form': form}
-    return render(request, 'mtechMinorEval/editStudent.html', context)
+    return render(request, 'mtechMinorEval/addNewStudent.html', context)
 
 
 
