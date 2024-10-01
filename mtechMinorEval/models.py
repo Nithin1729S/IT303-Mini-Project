@@ -12,6 +12,7 @@ class Project(models.Model):
     title=models.CharField(max_length=255)
     desc=models.TextField(null=True,blank=True)
     src_link=models.CharField(max_length=2000,null=True,blank=True)
+    ppt=models.FileField(upload_to='mtechMinorEval/ppts/',null=True,blank=True)
     student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='projects')
     submitted_at = models.DateTimeField(auto_now_add=True)
     examiner = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='examiner_projects')
