@@ -68,8 +68,9 @@ def projectsList(request):
             # Union the filtered or unfiltered querysets
             projects = guide_projects.union(examiner_projects)
 
-            # Pagination
-            paginator = Paginator(projects, 5)  # Show 10 projects per page
+            # Handle pagination
+            per_page = request.GET.get('per_page', 5)  # Default to 5 projects per page
+            paginator = Paginator(projects, per_page)  # Dynamic per_page value
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
 
@@ -78,6 +79,7 @@ def projectsList(request):
                 'faculty': faculty,
                 'search_query': search_query,
                 'paginator': paginator,
+                'per_page': per_page,  # Pass per_page to template to highlight active option
             }
             return render(request, 'mtechMinorEval/projectsList.html', context)
 
@@ -86,6 +88,7 @@ def projectsList(request):
             return redirect('login')
     else:
         return redirect('login')
+
 
 
 
