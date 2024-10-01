@@ -19,11 +19,17 @@
                     <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
                         <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}"><span class="fas fa-home"></span></a></li>
                         <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Projects</li>
+                        <li class="breadcrumb-item active" aria-current="page">Students</li>
                     </ol>
                 </nav>
                 <h2 class="h4">All Projects</h2>
-                <p class="mb-0">MTech Minor IT Projects</p>
+                <p class="mb-0">MTech Minor IT Students</p>
+                <br>
+                <div class="btn-toolbar dropdown">
+                    <a href="{% url 'add-new-project' %}" class="btn btn-primary btn-sm mr-2 ">
+                        <span class="fas fa-plus mr-2"></span>New Project
+                    </a>
+                </div>
             </div>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group">
@@ -36,11 +42,19 @@
         <div class="table-settings mb-4">
             <div class="row align-items-center justify-content-between">
                 <div class="col col-md-6 col-lg-3 col-xl-4">
-                    <div class="input-group">
-                        <span class="input-group-text" id="basic-addon2"><span class="fas fa-search"></span></span>
-                        <input type="text" class="form-control" id="exampleInputIconLeft" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2">
-                    </div>
+                    <form method="GET" action="{% url 'project-allotment' %}" class="w-100">
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon2">
+                                <span class="fas fa-search"></span>
+                            </span>
+                            <input type="text" name="search" class="form-control" id="exampleInputIconLeft" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="{{ search_query }}">
+                        </div>
+                    </form>
                 </div>
+
+
+
+
                 <div class="col-4 col-md-2 col-xl-1 pl-md-0 text-right">
                     <div class="btn-group">
                         <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -50,11 +64,32 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right">
-                            <span class="dropdown-item font-weight-bold text-dark">Show</span>
-                            <a class="dropdown-item d-flex font-weight-bold" href="#">10 <span class="icon icon-small ml-auto"><span class="fas fa-check"></span></span></a>
-                            <a class="dropdown-item font-weight-bold" href="#">20</a>
-                            <a class="dropdown-item font-weight-bold" href="#">30</a>
+                            <a class="dropdown-item d-flex font-weight-bold" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=5">
+                                5 
+                                {% if per_page == '5' %}
+                                <span class="icon icon-small ml-auto" >
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item d-flex font-weight-bold" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=10">
+                                10 
+                                {% if per_page == '10' %}
+                                <span class="icon icon-small ml-auto">
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item d-flex font-weight-bold" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=20">
+                                20 
+                                {% if per_page == '20' %}
+                                <span class="icon icon-small ml-auto" >
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
                         </div>
+                                                                     
                     </div>
                 </div>
             </div>
@@ -124,30 +159,33 @@
             <div class="card-footer px-3 border-0 d-flex align-items-center justify-content-between">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination mb-0">
+                        {% if projects.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="#">Previous</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ projects.previous_page_number }}">Previous</a>
                         </li>
+                        {% endif %}
+                        
+                        {% for num in projects.paginator.page_range %}
+                            {% if projects.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" href="#">{{ num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+        
+                        {% if projects.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="#">1</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ projects.next_page_number }}">Next</a>
                         </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">4</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">5</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
+                        {% endif %}
                     </ul>
                 </nav>
-                <div class="font-weight-bold small">Showing <b>5</b> out of <b>25</b> entries</div>
+                <div class="font-weight-bold small">Showing <b>{{ projects.start_index }}</b> to <b>{{ projects.end_index }}</b> out of <b>{{ projects.paginator.count }}</b> entries</div>
+
             </div>
         </div>
 

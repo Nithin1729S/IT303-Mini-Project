@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.db import transaction
 from django.core.paginator import Paginator
 from django.contrib.auth import authenticate, login, logout
@@ -10,23 +10,20 @@ from .forms import ExaminerEvaluationForm, GuideEvaluationForm, ProfileEditForm
 from google.auth.transport.requests import Request
 from users.models import *
 import requests
-from weasyprint import HTML, CSS
+from weasyprint import HTML
 from django.db.models import Q
-import json
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from django.http import JsonResponse
 import os
-from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import redirect
-from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from django.template.loader import render_to_string
 from .forms import ProjectEditForm,StudentEditForm,FacultyEditForm
 from users.views import send_login_email
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+CLIENT_SECRET_FILE = 'mtechMinorEval/static/client.json'
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -278,7 +275,7 @@ def projectAllotment(request):
 
     # Filter students based on the search query
     if search_query:
-        projects= Faculty.objects.filter(
+        projects= Project.objects.filter(
             Q(title__icontains=search_query) |
             Q(desc__icontains=search_query) |
             Q(student__name__icontains=search_query) |
@@ -651,10 +648,6 @@ def addNewFaculty(request):
     context = {'form': form}
     return render(request, 'mtechMinorEval/addNewFaculty.html', context)
 
-
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-
-CLIENT_SECRET_FILE = 'mtechMinorEval/static/client.json'
 
 def export_faculty_project_to_google_sheet(request):
     if not request.user.is_authenticated:
