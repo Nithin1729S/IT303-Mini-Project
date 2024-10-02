@@ -96,9 +96,22 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        
-                        <th>Name</th>						
-                        <th>Email</th>
+                        <th>
+                            <a href="?sort=name&order={% if sort_column == 'name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Name
+                                {% if sort_column == 'name' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=email&order={% if sort_column == 'email' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Email
+                                {% if sort_column == 'email' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -136,18 +149,18 @@
                     </tr>
                     {% endfor %}
                     <!-- Item -->
-                                                  
                 </tbody>
             </table>
+            
             <div class="card-footer px-3 border-0 d-flex align-items-center justify-content-between">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination mb-0">
                         {% if facultys.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ facultys.previous_page_number }}">Previous</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ facultys.previous_page_number }}">Previous</a>
                         </li>
                         {% endif %}
-                        
+            
                         {% for num in facultys.paginator.page_range %}
                             {% if facultys.number == num %}
                             <li class="page-item active">
@@ -155,21 +168,21 @@
                             </li>
                             {% else %}
                             <li class="page-item">
-                                <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ num }}">{{ num }}</a>
+                                <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ num }}">{{ num }}</a>
                             </li>
                             {% endif %}
                         {% endfor %}
-        
+            
                         {% if facultys.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ facultys.next_page_number }}">Next</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ facultys.next_page_number }}">Next</a>
                         </li>
                         {% endif %}
                     </ul>
                 </nav>
                 <div class="font-weight-bold small">Showing <b>{{ facultys.start_index }}</b> to <b>{{ facultys.end_index }}</b> out of <b>{{ facultys.paginator.count }}</b> entries</div>
-
             </div>
+            
         </div>
 
         {% include 'mtechMinorEval/footer.html' %}
