@@ -230,6 +230,7 @@ def loginUser(request):
 
             #Update the cache with the new attempts data
             cache.set(cache_key, attempts, timeout = 60*2) #Cacehe timeout of 2 minutes to store attempts
+            #(should always  be greater than the time for which we are blocking a user)
 
     return render(request, 'users/login.html')
 
