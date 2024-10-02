@@ -1,4 +1,5 @@
 import requests
+import datetime
 
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect,get_object_or_404
@@ -15,10 +16,12 @@ from django.utils import timezone
 import re,os,socket,platform
 import pytz
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from dotenv import load_dotenv
+from django.core.cache import cache
+from django.utils import timezone
 load_dotenv()
 
 class ExtendedUserCreationForm(UserCreationForm):
@@ -181,8 +184,24 @@ def loginUser(request):
         # Proceed with the login logic if CAPTCHA was successful
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, email=email, password=password)
+        # user = authenticate(request, email=email, password=password)
 
+        #Cache key to track login attempts
+        cache_key = f"login_attempts_{email}"
+        attempts = cache.get(cache_key, {'count': 0, 'lockout_until': None})
+
+        #Check if the user is currently locked out
+        if attempts['lockout_until']:
+            if timezone.now() < attempts['lockout_until']:
+                time_left = (attempts['lockout_until'] - timezone.now()).seconds
+                messages.error(request, f"Too many failed  attempts. Please try againn in {time_left} seconds.")
+                return redirect('login')
+            else:
+                #Reset lockout after the lockout period is over
+                attempts['count'] = 0
+                attempts['lockout_until'] = None
+        
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             try:
                 profile = Profile.objects.get(user=user)
@@ -191,13 +210,26 @@ def loginUser(request):
                     recipient_list = [email]
                     send_login_email(profile.user.username, recipient_list)
                     messages.success(request, f'{email} logged in successfully!')
+                    #Reset the failed attempts on successful login
+                    cache.delete(cache_key)
                     return redirect('projectsList')
                 else:
                     messages.error(request, "You do not have permission to access this area.")
             except Profile.DoesNotExist:
                 messages.error(request, "Profile not found for the user.")
         else:
-            messages.error(request, "Email or password is incorrect.")
+            #Increment the failed attempts count
+            attempts['count'] +=1
+
+            if attempts['count'] > 2:
+            #Lock the user for 1 minue
+                attempts['lockout_until'] = timezone.now() + timedelta(minutes=1)
+                messages.error(request, "Too many failed attempts. you are locked for 1 minute.")
+            else:
+                messages.error(request, "Email or password is incorrect.")
+
+            #Update the cache with the new attempts data
+            cache.set(cache_key, attempts, timeout = 60*2) #Cacehe timeout of 2 minutes to store attempts
 
     return render(request, 'users/login.html')
 
