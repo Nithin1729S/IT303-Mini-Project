@@ -230,10 +230,30 @@ def faculty_specific_eval(request,pk):
     userEmail = user.email
     userProfile = get_object_or_404(Profile, email=userEmail)
     faculty = get_object_or_404(Faculty, profile=userProfile)
-    projects=ProjectEvalSummary.objects.filter(Q(guide=faculty) | Q(examiner=faculty))
+    search_query = request.GET.get('search', '')
+    per_page = request.GET.get('per_page', 5)  
+    sort_column = request.GET.get('sort', 'student__rollno')  
+    sort_order = request.GET.get('order', 'asc')
+    if sort_order == 'desc':
+        order_by = f'-{sort_column}'
+    else:
+        order_by = sort_column 
+    projects=ProjectEvalSummary.objects.filter(Q(guide=faculty) |
+                                                Q(examiner=faculty) )
+    projects=projects.filter(Q(project__title__icontains=search_query) |
+                                                  Q(student__name__icontains=search_query) |
+                                                   Q(student__rollno__icontains=search_query) 
+    ).order_by(order_by)
+    paginator = Paginator(projects, per_page)  
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context={
         'faculty':faculty,
-        'projects':projects
+        'projects':page_obj,
+        'search_query': search_query,
+        'per_page': per_page,
+        'sort_column': sort_column,
+        'sort_order': sort_order,
     }
     return render(request,'mtechMinorEval/facultySpecific.html',context)
 
