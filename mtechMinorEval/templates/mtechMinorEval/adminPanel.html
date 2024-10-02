@@ -28,10 +28,6 @@
                     <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger"></span>Upgrade to Pro</a>
                 </div>
             </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-primary">Share</button>
-                <button type="button" class="btn btn-sm btn-outline-primary">Export</button>
-            </div>
         </div>
 
         <div class="row justify-content-md-center">
@@ -149,81 +145,23 @@
                                     <tr>
                                         <th scope="col">Page name</th>
                                         <th scope="col">Page Views</th>
-                                        <th scope="col">Page Value</th>
                                         <th scope="col">Bounce rate</th>
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    {% for access in path_accesses %}
                                     <tr>
                                         <th scope="row">
-                                            /admin/index.html
+                                            {{ access.path }}
                                         </th>
                                         <td>
-                                            3,225
+                                            {{ access.access_count }}
                                         </td>
                                         <td>
-                                            $20
-                                        </td>
-                                        <td>
-                                            <span class="fas fa-arrow-up text-danger mr-3"></span> 42,55%
+                                            {{ access.bounces }}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            /admin/forms.html
-                                        </th>
-                                        <td>
-                                            2,987
-                                        </td>
-                                        <td>
-                                            0
-                                        </td>
-                                        <td>
-                                            <span class="fas fa-arrow-down text-success mr-3"></span> 43,52%
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            /admin/util.html
-                                        </th>
-                                        <td>
-                                            2,844
-                                        </td>
-                                        <td>
-                                        294
-                                        </td>
-                                        <td>
-                                            <span class="fas fa-arrow-down text-success mr-3"></span> 32,35%
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            /admin/validation.html
-                                        </th>
-                                        <td>
-                                            2,050
-                                        </td>
-                                        <td>
-                                            $147
-                                        </td>
-                                        <td>
-                                            <span class="fas fa-arrow-up text-danger mr-3"></span> 50,87%
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">
-                                            /admin/modals.html
-                                        </th>
-                                        <td>
-                                            1,483
-                                        </td>
-                                        <td>
-                                            $19
-                                        </td>
-                                        <td>
-                                            <span class="fas fa-arrow-down text-success mr-3"></span> 32,24%
-                                        </td>
-                                    </tr>
+                                    {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
@@ -243,6 +181,36 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}{% endblock javascripts %}
+<!-- access_count.html -->
+<!-- access_count.html -->
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path Access Counts</title>
+</head>
+<body>
+    <h1>Path Access Counts</h1>
+    <table>
+        <tr>
+            <th>Path</th>
+            <th>Access Count</th>
+            <th>Bounces</th>
+        </tr>
+        {% for access in path_accesses %}
+        <tr>
+            <td>{{ access.path }}</td>
+            <td>{{ access.access_count }}</td>
+            <td>{{ access.bounces }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Bounce Rate: {{ bounce_rate }}%</h2>
+</body>
+</html> {% endcomment %}
+
 
 
 <!-- {% load static %}

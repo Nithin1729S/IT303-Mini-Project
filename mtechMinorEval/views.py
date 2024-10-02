@@ -321,10 +321,15 @@ def adminLogin(request):
 @user_passes_test(lambda u: u.is_superuser)
 def adminPanel(request):
         "Gives a panel to admin listing all databases to perform CRUD operations on."
+        path_accesses = PathAccess.objects.order_by('-access_count')[:8]
+        total_visits = sum(access.access_count for access in path_accesses)
+        total_bounces = sum(access.bounces for access in path_accesses)
+        bounce_rate = (total_bounces / total_visits) * 100 if total_visits > 0 else 0
         projects = Project.objects.all() 
         students = Student.objects.all() 
         facultys = Faculty.objects.all() 
-        context={'projects':projects,'students':students,'facultys':facultys}
+        context={'projects':projects,'students':students,'facultys':facultys,'path_accesses': path_accesses,
+            'bounce_rate': bounce_rate,}
         return render(request,'mtechMinorEval/adminPanel.html', context)
 
 
@@ -895,3 +900,27 @@ def export_faculty_eval_to_google_sheet(request):
     except HttpError as err:
         print(f"An error occurred: {err}")
         return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
+
+
+        # views.py
+from django.shortcuts import render
+from .models import PathAccess
+
+# views.py
+from django.shortcuts import render
+from .models import PathAccess
+
+def access_count_view(request):
+    path_accesses = PathAccess.objects.all()
+    
+    total_visits = sum(access.access_count for access in path_accesses)
+    total_bounces = sum(access.bounces for access in path_accesses)
+
+    # Calculate bounce rate
+    bounce_rate = (total_bounces / total_visits) * 100 if total_visits > 0 else 0
+
+    context = {
+        'path_accesses': path_accesses,
+        'bounce_rate': bounce_rate,
+    }
+    return render(request, 'mtechMinorEval/access_count.html', context)

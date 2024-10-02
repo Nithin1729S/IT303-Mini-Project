@@ -1,0 +1,28 @@
+<!-- access_count.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path Access Counts</title>
+</head>
+<body>
+    <h1>Path Access Counts</h1>
+    <table>
+        <tr>
+            <th>Path</th>
+            <th>Access Count</th>
+            <th>Bounces</th>
+        </tr>
+        {% for access in path_accesses %}
+        <tr>
+            <td>{{ access.path }}</td>
+            <td>{{ access.access_count }}</td>
+            <td>{{ access.bounces }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Bounce Rate: {{ bounce_rate }}%</h2>
+</body>
+</html>

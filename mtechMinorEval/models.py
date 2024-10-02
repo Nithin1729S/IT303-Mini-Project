@@ -134,3 +134,13 @@ def update_examiner_evaluation(sender, instance, **kwargs):
     eval_summary.examiner = instance.examiner
     eval_summary.examiner_score = instance.total_score
     eval_summary.save()
+
+from django.db import models
+
+class PathAccess(models.Model):
+    path = models.CharField(max_length=255)
+    access_count = models.IntegerField(default=0)
+    bounces = models.IntegerField(default=0)  # New field to track bounces
+
+    def __str__(self):
+        return self.path
