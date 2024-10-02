@@ -34,6 +34,20 @@ def home(request):
     faculty = get_object_or_404(Faculty, profile=userProfile)
     return render(request,'mtechMinorEval/home.html',{'faculty':faculty})
 
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from .models import Profile, Faculty, Project
+
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from .models import Profile, Faculty, Project
+
 @login_required(login_url='login')
 def projectsList(request):
     user = request.user
@@ -47,37 +61,29 @@ def projectsList(request):
         if userProfile.role == 'faculty':
             faculty = get_object_or_404(Faculty, profile=userProfile)
 
-            # Search functionality: apply search filter before union
+            # Get search and sorting parameters
             search_query = request.GET.get('search', '')
+            per_page = request.GET.get('per_page', 5)
+            sort_column = request.GET.get('sort', 'title')
+            sort_order = request.GET.get('order', 'asc')
 
+            # Basic query without complex lookups
+            projects = Project.objects.filter(
+                Q(guide=faculty) | Q(examiner=faculty)
+            ).distinct()
+
+            # Simple search on title only
             if search_query:
-                guide_projects = Project.objects.filter(
-                    guide=faculty
-                ).filter(
-                    Q(title__icontains=search_query) |
-                    Q(student__name__icontains=search_query) |
-                    Q(student__email__icontains=search_query) |
-                    Q(student__rollno__icontains=search_query)
-                )
+                projects = projects.filter(title__icontains=search_query)
 
-                examiner_projects = Project.objects.filter(
-                    examiner=faculty
-                ).filter(
-                    Q(title__icontains=search_query) |
-                    Q(student__name__icontains=search_query) |
-                    Q(student__email__icontains=search_query) |
-                    Q(student__rollno__icontains=search_query)
-                )
+            # Simple sorting
+            if sort_order == 'desc':
+                projects = projects.order_by(f'-{sort_column}')
             else:
-                guide_projects = Project.objects.filter(guide=faculty)
-                examiner_projects = Project.objects.filter(examiner=faculty)
-
-            # Union the filtered or unfiltered querysets
-            projects = guide_projects.union(examiner_projects)
+                projects = projects.order_by(sort_column)
 
             # Handle pagination
-            per_page = request.GET.get('per_page', 5)  # Default to 5 projects per page
-            paginator = Paginator(projects, per_page)  # Dynamic per_page value
+            paginator = Paginator(projects, per_page)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
 
@@ -86,12 +92,14 @@ def projectsList(request):
                 'faculty': faculty,
                 'search_query': search_query,
                 'paginator': paginator,
-                'per_page': per_page,  # Pass per_page to template to highlight active option
+                'per_page': per_page,
+                'sort_column': sort_column,
+                'sort_order': sort_order,
             }
             return render(request, 'mtechMinorEval/projectsList.html', context)
 
         else:
-            logout(request, user)
+            logout(request)
             return redirect('login')
     else:
         return redirect('login')

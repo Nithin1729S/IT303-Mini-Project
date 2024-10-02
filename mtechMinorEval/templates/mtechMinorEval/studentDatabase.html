@@ -101,7 +101,7 @@
                 <thead>
                     <tr>
                         <th>
-                            <a href="?sort=rollno&order={% if sort_column == 'rollno' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=rollno&order={% if sort_column == 'rollno' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 Rollno
                                 {% if sort_column == 'rollno' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
@@ -109,7 +109,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="?sort=name&order={% if sort_column == 'name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=name&order={% if sort_column == 'name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 Name
                                 {% if sort_column == 'name' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
@@ -117,7 +117,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="?sort=email&order={% if sort_column == 'email' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=email&order={% if sort_column == 'email' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 Email
                                 {% if sort_column == 'email' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>

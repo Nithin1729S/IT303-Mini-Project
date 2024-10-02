@@ -93,15 +93,43 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        
-                        <th>Project Name</th>						
-                        <th>Student Rollno</th>
-                        <th>Student Name</th>
-                        <th>Student Email</th>
+                        <th>
+                            <a href="?sort=title&order={% if sort_column == 'title' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                Project Title
+                                {% if sort_column == 'title' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=student__rollno&order={% if sort_column == 'student__rollno' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                Student Rollno
+                                {% if sort_column == 'student__rollno' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=student__name&order={% if sort_column == 'student__name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                Student Name
+                                {% if sort_column == 'student__name' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=student__email&order={% if sort_column == 'student__email' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                Student Email
+                                {% if sort_column == 'student__email' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
                         <th>Role</th>
                         <th>Action</th>
                     </tr>
                 </thead>
+                
                 <tbody>
                     <!-- Item -->
                     {% for project in projects %}
@@ -142,23 +170,24 @@
                     <ul class="pagination mb-0">
                         {% if projects.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ projects.previous_page_number }}&search={{ search_query }}">Previous</a>
+                            <a class="page-link" href="?page={{ projects.previous_page_number }}&sort={{ sort_column }}&order={{ sort_order }}&search={{ search_query }}">Previous</a>
                         </li>
                         {% endif %}
                         {% for page_num in projects.paginator.page_range %}
                         <li class="page-item {% if projects.number == page_num %}active{% endif %}">
-                            <a class="page-link" href="?page={{ page_num }}&search={{ search_query }}">{{ page_num }}</a>
+                            <a class="page-link" href="?page={{ page_num }}&sort={{ sort_column }}&order={{ sort_order }}&search={{ search_query }}">{{ page_num }}</a>
                         </li>
                         {% endfor %}
                         {% if projects.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ projects.next_page_number }}&search={{ search_query }}">Next</a>
+                            <a class="page-link" href="?page={{ projects.next_page_number }}&sort={{ sort_column }}&order={{ sort_order }}&search={{ search_query }}">Next</a>
                         </li>
                         {% endif %}
                     </ul>
                 </nav>
                 <div class="font-weight-bold small">Showing <b>{{ projects.start_index }}</b> to <b>{{ projects.end_index }}</b> out of <b>{{ projects.paginator.count }}</b> entries</div>
             </div>
+            
             
         </div>
 

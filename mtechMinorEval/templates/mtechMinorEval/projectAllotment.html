@@ -101,7 +101,7 @@
                     <tr>
                         
                         <th>
-                            <a href="?sort=title&order={% if sort_column == 'title' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=title&order={% if sort_column == 'title' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 Title
                                 {% if sort_column == 'title' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
@@ -110,7 +110,7 @@
                         </th>					
                         
                         <th>
-                            <a href="?sort=student__rollno&order={% if sort_column == 'student__rollno' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=student__rollno&order={% if sort_column == 'student__rollno' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 Student Rollno
                                 {% if sort_column == 'student.rollno' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
@@ -118,7 +118,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="?sort=student&order={% if sort_column == 'student' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=student&order={% if sort_column == 'student' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 Student Name
                                 {% if sort_column == 'student' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
@@ -126,7 +126,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="?sort=examiner&order={% if sort_column == 'examiner' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=examiner&order={% if sort_column == 'examiner' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 Examiner
                                 {% if sort_column == 'examiner' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
@@ -134,7 +134,7 @@
                             </a>
                         </th>
                         <th>
-                            <a href="?sort=guide&order={% if sort_column == 'guide' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=guide&order={% if sort_column == 'guide' and sort_order == 'asc' %}desc{% else %}asc{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
                                 Guide
                                 {% if sort_column == 'guide' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
