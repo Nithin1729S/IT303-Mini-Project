@@ -12,5 +12,6 @@ urlpatterns = [
     path('resend-otp/',resend_otp,name='resend_otp'),
     path('login-otp/', views.login_otp, name='login_otp'),
     path('verify-otp-login/', views.verify_otp_login, name='verify_otp_login'),
-    path('student-profile/<str:pk>',views.student_profile_view,name='student-profile')
+    path('student-profile/<str:pk>',views.student_profile_view,name='student-profile'),
+    path('change-password/', views.change_password_view, name='change_password'),
 ]

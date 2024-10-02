@@ -36,8 +36,8 @@
                 <span>Edit Profile</span>
             </a>
         </li>
-        <li class="nav-item  {% if 'student-database' in segment %} active {% endif %}">
-            <a href="#" class="nav-link">
+        <li class="nav-item  {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
+            <a href="{% url 'change_password' %}" class="nav-link">
                 <span class="sidebar-icon"><span class="fas fa-user-graduate"></span></span>
                 <span>Change Password</span>
             </a>

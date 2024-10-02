@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from .models import Profile, Student, Faculty
 from django.contrib import messages
 from django import forms
+from .forms import FacultyChangePasswordForm
 from mtechMinorEval.models import Project
 from users.models import Profile
 import random
@@ -380,3 +381,45 @@ def resend_otp(request):
         messages.error(request, 'Unable to resend OTP. Please try again.')
 
     return redirect('reset-password', otp=request.session.get('otp'))
+
+
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import User
+from .forms import FacultyChangePasswordForm
+from .models import Faculty
+
+def change_password_view(request):
+    user = request.user
+    userEmail = user.email
+    userProfile = get_object_or_404(Profile, email=userEmail)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
+    if request.method == 'POST':
+        form = FacultyChangePasswordForm(request.POST)
+        form.email = request.user.email  # Set the email from the logged-in user
+
+        if form.is_valid():
+            new_password = form.cleaned_data['new_password']
+            user = User.objects.get(email=request.user.email)
+
+            # Update user's password
+            user.set_password(new_password)
+            user.save()
+
+            # Optionally update the session authentication
+            update_session_auth_hash(request, user)
+
+            messages.success(request, 'Your password has been changed successfully.')
+            return redirect('projectsList')  # Redirect to a success page
+
+    else:
+        form = FacultyChangePasswordForm()
+
+    return render(request, 'users/changePassword.html', {
+        'form': form,
+        'email': request.user.email,
+        'faculty':faculty
+    })
+
