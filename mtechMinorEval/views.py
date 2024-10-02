@@ -171,7 +171,7 @@ def summary(request):
 def totalEval(request):
     search_query = request.GET.get('search', '')
     per_page = request.GET.get('per_page', 5)  
-    sort_column = request.GET.get('sort', 'title')  
+    sort_column = request.GET.get('sort', 'student__rollno')  
     sort_order = request.GET.get('order', 'asc') 
     if sort_order == 'desc':
         order_by = f'-{sort_column}'
@@ -179,12 +179,11 @@ def totalEval(request):
         order_by = sort_column 
 
     "Gives adminstrator the evaluation summary of entire mtech minor it projects and can be run by only logged in users."
-    projects = Project.objects.select_related('student', 'guide', 'examiner')\
-                          .prefetch_related('guide_evaluation', 'examiner_evaluation').filter(
-                              Q(title__icontains=search_query) |
+    projects = ProjectEvalSummary.objects.filter(
+                              Q(project__title__icontains=search_query) |
                               Q(student__name__icontains=search_query) |
                               Q(student__rollno__icontains=search_query)
-                          ).order_by(order_by)
+    ).order_by(order_by)
     
     paginator = Paginator(projects, per_page)  
     page_number = request.GET.get('page')

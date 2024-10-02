@@ -96,7 +96,7 @@
                     <tr>
                         <th>
                             <a href="?sort=student__rollno&order={% if sort_column == 'student__rollno' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
-                                Register Number
+                                Student Rollno
                                 {% if sort_column == 'student__rollno' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
                                 {% endif %}
@@ -104,7 +104,7 @@
                         </th>
                         <th>
                             <a href="?sort=student&order={% if sort_column == 'student' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
-                                Name of the Student
+                                Student Name
                                 {% if sort_column == 'student' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
                                 {% endif %}
@@ -127,23 +127,28 @@
                             </a>
                         </th>
                         <th>
-                            <a href="?sort=guide_evaluation&order={% if sort_column == 'guide_evaluation' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=guide_score&order={% if sort_column == 'guide_score' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
                                 Guide Marks (Max 60)
-                                {% if sort_column == 'guide_evaluation' %}
+                                {% if sort_column == 'guide_score' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
                                 {% endif %}
                             </a>
                         </th>
                         <th>
-                            <a href="?sort=examiner_evaluation&order={% if sort_column == 'examiner_evaluation' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                            <a href="?sort=examiner_score&order={% if sort_column == 'examiner_score' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
                                 Examiner Marks (Max 40)
-                                {% if sort_column == 'examiner_evaluation' %}
+                                {% if sort_column == 'examiner_score' %}
                                     <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
                                 {% endif %}
                             </a>
                         </th>
                         <th>
-                            Total Marks (Max 100)
+                            <a href="?sort=total_score&order={% if sort_column == 'total_score' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Total Marks (Max 100)
+                                {% if sort_column == 'total_score' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
                         </th>
                         <th>
                             S/N
@@ -155,45 +160,24 @@
                     <tr>
                         <td>{{ project.student.rollno }}</td>
                         <td>{{ project.student.name|truncatechars:20 }}</td>
-                        <td>{{ project.guide.name|truncatechars:20 }}</td>
-                        <td>{{ project.examiner.name|truncatechars:20 }}</td>
+                        <td>{{ project.guide|truncatechars:20 }}</td>
+                        <td>{{ project.examiner|truncatechars:20 }}</td>
                         <td>
-                            {% if project.guide_evaluation %}
-                                {{ project.guide_evaluation.total_score }}
-                            {% else %}
-                                N/A
-                            {% endif %}
+                            {{ project.guide_score|default:"N/A" }}
                         </td>
                         <td>
-                            {% if project.examiner_evaluation %}
-                                {{ project.examiner_evaluation.total_score }}
-                            {% else %}
-                                N/A
-                            {% endif %}
+                            {{ project.examiner_score|default:"N/A" }}
                         </td>
                         <td>
-                            {% if project.guide_evaluation and project.examiner_evaluation %}
-                                {{ project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" }}
-                            {% else %}
-                                N/A
-                            {% endif %}
+                            {{ project.total_score|default:'N/A' }}
                         </td>
                         <td>
-                            {% if project.guide_evaluation and project.examiner_evaluation %}
-                                {% with total_score=project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" %}
-                                    {% if total_score >= 50 %}
-                                        S
-                                    {% else %}
-                                        N
-                                    {% endif %}
-                                {% endwith %}
-                            {% else %}
-                                N/A
-                            {% endif %}
+                            {{ project.sn }}
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
+                
             </table>
             <div class="card-footer px-3 border-0 d-flex align-items-center justify-content-between">
                 <nav aria-label="Page navigation example">

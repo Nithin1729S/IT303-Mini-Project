@@ -7,6 +7,12 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from users.models import Student, Faculty
+
+
 class Project(models.Model):
     id = models.UUIDField(default=uuid.uuid4,unique=True,primary_key=True,editable=False)
     title=models.CharField(max_length=255)
@@ -82,47 +88,49 @@ class ExaminerEvaluation(models.Model):
         return f"Examiner Evaluation for {self.project.title}"
 
 
+
 class ProjectEvalSummary(models.Model):
-    project = models.OneToOneField(Project, on_delete=models.CASCADE, related_name='eval_summary')
-    project_name = models.CharField(max_length=255)
-    examiner_total_eval = models.PositiveIntegerField(default=0)
-    guide_total_eval = models.PositiveIntegerField(default=0)
-    is_satisfactory = models.BooleanField(default=False)
-    guide_name = models.CharField(max_length=255, blank=True)
-    examiner_name = models.CharField(max_length=255, blank=True)
-    student_rollno = models.CharField(max_length=20, blank=True)
+    project = models.OneToOneField('Project', on_delete=models.CASCADE, related_name='eval_summary')
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
+    guide = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='guide_eval_summaries')
+    examiner = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='examiner_eval_summaries')
+    examiner_score = models.PositiveIntegerField(default=0)
+    guide_score = models.PositiveIntegerField(default=0)
+    total_score = models.PositiveIntegerField(default=0)
+    sn = models.CharField(max_length=1, editable=False, default='n')  # New field for status
+
+    def save(self, *args, **kwargs):
+        # Set the sn field based on total_score
+        self.sn = 's' if self.total_score >= 50 else 'n'
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Evaluation Summary for {self.project_name}"
+        return f"Evaluation Summary for {self.project.title}"
 
-def create_or_update_eval_summary(project):
-    summary, created = ProjectEvalSummary.objects.get_or_create(project=project)
-    summary.project_name = project.title
-    summary.guide_name = project.guide.profile.user.get_full_name() if project.guide else ""
-    summary.examiner_name = project.examiner.profile.user.get_full_name() if project.examiner else ""
-    summary.student_rollno = project.student.rollno if hasattr(project.student, 'rollno') else ""
-    summary.save()
-    return summary
+@receiver(post_save, sender='mtechMinorEval.Project')
+def create_or_update_eval_summary(sender, instance, created, **kwargs):
+    eval_summary, _ = ProjectEvalSummary.objects.get_or_create(project=instance)
+    eval_summary.student = instance.student
+    eval_summary.guide = instance.guide
+    eval_summary.examiner = instance.examiner
+    eval_summary.save()
 
-@receiver(post_save, sender=Project)
-def project_post_save(sender, instance, created, **kwargs):
-    create_or_update_eval_summary(instance)
+@receiver(post_save, sender='mtechMinorEval.GuideEvaluation')
+def update_guide_evaluation(sender, instance, **kwargs):
+    eval_summary, _ = ProjectEvalSummary.objects.get_or_create(project=instance.project)
+    eval_summary.student = instance.project.student  # Ensure student is updated
+    eval_summary.guide = instance.guide  # Ensure guide is updated
+    eval_summary.guide_score = instance.total_score
+    eval_summary.total_score = eval_summary.guide_score + eval_summary.examiner_score
+    eval_summary.save()  # This will trigger the save method and update `sn`
 
-@receiver(post_save, sender=GuideEvaluation)
-def update_guide_eval(sender, instance, **kwargs):
-    summary = create_or_update_eval_summary(instance.project)
-    summary.guide_total_eval = instance.total_score
-    summary.is_satisfactory = (summary.guide_total_eval + summary.examiner_total_eval) >= 50  # Adjust threshold as needed
-    summary.save()
+@receiver(post_save, sender='mtechMinorEval.ExaminerEvaluation')
+def update_examiner_evaluation(sender, instance, **kwargs):
+    eval_summary, _ = ProjectEvalSummary.objects.get_or_create(project=instance.project)
+    eval_summary.student = instance.project.student  # Ensure student is updated
+    eval_summary.examiner = instance.examiner  # Ensure examiner is updated
+    eval_summary.examiner_score = instance.total_score
+    eval_summary.total_score = eval_summary.guide_score + eval_summary.examiner_score
+    eval_summary.save()  # This will trigger the save method and update `sn`
 
-@receiver(post_save, sender=ExaminerEvaluation)
-def update_examiner_eval(sender, instance, **kwargs):
-    summary = create_or_update_eval_summary(instance.project)
-    summary.examiner_total_eval = instance.total_score
-    summary.is_satisfactory = (summary.guide_total_eval + summary.examiner_total_eval) >= 50  # Adjust threshold as needed
-    summary.save()
 
-# Run this function once to create ProjectEvalSummary for existing Projects
-def create_eval_summaries_for_existing_projects():
-    for project in Project.objects.all():
-        create_or_update_eval_summary(project)
