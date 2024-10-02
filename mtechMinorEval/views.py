@@ -900,9 +900,138 @@ def export_faculty_eval_to_google_sheet(request):
     except HttpError as err:
         print(f"An error occurred: {err}")
         return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
+    
+
+def export_faculty_details_to_google_sheet(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
+    try:
+        creds = None
+        token_path = 'token.json'
+        if os.path.exists(token_path):
+            creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
+                creds = flow.run_local_server(port=0)
+            with open(token_path, 'w') as token:
+                token.write(creds.to_json())
+        
+        service = build('sheets', 'v4', credentials=creds)
+        facultys=Faculty.objects.all()
+        sheet_data = [['Faculty Name', 'Email']]
+        for faculty in facultys:
+            sheet_data.append([
+                faculty.name,
+                faculty.email
+            ])
+        body = {
+            'properties': {'title': f"Facultys Data"},
+            'sheets': [{
+                'data': [{
+                    'rowData': [{'values': [{'userEnteredValue': {'stringValue': str(cell)}} for cell in row]} for row in sheet_data]
+                }]
+            }]
+        }
+        spreadsheet = service.spreadsheets().create(body=body).execute()
+        sheet_id = spreadsheet.get('spreadsheetId')
+        return redirect(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
+    except HttpError as err:
+        print(f"An error occurred: {err}")
+        return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
+    
+
+def export_student_details_to_google_sheet(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
+    try:
+        creds = None
+        token_path = 'token.json'
+        if os.path.exists(token_path):
+            creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
+                creds = flow.run_local_server(port=0)
+            with open(token_path, 'w') as token:
+                token.write(creds.to_json())
+        
+        service = build('sheets', 'v4', credentials=creds)
+        students=Student.objects.all()
+        sheet_data = [['Student Rollno','Student Name', 'Email','CGPA']]
+        for student in students:
+            sheet_data.append([
+                student.rollno,
+                student.name,
+                student.email,
+                student.cgpa
+            ])
+        body = {
+            'properties': {'title': f"Students' Data"},
+            'sheets': [{
+                'data': [{
+                    'rowData': [{'values': [{'userEnteredValue': {'stringValue': str(cell)}} for cell in row]} for row in sheet_data]
+                }]
+            }]
+        }
+        spreadsheet = service.spreadsheets().create(body=body).execute()
+        sheet_id = spreadsheet.get('spreadsheetId')
+        return redirect(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
+    except HttpError as err:
+        print(f"An error occurred: {err}")
+        return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
 
 
-        # views.py
+
+def export_project_details_to_google_sheet(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
+    try:
+        creds = None
+        token_path = 'token.json'
+        if os.path.exists(token_path):
+            creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
+                creds = flow.run_local_server(port=0)
+            with open(token_path, 'w') as token:
+                token.write(creds.to_json())
+        
+        service = build('sheets', 'v4', credentials=creds)
+        projects=Project.objects.all()
+        sheet_data = [['Project Title','Student Rollno', 'Student Name','Guide','Examiner']]
+        for project in projects:
+            sheet_data.append([
+                project.title,
+                project.student.rollno,
+                project.student.name,
+                project.guide,
+                project.examiner
+            ])
+        body = {
+            'properties': {'title': f"Projects' Data"},
+            'sheets': [{
+                'data': [{
+                    'rowData': [{'values': [{'userEnteredValue': {'stringValue': str(cell)}} for cell in row]} for row in sheet_data]
+                }]
+            }]
+        }
+        spreadsheet = service.spreadsheets().create(body=body).execute()
+        sheet_id = spreadsheet.get('spreadsheetId')
+        return redirect(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
+    except HttpError as err:
+        print(f"An error occurred: {err}")
+        return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
+    
+
+
 from django.shortcuts import render
 from .models import PathAccess
 

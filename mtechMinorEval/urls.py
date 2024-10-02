@@ -27,4 +27,7 @@ urlpatterns=[
     path('export-faculty-eval/', views.export_faculty_eval_to_google_sheet, name='faculty-eval-export'),
     path('faculty-evals/<str:pk>',views.faculty_specific_eval,name='faculty-specific'),
     path('access-counts/', views.access_count_view, name='access-counts'),
+    path('export-faculty/',views.export_faculty_details_to_google_sheet,name='export-faculty'),
+    path('export-student/',views.export_student_details_to_google_sheet,name='export-student'),
+    path('export-project/',views.export_project_details_to_google_sheet,name='export-project')
 ]
