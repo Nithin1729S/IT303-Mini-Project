@@ -24,19 +24,19 @@
                 <span>Dashboard</span>
                 </a>
             </li>
-            <li class="nav-item  {% if request.resolver_match.url_name == 'faculty-database' %} active {% endif %}">
+            <li class="nav-item  {% if request.resolver_match.url_name == 'faculty-database' or request.resolver_match.url_name == 'add-new-faculty' %} active {% endif %}">
                 <a href="{% url 'faculty-database' %}" class="nav-link">
                     <span class="sidebar-icon"><span class="fas fa-chalkboard-teacher"></span></span>
                     <span>Facultys</span>
                 </a>
             </li>
-            <li class="nav-item {% if request.resolver_match.url_name == 'student-database' %} active {% endif %}">
+            <li class="nav-item {% if request.resolver_match.url_name == 'student-database' or request.resolver_match.url_name == 'add-new-student' %} active {% endif %}">
                 <a href="{% url 'student-database' %}" class="nav-link">
                     <span class="sidebar-icon"><span class="fas fa-user-graduate"></span></span>
                     <span>Students</span>
                 </a>
             </li>
-            <li class="nav-item {% if request.resolver_match.url_name == 'project-allotment' %} active {% endif %}">
+            <li class="nav-item {% if request.resolver_match.url_name == 'project-allotment' or request.resolver_match.url_name == 'add-new-project' %} active {% endif %}">
                 <a href="{% url 'project-allotment' %}" class="nav-link">
                     <span class="sidebar-icon"><span class="fas fa-tasks"></span></span>
                     <span>Projects</span>
