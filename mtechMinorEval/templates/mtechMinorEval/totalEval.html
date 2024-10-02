@@ -1,0 +1,411 @@
+{% extends "mtechMinorEval/base.html" %}
+
+{% block title %} Transactions {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+                
+    <main class="content">
+
+        {% include 'mtechMinorEval/navigation.html' %}
+
+        
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <div class="d-block mb-4 mb-md-0">
+                <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+                    <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                        <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}"><span class="fas fa-home"></span></a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Evaluations</li>
+                    </ol>
+                </nav>
+                <h2 class="h4">All Evaluations</h2>
+                <p class="mb-0">MTech Minor IT Students</p>
+                <br>
+            </div>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-primary">Share</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary">Export</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-settings mb-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col col-md-6 col-lg-3 col-xl-4">
+                    <form method="GET" action="{% url 'total-eval' %}" class="w-100">
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon2">
+                                <span class="fas fa-search"></span>
+                            </span>
+                            <input type="text" name="search" class="form-control" id="exampleInputIconLeft" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="{{ search_query }}">
+                        </div>
+                    </form>
+                </div>
+
+
+
+
+                <div class="col-4 col-md-2 col-xl-1 pl-md-0 text-right">
+                    <div class="btn-group">
+                        <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="icon icon-sm icon-gray">
+                                <span class="fas fa-cog"></span>
+                            </span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right">
+                            <a class="dropdown-item d-flex font-weight-bold" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=5">
+                                5 
+                                {% if per_page == '5' %}
+                                <span class="icon icon-small ml-auto" >
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item d-flex font-weight-bold" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=10">
+                                10 
+                                {% if per_page == '10' %}
+                                <span class="icon icon-small ml-auto">
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item d-flex font-weight-bold" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=20">
+                                20 
+                                {% if per_page == '20' %}
+                                <span class="icon icon-small ml-auto" >
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                        </div>
+                                                                     
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-body border-light shadow-sm table-wrapper table-responsive pt-0">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            <a href="?sort=student__rollno&order={% if sort_column == 'student__rollno' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Register Number
+                                {% if sort_column == 'student__rollno' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=student&order={% if sort_column == 'student' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Name of the Student
+                                {% if sort_column == 'student' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=guide&order={% if sort_column == 'guide' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Guide
+                                {% if sort_column == 'guide' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=examiner&order={% if sort_column == 'examiner' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Examiner
+                                {% if sort_column == 'examiner' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=guide_evaluation&order={% if sort_column == 'guide_evaluation' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Guide Marks (Max 60)
+                                {% if sort_column == 'guide_evaluation' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=examiner_evaluation&order={% if sort_column == 'examiner_evaluation' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Examiner Marks (Max 40)
+                                {% if sort_column == 'examiner_evaluation' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            Total Marks (Max 100)
+                        </th>
+                        <th>
+                            S/N
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <td>{{ project.student.rollno }}</td>
+                        <td>{{ project.student.name|truncatechars:20 }}</td>
+                        <td>{{ project.guide.name|truncatechars:20 }}</td>
+                        <td>{{ project.examiner.name|truncatechars:20 }}</td>
+                        <td>
+                            {% if project.guide_evaluation %}
+                                {{ project.guide_evaluation.total_score }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if project.examiner_evaluation %}
+                                {{ project.examiner_evaluation.total_score }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if project.guide_evaluation and project.examiner_evaluation %}
+                                {{ project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if project.guide_evaluation and project.examiner_evaluation %}
+                                {% with total_score=project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" %}
+                                    {% if total_score >= 50 %}
+                                        S
+                                    {% else %}
+                                        N
+                                    {% endif %}
+                                {% endwith %}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="card-footer px-3 border-0 d-flex align-items-center justify-content-between">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination mb-0">
+                        {% if projects.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ projects.previous_page_number }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in projects.paginator.page_range %}
+                            {% if projects.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" href="#">{{ num }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+        
+                        {% if projects.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ projects.next_page_number }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="font-weight-bold small">Showing <b>{{ projects.start_index }}</b> to <b>{{ projects.end_index }}</b> out of <b>{{ projects.paginator.count }}</b> entries</div>
+
+            </div>
+        </div>
+
+        {% include 'mtechMinorEval/footer.html' %}
+
+    </main>
+    <script>
+        function submitDeleteForm(form) {
+            if (confirm("Are you sure you want to delete this project?")) {
+                form.submit();
+            }
+        }
+    </script>
+    
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
+
+<!-- {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Project Allotment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        table {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        thead {
+            background-color: #2c3e50;
+            color: #fff;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #eaeaea;
+        }
+
+        th {
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <nav style="background-color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 24px;"></nav>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <a href="{% url 'admin-panel' %}" style="font-size: 1.25rem; font-weight: bold; color: #2d3748;">Admin Panel</a>
+            <div style="margin-left: auto;">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'admin-logout' %}" style="color: #4299e1; text-decoration: none;">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" style="color: #4299e1; text-decoration: none;">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-black">Project Database</h1>
+
+    <div class="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none"></div>
+        {% if messages %}
+        <div class="mt-4 w-full max-w-md">
+            {% for message in messages %}
+            <div class="flash-message bg-white shadow-lg rounded-lg p-4 mb-2 pointer-events-auto">
+                <div class="flex items-center">
+                    {% if message.tags == 'success' %}
+                    <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% elif message.tags == 'error' %}
+                    <svg class="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% else %}
+                    <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    {% endif %}
+                    <p class="text-gray-800">{{ message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'admin-panel' %}" style="background-color:  rgb(0, 162, 255); color: white; padding: 0.5rem 1rem; border-radius: 0.25rem;">Go Back</a>
+        <a href="{% url 'add-new-project' %}" style="background-color: rgb(0, 162, 255); color: white; padding: 0.5rem 1rem; border-radius: 0.25rem;">Add New Project</a>
+    </div>
+    
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Source Link</th>
+                <th>Student</th>
+                <th>Submitted At</th>
+                <th>Examiner</th>
+                <th>Guide</th>
+                <th>Deadline</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+            <tr>
+                <td>{{ project.title }}</td>
+                <td>{{ project.desc|truncatechars:30  }}</td>
+                <td><a href="{{ project.src_link }}" target="_blank">{{ project.src_link|truncatechars:30 }}</a></td>
+                <td>{{ project.student.name }}</td>
+                <td>{{ project.submitted_at }}</td>
+                <td>{{ project.examiner.name }}</td>
+                <td>{{ project.guide.name }}</td>
+                <td>{{ project.deadline }}</td>
+                <td>
+                    <a href="{% url 'project-edit' project.id %}" class="button">Edit</a>
+                    <form action="{% url 'project-delete' project.id %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="button" onclick="return confirm('Are you sure you want to delete this project?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html> -->

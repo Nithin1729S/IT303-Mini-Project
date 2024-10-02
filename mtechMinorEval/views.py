@@ -167,6 +167,37 @@ def summary(request):
     }
     return render(request, 'mtechMinorEval/summary.html', context)
 
+@login_required(login_url='login')
+def totalEval(request):
+    search_query = request.GET.get('search', '')
+    per_page = request.GET.get('per_page', 5)  
+    sort_column = request.GET.get('sort', 'title')  
+    sort_order = request.GET.get('order', 'asc') 
+    if sort_order == 'desc':
+        order_by = f'-{sort_column}'
+    else:
+        order_by = sort_column 
+
+    "Gives adminstrator the evaluation summary of entire mtech minor it projects and can be run by only logged in users."
+    projects = Project.objects.select_related('student', 'guide', 'examiner')\
+                          .prefetch_related('guide_evaluation', 'examiner_evaluation').filter(
+                              Q(title__icontains=search_query) |
+                              Q(student__name__icontains=search_query) |
+                              Q(student__rollno__icontains=search_query)
+                          ).order_by(order_by)
+    
+    paginator = Paginator(projects, per_page)  
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'projects': page_obj,
+        'search_query': search_query,
+        'per_page': per_page,
+        'sort_column': sort_column,
+        'sort_order': sort_order,
+    }
+    return render(request, 'mtechMinorEval/totalEval.html', context)
 
 
 @login_required(login_url='login')
@@ -274,7 +305,7 @@ def projectAllotment(request):
     per_page = request.GET.get('per_page', 5)  
     sort_column = request.GET.get('sort', 'title')  
     sort_order = request.GET.get('order', 'asc')  
-    
+
     if sort_order == 'desc':
         order_by = f'-{sort_column}'
     else:

@@ -5,6 +5,7 @@ urlpatterns=[
     path('projectsList/',views.projectsList,name='projectsList'),
     path('evaluate/<str:pk>/',views.evaluate,name='evaluate'),
     path('summary/',views.summary,name='summary'),
+    path('totalEval/',views.totalEval,name='total-eval'),
     path('generate-pdf/',views.generate_pdf,name='generate-pdf'),
     path('admin-panel/',views.adminPanel,name='admin-panel'),
     path('admin-login/',views.adminLogin,name='admin-login'),
