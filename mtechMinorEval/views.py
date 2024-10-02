@@ -748,3 +748,52 @@ def export_faculty_project_to_google_sheet(request):
     except HttpError as err:
         print(f"An error occurred: {err}")
         return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
+    
+def export_total_eval_to_google_sheet(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
+    try:
+        creds = None
+        token_path = 'token.json'
+        if os.path.exists(token_path):
+            creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
+                creds = flow.run_local_server(port=0)
+            with open(token_path, 'w') as token:
+                token.write(creds.to_json())
+        
+        service = build('sheets', 'v4', credentials=creds)
+        sheet_data = [['Rollno', 'Student Name', 'Project Name', 'Guide Name', 'Examiner Name','Guide Marks','Examiner Marks','Total Marks','S/N']]
+        projects = ProjectEvalSummary.objects.all()
+        for project in projects:
+            sheet_data.append([
+                project.student.rollno,
+                project.student.name,
+                project.project.title,
+                project.guide.name,
+                project.examiner.name,
+                project.guide_score,
+                project.examiner_score,
+                project.total_score,
+                project.sn,
+            ])
+        body = {
+            'properties': {'title': 'MTech IT Minor Project Evaluation'},
+            'sheets': [{
+                'data': [{
+                    'rowData': [{'values': [{'userEnteredValue': {'stringValue': str(cell)}} for cell in row]} for row in sheet_data]
+                }]
+            }]
+        }
+
+        spreadsheet = service.spreadsheets().create(body=body).execute()
+        sheet_id = spreadsheet.get('spreadsheetId')
+        return redirect(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
+
+    except HttpError as err:
+        print(f"An error occurred: {err}")
+        return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)

@@ -19,7 +19,7 @@
                     <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
                         <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}"><span class="fas fa-home"></span></a></li>
                         <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Evaluations</li>
+                        <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'total-eval' %}">Evaluations</a></li>
                     </ol>
                 </nav>
                 <h2 class="h4">All Evaluations</h2>
@@ -28,10 +28,11 @@
             </div>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-outline-primary">Share</button>
-                    <button type="button" class="btn btn-sm btn-outline-primary">Export</button>
+                    <a href="{% url 'total-eval-export' %}" class="btn btn-sm btn-outline-primary">Export</a>
+                    <a href="{% url 'generate-pdf' %}" class="btn btn-sm btn-outline-primary">Print</a>
                 </div>
             </div>
+            
         </div>
 
         <div class="table-settings mb-4">
