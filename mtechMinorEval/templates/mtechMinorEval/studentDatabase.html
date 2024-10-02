@@ -100,9 +100,30 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Rollno</th>
-                        <th>Name</th>
-                        <th>Email</th>
+                        <th>
+                            <a href="?sort=rollno&order={% if sort_column == 'rollno' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Rollno
+                                {% if sort_column == 'rollno' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=name&order={% if sort_column == 'name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Name
+                                {% if sort_column == 'name' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=email&order={% if sort_column == 'email' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Email
+                                {% if sort_column == 'email' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -153,7 +174,7 @@
                     <ul class="pagination mb-0">
                         {% if students.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ students.previous_page_number }}">Previous</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ students.previous_page_number }}">Previous</a>
                         </li>
                         {% endif %}
                         
@@ -164,14 +185,14 @@
                             </li>
                             {% else %}
                             <li class="page-item">
-                                <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ num }}">{{ num }}</a>
+                                <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ num }}">{{ num }}</a>
                             </li>
                             {% endif %}
                         {% endfor %}
         
                         {% if students.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ students.next_page_number }}">Next</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ students.next_page_number }}">Next</a>
                         </li>
                         {% endif %}
                     </ul>

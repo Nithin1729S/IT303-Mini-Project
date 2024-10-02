@@ -304,16 +304,21 @@ def studentDatabase(request):
     "View the student database."
     search_query = request.GET.get('search', '')
     per_page = request.GET.get('per_page', 5)  # Default to 5 entries per page
+    sort_column = request.GET.get('sort', 'name')  # Default sort column is 'name'
+    sort_order = request.GET.get('order', 'asc')   # Default order is ascending
+
+    if sort_order == 'desc':
+        order_by = f'-{sort_column}'
+    else:
+        order_by = sort_column
 
     # Filter students based on the search query
-    if search_query:
-        students = Student.objects.filter(
+   
+    students = Student.objects.filter(
             Q(rollno__icontains=search_query) |
             Q(name__icontains=search_query) |
             Q(email__icontains=search_query)
-        )
-    else:
-        students = Student.objects.all()
+    ).order_by(order_by)
 
     # Pagination
     paginator = Paginator(students, per_page)  # Use the per_page value
@@ -324,10 +329,10 @@ def studentDatabase(request):
         'students': page_obj,
         'search_query': search_query,
         'per_page': per_page,
+        'sort_column': sort_column,
+        'sort_order': sort_order,
     }
     return render(request, 'mtechMinorEval/studentDatabase.html', context)
-
-
 
 
 
