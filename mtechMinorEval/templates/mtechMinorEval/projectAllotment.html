@@ -100,13 +100,50 @@
                 <thead>
                     <tr>
                         
-                        <th>Title</th>						
+                        <th>
+                            <a href="?sort=title&order={% if sort_column == 'title' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Title
+                                {% if sort_column == 'title' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>					
+                        
+                        <th>
+                            <a href="?sort=student__rollno&order={% if sort_column == 'student__rollno' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Student Rollno
+                                {% if sort_column == 'student.rollno' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=student&order={% if sort_column == 'student' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Student Name
+                                {% if sort_column == 'student' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=examiner&order={% if sort_column == 'examiner' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Examiner
+                                {% if sort_column == 'examiner' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="?sort=guide&order={% if sort_column == 'guide' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Guide
+                                {% if sort_column == 'guide' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
                         <th>Description</th>
                         <th>Source Link</th>
-                        <th>Student</th>
                         <th>Submitted At</th>
-                        <th>Examiner</th>
-                        <th>Guide</th>
                         <th>Deadline</th>
                         <th>Actions</th>
                     </tr>
@@ -116,19 +153,23 @@
                     {% for project in projects %}
                     <tr>
                         <td>
-                            <a href="../invoice.html" class="font-weight-bold">
+                            <div class="font-weight-bold">
                                 {{ project.title }}
-                            </a>
+                            </div>
                         </td>
+                        <td>
+                            <span class="font-weight-normal">{{ project.student.rollno }}</span>
+                        </td>
+                        <td><span class="font-weight-normal">{{ project.student.name|truncatechars:20 }}</span></td>
+                        <td><span class="font-weight-bold">{{ project.examiner.name|truncatechars:20 }}</span></td>
+                        <td><span class="font-weight-bold">{{ project.guide.name|truncatechars:20 }}</span></td>
+
                         <td>
                             <span class="font-weight-normal">{{ project.desc|truncatechars:30  }}</span>
                         </td>
-                        <td><span class="font-weight-normal"><a href="{{ project.src_link }}" target="_blank">{{ project.src_link|truncatechars:30 }}</a></span></td>                        
-                        <td><span class="font-weight-normal">{{ project.student.name|truncatechars:30 }}</span></td>
-                        <td><span class="font-weight-bold">{{ project.submitted_at|truncatechars:30 }}</span></td>
-                        <td><span class="font-weight-bold">{{ project.examiner.name|truncatechars:30 }}</span></td>
-                        <td><span class="font-weight-bold">{{ project.guide.name|truncatechars:30 }}</span></td>
-                        <td><span class="font-weight-bold text-warning">{{ project.deadline|truncatechars:20 }}</span></td>
+                        <td><span class="font-weight-normal"><a href="{{ project.src_link }}" target="_blank">{{ project.src_link|truncatechars:20 }}</a></span></td>                        
+                        <td><span class="font-weight-bold">{{ project.submitted_at|truncatechars:10 }}</span></td>
+                        <td><span class="font-weight-bold text-warning">{{ project.deadline|truncatechars:10 }}</span></td>
                         <td>
                             <div class="btn-group">
                                 <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -138,7 +179,6 @@
                                     <span class="sr-only">Toggle Dropdown</span>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#"><span class="fas fa-eye mr-2"></span>View Details</a>
                                     <a class="dropdown-item" href="{% url 'project-edit' project.id %}"><span class="fas fa-edit mr-2"></span>Edit</a>
                                     <form action="{% url 'project-delete' project.id %}" method="POST" id="delete-form-{{ project.id }}">
                                         {% csrf_token %}
@@ -161,7 +201,7 @@
                     <ul class="pagination mb-0">
                         {% if projects.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ projects.previous_page_number }}">Previous</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ projects.previous_page_number }}">Previous</a>
                         </li>
                         {% endif %}
                         
@@ -172,14 +212,14 @@
                             </li>
                             {% else %}
                             <li class="page-item">
-                                <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ num }}">{{ num }}</a>
+                                <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ num }}">{{ num }}</a>
                             </li>
                             {% endif %}
                         {% endfor %}
         
                         {% if projects.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ projects.next_page_number }}">Next</a>
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}sort={{ sort_column }}&order={{ sort_order }}&page={{ projects.next_page_number }}">Next</a>
                         </li>
                         {% endif %}
                     </ul>

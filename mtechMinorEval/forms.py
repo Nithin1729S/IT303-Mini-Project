@@ -226,6 +226,7 @@ class StudentEditForm(forms.ModelForm):
             'class': 'form-control', 
             'id': 'password',
             'placeholder': 'Enter your password',
+            'autocomplete':"new-password",
         }), 
         required=False
     )

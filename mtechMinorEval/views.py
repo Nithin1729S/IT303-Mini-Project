@@ -271,21 +271,25 @@ def adminLogout(request):
 def projectAllotment(request):
     "View the projects database."
     search_query = request.GET.get('search', '')
-    per_page = request.GET.get('per_page', 5)  # Default to 5 entries per page
+    per_page = request.GET.get('per_page', 5)  
+    sort_column = request.GET.get('sort', 'title')  
+    sort_order = request.GET.get('order', 'asc')  
+    
+    if sort_order == 'desc':
+        order_by = f'-{sort_column}'
+    else:
+        order_by = sort_column
 
-    # Filter students based on the search query
-    if search_query:
-        projects= Project.objects.filter(
+   
+    projects= Project.objects.filter(
             Q(title__icontains=search_query) |
             Q(desc__icontains=search_query) |
             Q(student__name__icontains=search_query) |
             Q(student__rollno__icontains=search_query) 
-        )
-    else:
-        projects = Project.objects.all()
+        ).order_by(order_by)
 
-    # Pagination
-    paginator = Paginator(projects, per_page)  # Use the per_page value
+    
+    paginator = Paginator(projects, per_page)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -293,9 +297,11 @@ def projectAllotment(request):
         'projects': page_obj,
         'search_query': search_query,
         'per_page': per_page,
+        'sort_column': sort_column,
+        'sort_order': sort_order,
     }
     return render(request, 'mtechMinorEval/projectAllotment.html', context)
-
+    
 
 
 @login_required(login_url='admin-login')
