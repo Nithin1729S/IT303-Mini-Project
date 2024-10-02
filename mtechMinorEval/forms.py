@@ -199,9 +199,61 @@ class GuideEvaluationForm(ModelForm):
 class ProjectEditForm(ModelForm):
     class Meta:
         model = Project
-        fields = ['title', 'desc', 'src_link', 'student', 'examiner', 'guide', 'deadline']
+        fields = ['title', 'desc', 'src_link', 'student', 'examiner', 'guide', 'deadline','ppt']
         widgets = {
-            'deadline': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'title':forms.TextInput(
+                attrs={
+                    'id':'title',
+                    'class':'form-control',
+                    'placeholder':'Enter Project Title'
+                }
+            ),
+            'desc':forms.TextInput(
+                attrs={
+                    'id':'desc',
+                    'class':'form-control',
+                    'placeholder':'Enter Project Description'
+                }
+            ),
+            'src_link':forms.TextInput(
+                attrs={
+                    'id':'src_link',
+                    'class':'form-control',
+                    'placeholder':'Enter relevant links'
+                }
+            ),
+            'deadline':forms.DateTimeInput(
+                attrs={
+                    'type':'datetime-local',
+                    'id':'deadline',
+                    'class':'form-control',
+                }
+            ),
+            'student':forms.Select(
+                attrs={
+                    'id':'student',
+                    'class':'form-control',
+                }
+            ),
+            'guide':forms.Select(
+                attrs={
+                    'id':'guide',
+                    'class':'form-control',
+                }
+            ),
+            'examiner':forms.Select(
+                attrs={
+                    'id':'examiner',
+                    'class':'form-control',
+                }
+            ),
+            'ppt': forms.FileInput(
+                attrs={
+                    'class': 'form-control',
+                    'id': 'ppt'
+                }
+)
+            
         }
 
     def clean(self):

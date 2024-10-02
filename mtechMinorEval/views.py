@@ -462,7 +462,7 @@ def editProject(request, pk):
     "Edit a particular project details"
     project = get_object_or_404(Project, id=pk) 
     if request.method == 'POST':
-        form = ProjectEditForm(request.POST, instance=project)
+        form = ProjectEditForm(request.POST, request.FILES,instance=project)
         if form.is_valid():
             form.save()
             messages.success(request, 'Project details updated successfully.')
