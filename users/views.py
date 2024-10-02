@@ -23,6 +23,7 @@ from django.utils.crypto import get_random_string
 from dotenv import load_dotenv
 from django.core.cache import cache
 from django.utils import timezone
+from twilio.rest import Client
 load_dotenv()
 
 class ExtendedUserCreationForm(UserCreationForm):
@@ -77,6 +78,18 @@ def send_faculty_otp(subject,message,recipient_list):
     from_email = os.getenv('MAIL')  
     print(message)
     #send_mail(subject, message, from_email, recipient_list,fail_silently=False)
+
+def send_sms(message,to):
+    print(message)
+    account_sid=os.getenv('TWILIO_SID')
+    auth_token=os.getenv('TWILIO_AUTHTOKEN')
+    client = Client(account_sid, auth_token)
+    message = client.messages.create(
+    messaging_service_sid='MG2f6a62ceae5ed730c7fa15a9ad623446',
+    body=message,
+    to=to
+    )
+    
 
 def register(request):
     "Function to register a new faculty"
@@ -238,20 +251,41 @@ def loginUser(request):
 def login_otp(request):
     "Login via otp"
     if request.method == 'POST':
-        email = request.POST.get('email')
+        contact_info = request.POST.get('contact_info')  # This can be either email or phone number
         otp = generate_otp()
 
-        # Store OTP and email in session for now
+        # Store OTP in session for now
         request.session['otp'] = otp
-        request.session['email'] = email
+        
+        # Check if contact_info is an email or phone number
+        try:
+            # Check for email
+            if '@' in contact_info:
+                user = User.objects.get(profile__email=contact_info)
+                recipient_list = [contact_info]
+                
+                # Send OTP to email
+                subject = 'Your OTP for Login'
+                message = f'Your OTP for login is {otp}. It is valid for 5 minutes.'
+                send_faculty_otp(subject, message, recipient_list)
+                messages.success(request, 'OTP sent to your email.')
 
-        # Send the OTP to the user's email
-        subject = 'Your OTP for Login'
-        message = f'Your OTP for login is {otp}. It is valid for 5 minutes.'
-        recipient_list = [email]
-        send_faculty_otp(subject,message,recipient_list)
-        messages.success(request, 'OTP sent to your email.')
-        return redirect('verify_otp_login')
+            else:
+                # Check for phone number
+                faculty = Faculty.objects.get(phone_number=contact_info)
+
+                # Send OTP via SMS
+                send_sms(f'Your OTP for login is {otp}. It is valid for 5 minutes.',contact_info)
+                messages.success(request, 'OTP sent to your phone number.')
+
+            # Store contact info in session for verification later
+            request.session['contact_info'] = contact_info
+            return redirect('verify_otp_login')
+
+        except User.DoesNotExist:
+            messages.error(request, 'No user found with this email.')
+        except Faculty.DoesNotExist:
+            messages.error(request, 'No user found with this phone number.')
 
     return render(request, 'users/login_otp.html')
 
@@ -260,24 +294,29 @@ def verify_otp_login(request):
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
         session_otp = request.session.get('otp')
-        email = request.session.get('email')
-        
+        contact_info = request.session.get('contact_info')
+
         if entered_otp == str(session_otp):
             try:
-                user = User.objects.get(email=email)
+                # Check if contact_info is an email or phone number
+                if '@' in contact_info:
+                    user = User.objects.get(profile__email=contact_info)
+                else:
+                    faculty = Faculty.objects.get(phone_number=contact_info)
+                    user = faculty.profile.user  # Get the associated user
+                
                 profile = Profile.objects.get(user=user)
-                login(request, user,backend='users.backends.EmailBackend')
-                recipient_list = [email]
-                send_login_email(profile.user.username,recipient_list)
+                login(request, user, backend='users.backends.EmailBackend')
+                recipient_list = [profile.email]
+                send_login_email(profile.user.username, recipient_list)
                 messages.success(request, 'Logged in successfully with OTP!')
                 return redirect('projectsList')
-            except User.DoesNotExist:
-                messages.error(request, 'No user found with this email.')
+            except (User.DoesNotExist, Faculty.DoesNotExist):
+                messages.error(request, 'No user found with this contact information.')
         else:
             messages.error(request, 'Invalid OTP. Please try again.')
 
     return render(request, 'users/verify_otp_login.html')
-
 
 
 def logoutUser(request):
