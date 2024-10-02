@@ -56,6 +56,8 @@
         <p style="margin-bottom: 5px;">July – December 2023 Session</p>
         <p style="font-size: 0.9em;">Each student is allotted a maximum of 20 minutes for their presentation, followed by a 10 minutes for Question and Answers.</p>
       </div>
+    {% if guide_count %}
+    <div>
     <h1>Minor Project Guide Evaluation</h1>
     <table>
         <tr>
@@ -140,6 +142,10 @@
         {% endif %}
         {% endfor %}
     </table>
+    </div>
+    {% endif %}
+    {% if examiner_count  %}
+    <div>
     <h1>Minor Project Examiner Evaluation</h1>
     <table>
         <tr>
@@ -216,6 +222,8 @@
         {% endif %}
         {% endfor %}
     </table>
+    </div>
+    {% endif %}
     <!-- <h1>Total Evaluation</h1>
     <table>
         <tr>

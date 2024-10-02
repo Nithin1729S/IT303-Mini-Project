@@ -206,9 +206,14 @@ def generate_pdf(request):
     projects = Project.objects.select_related('student', 'guide', 'examiner')\
                               .prefetch_related('guide_evaluation', 'examiner_evaluation')\
                               .filter(Q(guide=faculty) | Q(examiner=faculty))
+    guide_projects_count = Project.objects.filter(guide=faculty).count()
+    examiner_projects_count = Project.objects.filter(examiner=faculty).count()
+
     context = {
         'projects': projects,
-        'faculty':faculty
+        'faculty':faculty,
+        'guide_count':guide_projects_count,
+        'examiner_count':examiner_projects_count
     }
     
     # Check if the user wants to download the PDF
