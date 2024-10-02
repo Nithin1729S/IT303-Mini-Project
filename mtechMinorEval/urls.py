@@ -24,5 +24,6 @@ urlpatterns=[
     path('add-new-faculty/',views.addNewFaculty,name='add-new-faculty'),
     path('export-faculty-project/', views.export_faculty_project_to_google_sheet, name='faculty-project-export'),
     path('export-total-eval/', views.export_total_eval_to_google_sheet, name='total-eval-export'),
+    path('export-faculty-eval/', views.export_faculty_eval_to_google_sheet, name='faculty-eval-export'),
     path('faculty-evals/<str:pk>',views.faculty_specific_eval,name='faculty-specific')
 ]

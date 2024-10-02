@@ -24,7 +24,7 @@
             <span>Projects List</span>
             </a>
         </li>
-        <li class="nav-item  {% if request.resolver_match.url_name == 'generate-pdf' %} active {% endif %}">
+        <li class="nav-item  {% if request.resolver_match.url_name == 'faculty-specific' %} active {% endif %}">
             <a href="{% url 'faculty-specific' faculty.id %}" class="nav-link">
                 <span class="sidebar-icon"><span class="fas fa-clipboard-list"></span></span>
                 <span>Your Evaluations</span>
