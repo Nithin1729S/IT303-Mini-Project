@@ -1,0 +1,193 @@
+{% extends "mtechMinorEval/base_faculty.html" %}
+
+{% block title %} Transactions {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+                
+    <main class="content">
+
+        {% include 'mtechMinorEval/navigation_faculty.html' %}
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <div class="d-block mb-4 mb-md-0">
+                <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+                    <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                        <li class="breadcrumb-item"><a href="#"><span class="fas fa-home"></span></a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'projectsList' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Your Evaluations</li>
+                    </ol>
+                </nav>
+                <h2 class="h4">Your Evaluations</h2>
+                <p class="mb-0">MTech IT Minor Evaluations</p>
+            </div>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group">
+                    <a href="#" class="btn btn-sm btn-outline-primary">Export</a>
+                    <a href="{% url 'generate-pdf' %}" class="btn btn-sm btn-outline-primary">Print</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-settings mb-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col col-md-6 col-lg-3 col-xl-4">
+                    <form method="GET" action="{% url 'faculty-specific' faculty.id %}" class="w-100">
+                        <div class="input-group">
+                            <span class="input-group-text" id="basic-addon2">
+                                <span class="fas fa-search"></span>
+                            </span>
+                            <input type="text" name="search" class="form-control" id="exampleInputIconLeft" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" value="{{ search_query }}">
+                        </div>
+                    </form>
+                </div>
+                
+                
+                <div class="col-4 col-md-2 col-xl-1 pl-md-0 text-right">
+                    <div class="btn-group">
+                        <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="icon icon-sm icon-gray">
+                                <span class="fas fa-cog"></span>
+                            </span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-xs dropdown-menu-right">
+                            <span class="dropdown-item font-weight-bold text-dark">Show</span>
+                            <a class="dropdown-item d-flex font-weight-bold" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=5">
+                                5 
+                                {% if per_page == '5' %}
+                                <span class="icon icon-small ml-auto" >
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item d-flex font-weight-bold" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=10">
+                                10 
+                                {% if per_page == '10' %}
+                                <span class="icon icon-small ml-auto">
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item d-flex font-weight-bold" href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}per_page=20">
+                                20 
+                                {% if per_page == '20' %}
+                                <span class="icon icon-small ml-auto" >
+                                    <span class="fas fa-check"></span>
+                                </span>
+                                {% endif %}
+                            </a>
+                        </div>
+                                                                     
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-body border-light shadow-sm table-wrapper table-responsive pt-0">
+            <table class="table table-hover">
+                <thead>
+                    <tr>						
+                        <th>Student Rollno</th>
+                        <th>Student Name</th>
+                        <th>Project Title</th>
+                        <th>Role</th>
+                        <th>Your Evaluation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Item -->
+                    {% for project in projects %}
+                    <tr>
+                        <td>
+                            <a href="../invoice.html" class="font-weight-bold">
+                                {{ project.student.rollno }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="../invoice.html" class="font-weight-bold">
+                                {{ project.student.name|truncatechars:30 }}
+                            </a>
+                        </td>
+                        <td>
+                            <span class="font-weight-normal">{{ project.project.title|truncatechars:20  }}</span>
+                        </td>
+                        {% if request.user.Profile.Faculty == project.guide %}
+                        <td>
+                            <span class="font-weight-normal">Guide</span>
+                        </td>
+                        {% elif request.user.Profile.Faculty == project.examiner %}
+                        <td>
+                            <span class="font-weight-normal">Examiner</span>
+                        </td>
+                        {% endif %}
+                        {% if request.user.Profile.Faculty == project.guide %}
+                        <td><span class="font-weight-normal">{{ project.guide_score|truncatechars:20 }}</span></td>
+                        {% else %}
+                        <td><span class="font-weight-normal">{{ project.examiner_score|truncatechars:20 }}</span></td>
+                        {% endif %}
+                        
+                        
+                        
+                    </tr>
+                    {% endfor %}
+                    <!-- Item -->
+                                                  
+                </tbody>
+            </table>
+            <div class="card-footer px-3 border-0 d-flex align-items-center justify-content-between">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination mb-0">
+                        {% if projects.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ projects.previous_page_number }}&search={{ search_query }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        {% for page_num in projects.paginator.page_range %}
+                        <li class="page-item {% if projects.number == page_num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ page_num }}&search={{ search_query }}">{{ page_num }}</a>
+                        </li>
+                        {% endfor %}
+                        {% if projects.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ projects.next_page_number }}&search={{ search_query }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <div class="font-weight-bold small">Showing <b>{{ projects.start_index }}</b> to <b>{{ projects.end_index }}</b> out of <b>{{ projects.paginator.count }}</b> entries</div>
+            </div>
+            
+        </div>
+
+        
+        <footer class="footer section py-12">
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- NITK Surathkal -->
+                    <div class="col-12 text-center mb-2">
+                        <p class="mb-0">
+                            &copy; <a class="text-primary font-weight-normal" href="https://www.nitk.ac.in/" target="_blank">NITK Surathkal</a>
+                        </p>
+                    </div>
+        
+                    <!-- MTech IT Minor Project Evaluation Dashboard -->
+                    <div class="col-12 text-center">
+                        <p class="mb-0">
+                            <a href="https://www.nitk.ac.in/" target="_blank">MTech IT Minor Project Evaluation Dashboard</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        
+
+
+    </main>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

@@ -34,9 +34,6 @@ def home(request):
     faculty = get_object_or_404(Faculty, profile=userProfile)
     return render(request,'mtechMinorEval/home.html',{'faculty':faculty})
 
-
-from django.db.models import Q
-
 @login_required(login_url='login')
 def projectsList(request):
     user = request.user
@@ -226,6 +223,19 @@ def generate_pdf(request):
     
     return render(request,'mtechMinorEval/generate-pdf-summary.html', context)
 
+
+
+def faculty_specific_eval(request,pk):
+    user = request.user
+    userEmail = user.email
+    userProfile = get_object_or_404(Profile, email=userEmail)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
+    projects=ProjectEvalSummary.objects.filter(Q(guide=faculty) | Q(examiner=faculty))
+    context={
+        'faculty':faculty,
+        'projects':projects
+    }
+    return render(request,'mtechMinorEval/facultySpecific.html',context)
 
 
 def adminLogin(request):
