@@ -89,6 +89,10 @@ class ExaminerEvaluation(models.Model):
 
 
 
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 class ProjectEvalSummary(models.Model):
     project = models.OneToOneField('Project', on_delete=models.CASCADE, related_name='eval_summary')
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
@@ -97,11 +101,11 @@ class ProjectEvalSummary(models.Model):
     examiner_score = models.PositiveIntegerField(default=0)
     guide_score = models.PositiveIntegerField(default=0)
     total_score = models.PositiveIntegerField(default=0)
-    sn = models.CharField(max_length=1, editable=False, default='n')  # New field for status
+    sn = models.CharField(max_length=1, editable=False, default='n')
 
     def save(self, *args, **kwargs):
-        # Set the sn field based on total_score
-        self.sn = 's' if self.total_score >= 50 else 'n'
+        self.total_score = self.guide_score + self.examiner_score
+        self.sn = 'S' if self.total_score >= 50 else 'N'
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -118,19 +122,15 @@ def create_or_update_eval_summary(sender, instance, created, **kwargs):
 @receiver(post_save, sender='mtechMinorEval.GuideEvaluation')
 def update_guide_evaluation(sender, instance, **kwargs):
     eval_summary, _ = ProjectEvalSummary.objects.get_or_create(project=instance.project)
-    eval_summary.student = instance.project.student  # Ensure student is updated
-    eval_summary.guide = instance.guide  # Ensure guide is updated
+    eval_summary.student = instance.project.student
+    eval_summary.guide = instance.guide
     eval_summary.guide_score = instance.total_score
-    eval_summary.total_score = eval_summary.guide_score + eval_summary.examiner_score
-    eval_summary.save()  # This will trigger the save method and update `sn`
+    eval_summary.save()
 
 @receiver(post_save, sender='mtechMinorEval.ExaminerEvaluation')
 def update_examiner_evaluation(sender, instance, **kwargs):
     eval_summary, _ = ProjectEvalSummary.objects.get_or_create(project=instance.project)
-    eval_summary.student = instance.project.student  # Ensure student is updated
-    eval_summary.examiner = instance.examiner  # Ensure examiner is updated
+    eval_summary.student = instance.project.student
+    eval_summary.examiner = instance.examiner
     eval_summary.examiner_score = instance.total_score
-    eval_summary.total_score = eval_summary.guide_score + eval_summary.examiner_score
-    eval_summary.save()  # This will trigger the save method and update `sn`
-
-
+    eval_summary.save()

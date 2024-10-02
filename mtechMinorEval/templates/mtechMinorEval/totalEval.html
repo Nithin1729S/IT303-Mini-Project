@@ -111,6 +111,14 @@
                             </a>
                         </th>
                         <th>
+                            <a href="?sort=project__title&order={% if sort_column == 'project__title' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                                Project Title
+                                {% if sort_column == 'project__title' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
                             <a href="?sort=guide&order={% if sort_column == 'guide' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
                                 Guide
                                 {% if sort_column == 'guide' %}
@@ -151,7 +159,12 @@
                             </a>
                         </th>
                         <th>
-                            S/N
+                            <a href="?sort=sn&order={% if sort_column == 'sn' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">
+                               S/N
+                                {% if sort_column == 'sn' %}
+                                    <span class="fas {% if sort_order == 'asc' %}fa-sort-up{% else %}fa-sort-down{% endif %}"></span>
+                                {% endif %}
+                            </a>
                         </th>
                     </tr>
                 </thead>
@@ -160,6 +173,7 @@
                     <tr>
                         <td>{{ project.student.rollno }}</td>
                         <td>{{ project.student.name|truncatechars:20 }}</td>
+                        <td>{{ project.project.title|truncatechars:20 }}</td>
                         <td>{{ project.guide|truncatechars:20 }}</td>
                         <td>{{ project.examiner|truncatechars:20 }}</td>
                         <td>
