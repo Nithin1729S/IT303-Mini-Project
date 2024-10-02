@@ -72,7 +72,13 @@ class ExaminerEvaluationForm(ModelForm):
                     'class': 'form-control', 
                     'id': 'report',
                 }
-            )
+            ),
+            'comments':forms.TextInput(
+                attrs={
+                    'class':'form-control',
+                    'id':'comments'
+                }
+            ),
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -252,7 +258,6 @@ class StudentEditForm(forms.ModelForm):
                 'class': 'form-control', 
                 'id': 'phone_number',
                 'placeholder': '+91 1234567890',
-                'required': 'true'
             }),
             'gender': forms.Select(attrs={
                 'class': 'form-select mb-0', 

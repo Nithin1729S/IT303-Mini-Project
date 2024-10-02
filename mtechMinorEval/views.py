@@ -421,6 +421,10 @@ def editStudent(request, pk):
 @login_required
 def editFaculty(request, pk):
     "Edit a particular faculty details"
+    if request.user.is_superuser:
+        template = "mtechMinorEval/base.html"
+    else:
+        template = "mtechMinorEval/base_faculty.html"
     faculty = Faculty.objects.get(id=pk)
     profile = faculty.profile 
     form = FacultyEditForm(instance=faculty)
@@ -452,7 +456,10 @@ def editFaculty(request, pk):
         'form': form,
         'profile_form': profile_form  
     }
-    return render(request, 'mtechMinorEval/editFaculty.html', context)
+    if request.user.is_superuser: 
+        return render(request, 'mtechMinorEval/editFaculty.html', context)
+    else:
+        return render(request,'mtechMinorEval/facultyEdit.html',context)
 
 
 
