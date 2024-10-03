@@ -1,16 +1,11 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from users.models import Profile,Student,Faculty
-from django.core.validators import FileExtensionValidator,MinValueValidator, MaxValueValidator
-import uuid
+from django.core.validators import FileExtensionValidator, MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-
-from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from users.models import Student, Faculty
+from users.models import Profile, Student, Faculty
+import uuid
 
 
 class Project(models.Model):
@@ -47,7 +42,6 @@ class GuideEvaluation(models.Model):
     guide = models.ForeignKey(Faculty, on_delete=models.SET_NULL,null=True,blank=True)
     datetime_from=models.DateTimeField(null=True,blank=True)
     datetime_to=models.DateTimeField(null=True,blank=True)
-    # Example metrics specific to Guide
     depthOfUnderstanding = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
     workDoneAndResults = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(18)])
     exceptionalWork = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(6)])
@@ -71,7 +65,6 @@ class ExaminerEvaluation(models.Model):
     examiner = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True,blank=True,limit_choices_to={'profile__role': 'faculty'})
     datetime_from=models.DateTimeField(null=True,blank=True)
     datetime_to=models.DateTimeField(null=True,blank=True)
-    # Example metrics specific to Examiner
     depthOfUnderstanding = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(8)])
     workDoneAndResults = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(12)])
     exceptionalWork = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(6)])
@@ -87,11 +80,6 @@ class ExaminerEvaluation(models.Model):
     def __str__(self):
         return f"Examiner Evaluation for {self.project.title}"
 
-
-
-from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 class ProjectEvalSummary(models.Model):
     project = models.OneToOneField('Project', on_delete=models.CASCADE, related_name='eval_summary')
@@ -135,7 +123,6 @@ def update_examiner_evaluation(sender, instance, **kwargs):
     eval_summary.examiner_score = instance.total_score
     eval_summary.save()
 
-from django.db import models
 
 class PathAccess(models.Model):
     path = models.CharField(max_length=255)

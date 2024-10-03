@@ -1,10 +1,6 @@
 {% extends "mtechMinorEval/base.html" %}
-
-{% block title %} Settings {% endblock %} 
-
-<!-- Specific Page CSS goes HERE  -->
+{% block title %} Add New Student {% endblock %} 
 {% block stylesheets %}{% endblock stylesheets %}
-
 {% block content %}
                 
     <main class="content">
@@ -44,35 +40,6 @@
 
 
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-            <!-- <div>
-                <button class="btn btn-secondary text-dark mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="fas fa-plus mr-2"></span>New
-                </button>
-                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="far fa-file-alt mr-2"></span>Document</a>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="far fa-comment-dots mr-2"></span>Message</a>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Product</a>
-                    <div role="separator" class="dropdown-divider"></div>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>Subscription Plan</a>
-                </div>
-            </div> -->
-            <div>
-                <!-- <div class="btn-group">
-                    <button type="button" data-toggle="tooltip" title="Calendar" class="btn btn-primary"><span class="fas fa-calendar-alt"></span></button>
-                </div>
-                <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="fas fa-clipboard mr-2"></span>Reports
-                    <span class="icon icon-small ml-1"><span class="fas fa-chevron-down"></span></span>
-                </button>
-                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Products</a>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-store mr-2"></span>Customers</a>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cart-arrow-down mr-2"></span>Orders</a>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-chart-pie mr-2"></span>Console</a>
-                    <div role="separator" class="dropdown-divider"></div>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-success mr-2"></span>All Reports</a>
-                </div> -->
-            </div>
         </div>
 
         <div class="row">
@@ -354,44 +321,4 @@
     </main>
     
 {% endblock content %}
-
-<!-- Specific Page JS goes HERE  -->
 {% block javascripts %}{% endblock javascripts %}
-
-
-
-<!-- {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Student</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white shadow-md rounded-lg p-8 max-w-lg w-full">
-        <h1 class="text-2xl font-bold mb-6 text-gray-800 text-center">Edit Student</h1>
-        <form method="POST" class="space-y-6">
-            {% csrf_token %}
-            <div class="space-y-4">
-                {% for field in form %}
-                    <div class="p-4 border rounded-md bg-gray-50 shadow-sm">
-                        <label class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
-                        {{ field }} 
-                        {% if field.errors %}
-                            <p class="mt-1 text-sm text-red-600">{{ field.errors }}</p>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-            <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">
-                Submit
-            </button>
-        </form>
-    </div>
-</body>
-
-</html> -->

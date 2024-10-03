@@ -1,4 +1,3 @@
-# middleware.py
 from django.utils.deprecation import MiddlewareMixin
 from .models import PathAccess
 

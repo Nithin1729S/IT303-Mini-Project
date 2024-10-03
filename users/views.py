@@ -466,6 +466,7 @@ def resend_otp(request):
 
     return redirect('reset-password', otp=request.session.get('otp'))
 
+@login_required
 def change_password_view(request):
     user = request.user
     userProfile = get_object_or_404(Profile, email=user.email)

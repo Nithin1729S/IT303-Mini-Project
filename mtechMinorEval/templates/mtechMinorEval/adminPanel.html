@@ -1,33 +1,12 @@
 {% extends "mtechMinorEval/base.html" %}
-
-{% block title %} Dashboard {% endblock %} 
-
-<!-- Specific Page CSS goes HERE  -->
+{% block title %} Admin Panel {% endblock %} 
 {% block stylesheets %}{% endblock stylesheets %}
-
 {% block content %}
 
     <main class="content">
 
         {% include 'mtechMinorEval/navigation.html' %}
-
-        <!-- <div class="preloader bg-soft flex-column justify-content-center align-items-center">
-            <img class="loader-element animate__animated animate__jackInTheBox" src="/static/assets/img/brand/light.svg" height="60" alt="Volt logo">
-        </div> -->
-
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-            <div class="btn-toolbar dropdown">
-                <!-- <button class="btn btn-primary btn-sm mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="fas fa-plus mr-2"></span>New Task
-                </button> -->
-                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-tasks"></span>New Task</a>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cloud-upload-alt"></span>Upload Files</a>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-user-shield"></span>Preview Security</a>
-                    <div role="separator" class="dropdown-divider"></div>
-                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger"></span>Upgrade to Pro</a>
-                </div>
-            </div>
         </div>
 
         <div class="row justify-content-md-center">
@@ -178,114 +157,4 @@
     </main>
 
 {% endblock content %}
-
-<!-- Specific Page JS goes HERE  -->
 {% block javascripts %}{% endblock javascripts %}
-<!-- access_count.html -->
-<!-- access_count.html -->
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Path Access Counts</title>
-</head>
-<body>
-    <h1>Path Access Counts</h1>
-    <table>
-        <tr>
-            <th>Path</th>
-            <th>Access Count</th>
-            <th>Bounces</th>
-        </tr>
-        {% for access in path_accesses %}
-        <tr>
-            <td>{{ access.path }}</td>
-            <td>{{ access.access_count }}</td>
-            <td>{{ access.bounces }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <h2>Bounce Rate: {{ bounce_rate }}%</h2>
-</body>
-</html> {% endcomment %}
-
-
-
-<!-- {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
-    
-</head>
-<body>
-    <div class="fixed top-0 left-0 right-0 flex justify-center z-50 pointer-events-none">
-        {% if messages %}
-        <div class="mt-4 w-full max-w-md">
-            {% for message in messages %}
-            <div class="flash-message bg-white shadow-lg rounded-lg p-4 mb-2 pointer-events-auto">
-                <div class="flex items-center">
-                    {% if message.tags == 'success' %}
-                    <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    {% elif message.tags == 'error' %}
-                    <svg class="w-6 h-6 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    {% else %}
-                    <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    {% endif %}
-                    <p class="text-gray-800">{{ message }}</p>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-    <link rel="stylesheet" href="../../static/css/style.min.css">
-    <nav style="background-color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 24px;">
-        <div style="max-width: 1200px; margin: 0 auto; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <a href="{% url 'admin-panel' %}" style="font-size: 1.25rem; font-weight: bold; color: #2d3748;">Admin Panel</a>
-            <div style="margin-left: auto;">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'admin-logout' %}" style="color: #4299e1; text-decoration: none;">Logout</a>
-                {% else %}
-                    <a href="{% url 'login' %}" style="color: #4299e1; text-decoration: none;">Login</a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
-
-    
-    <div style="text-align: center;"> 
-        <h1 style="color: #333; margin-bottom: 40px; font-size: 2.5em; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);">Welcome to the Admin Panel</h1>
-
-        <a href="{% url 'project-allotment' %}" style="display: inline-block; background-color: #3498db; color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 1.2em; margin: 10px 0; transition: background-color 0.3s ease, transform 0.3s ease;">
-            Project Allotment
-        </a>
-        <hr style="border: none; height: 2px; background-color: #ccc; margin: 20px auto; width: 60%;">
-        
-        <a href="{% url 'student-database' %}" style="display: inline-block; background-color: #3498db; color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 1.2em; margin: 10px 0; transition: background-color 0.3s ease, transform 0.3s ease;">
-            Student Database
-        </a>
-        <hr style="border: none; height: 2px; background-color: #ccc; margin: 20px auto; width: 60%;">
-        
-        <a href="{% url 'faculty-database' %}" style="display: inline-block; background-color: #3498db; color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 1.2em; margin: 10px 0; transition: background-color 0.3s ease, transform 0.3s ease;">
-            Faculty Database
-        </a>
-
-        <hr style="border: none; height: 2px; background-color: #ccc; margin: 20px auto; width: 60%;">
-        
-        <a href="{% url 'summary' %}" style="display: inline-block; background-color: #3498db; color: white; text-decoration: none; padding: 15px 30px; border-radius: 5px; font-size: 1.2em; margin: 10px 0; transition: background-color 0.3s ease, transform 0.3s ease;">
-            Marks Summary
-        </a>
-    </div>
-</body>
-</html> -->
