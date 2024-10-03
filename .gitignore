@@ -32,7 +32,10 @@ Thumbs.db
 
 # Static and media files
 /staticfiles/
-/media/
+media/**/*.pdf
+media/**/*.ppt
+media/**/*.pptx
+
 
 # Node modules (if using npm)
 node_modules/
