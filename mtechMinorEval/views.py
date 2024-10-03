@@ -1,34 +1,32 @@
-from django.shortcuts import render,redirect,get_object_or_404
-from django.http import HttpResponse,JsonResponse
-from django.db import transaction
-from django.core.paginator import Paginator
-from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required,user_passes_test
-from .models import *
-from .forms import ExaminerEvaluationForm, GuideEvaluationForm, ProfileEditForm
-from google.auth.transport.requests import Request
-from users.models import *
+import os
 import requests
-from django.core.paginator import Paginator
+from dotenv import load_dotenv
+
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from .models import Profile, Faculty, Project
-from django.shortcuts import render
-from .models import PathAccess
-from weasyprint import HTML
+from django.http import HttpResponse, JsonResponse
+from django.db import transaction
 from django.db.models import Q
+from django.core.paginator import Paginator
+from django.template.loader import render_to_string
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-import os
-from django.template.loader import render_to_string
-from .forms import ProjectEditForm,StudentEditForm,FacultyEditForm
-from users.views import send_login_email
 
-from dotenv import load_dotenv
+from weasyprint import HTML
+
+from mtechMinorEval.models import Profile, Faculty, Project, PathAccess
+from mtechMinorEval.forms import ExaminerEvaluationForm, GuideEvaluationForm, ProfileEditForm, ProjectEditForm, StudentEditForm, FacultyEditForm
+
+from users.models import *
+from mtechMinorEval.models import *
+from users.views import send_login_email 
+
 load_dotenv()
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -250,12 +248,15 @@ def faculty_specific_eval(request,pk):
         order_by = f'-{sort_column}'
     else:
         order_by = sort_column 
+
     projects=ProjectEvalSummary.objects.filter(Q(guide=faculty) |
                                                 Q(examiner=faculty) )
+    
     projects=projects.filter(Q(project__title__icontains=search_query) |
                                                   Q(student__name__icontains=search_query) |
                                                    Q(student__rollno__icontains=search_query) 
     ).order_by(order_by)
+    
     paginator = Paginator(projects, per_page)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
