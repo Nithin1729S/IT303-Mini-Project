@@ -1,8 +1,6 @@
 {% extends "mtechMinorEval/base.html" %}
 
-{% block title %} Transactions {% endblock %} 
-
-<!-- Specific Page CSS goes HERE  -->
+{% block title %} Student Database {% endblock %} 
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
@@ -127,7 +125,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Item -->
                     {% for student in students %}
                     <tr>
                         <td>
@@ -164,7 +161,6 @@
                         </td>
                     </tr>
                     {% endfor %}
-                    <!-- Item -->
                 </tbody>
             </table>
         
