@@ -617,7 +617,7 @@ def deleteFaculty(request,pk):
 def addNewProject(request):
     "Add new project"
     if request.method == 'POST':
-        form = ProjectEditForm(request.POST)
+        form = ProjectEditForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
             return redirect('project-allotment')
