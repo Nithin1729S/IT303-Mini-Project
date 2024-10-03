@@ -10,6 +10,13 @@ from .forms import ExaminerEvaluationForm, GuideEvaluationForm, ProfileEditForm
 from google.auth.transport.requests import Request
 from users.models import *
 import requests
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from .models import Profile, Faculty, Project
+from django.shortcuts import render
+from .models import PathAccess
 from weasyprint import HTML
 from django.db.models import Q
 from google.oauth2.credentials import Credentials
@@ -17,15 +24,15 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import os
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from django.template.loader import render_to_string
 from .forms import ProjectEditForm,StudentEditForm,FacultyEditForm
 from users.views import send_login_email
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-CLIENT_SECRET_FILE = 'mtechMinorEval/static/client.json'
+
 from dotenv import load_dotenv
 load_dotenv()
+
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+CLIENT_SECRET_FILE = 'mtechMinorEval/static/client.json'
 
 def home(request):
     user = request.user
@@ -34,19 +41,6 @@ def home(request):
     faculty = get_object_or_404(Faculty, profile=userProfile)
     return render(request,'mtechMinorEval/home.html',{'faculty':faculty})
 
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from .models import Profile, Faculty, Project
-
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from .models import Profile, Faculty, Project
 
 @login_required(login_url='login')
 def projectsList(request):
@@ -754,7 +748,7 @@ def addNewFaculty(request):
     context = {'form': form}
     return render(request, 'mtechMinorEval/addNewFaculty.html', context)
 
-
+@login_required(login_url='login')
 def export_faculty_project_to_google_sheet(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
@@ -802,6 +796,9 @@ def export_faculty_project_to_google_sheet(request):
         print(f"An error occurred: {err}")
         return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
     
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)    
 def export_total_eval_to_google_sheet(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
@@ -852,6 +849,9 @@ def export_total_eval_to_google_sheet(request):
         return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
     
 
+    
+
+@login_required(login_url='login')
 def export_faculty_eval_to_google_sheet(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
@@ -907,6 +907,9 @@ def export_faculty_eval_to_google_sheet(request):
         return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
     
 
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def export_faculty_details_to_google_sheet(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
@@ -948,6 +951,9 @@ def export_faculty_details_to_google_sheet(request):
         return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
     
 
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def export_student_details_to_google_sheet(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
@@ -991,7 +997,8 @@ def export_student_details_to_google_sheet(request):
         return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
 
 
-
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def export_project_details_to_google_sheet(request):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'You need to be logged in to export projects.'}, status=403)
@@ -1036,14 +1043,8 @@ def export_project_details_to_google_sheet(request):
         return JsonResponse({'error': 'Failed to export data to Google Sheets'}, status=500)
     
 
-
-from django.shortcuts import render
-from .models import PathAccess
-
-# views.py
-from django.shortcuts import render
-from .models import PathAccess
-
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
 def access_count_view(request):
     path_accesses = PathAccess.objects.all()
     

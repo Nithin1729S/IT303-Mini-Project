@@ -1,30 +1,34 @@
+import os
+import re
+import pytz
+import random
 import requests
+import socket
+import platform
+import threading
 import datetime
-from mtechMinorEval.forms import StudentEditForm,ProfileEditForm
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect,get_object_or_404
-from django.db import IntegrityError
+from datetime import timedelta,datetime
+from dotenv import load_dotenv
+from django import forms
+from django.core.cache import cache
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, Student, Faculty
-from django.contrib import messages
-from django import forms
-from .forms import FacultyChangePasswordForm
-from mtechMinorEval.models import Project
-from users.models import Profile
-import random
+from django.db import IntegrityError
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-import re,os,socket,platform
-import pytz
-import threading
-from datetime import datetime, timedelta
-from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
-from dotenv import load_dotenv
-from django.core.cache import cache
-from django.utils import timezone
+from mtechMinorEval.forms import StudentEditForm, ProfileEditForm
+from users.forms import FacultyChangePasswordForm
+from mtechMinorEval.models import Project
 from twilio.rest import Client
+from users.models import Student, Faculty, Profile
+
 load_dotenv()
+
 
 class ExtendedUserCreationForm(UserCreationForm):
     ROLE_CHOICES = (
@@ -111,15 +115,9 @@ def register(request):
             email = form.cleaned_data.get('email')
             username = form.cleaned_data.get('username')
 
-            # Check if the email is valid
-            # if not email.endswith('@nitk.edu.in'):
-            #     messages.error(request, 'Email must end with @nitk.edu.in.')
-            #     return render(request, 'users/register.html', {'form': form})
-
-            # Check if the email contains any numbers
-            # if re.search(r'\d', email):
-            #     messages.error(request, 'Email cannot contain numbers.')
-            #     return render(request, 'users/register.html', {'form': form})
+            if not email.endswith('@nitk.edu.in'):
+                messages.error(request, 'Email must end with @nitk.edu.in.')
+                return render(request, 'users/register.html', {'form': form})
 
             # Check if the email is already registered
             if User.objects.filter(email=email).exists():
@@ -248,6 +246,8 @@ def loginUser(request):
 
     return render(request, 'users/login.html')
 
+
+
 def login_otp(request):
     "Login via otp"
     if request.method == 'POST':
@@ -288,6 +288,8 @@ def login_otp(request):
             messages.error(request, 'No user found with this phone number.')
 
     return render(request, 'users/login_otp.html')
+
+
 
 def verify_otp_login(request):
     "OTP Verification for login via otp"
@@ -424,6 +426,8 @@ def verify_otp(request):
 
     return render(request, 'users/verify_otp.html')
 
+
+@login_required
 def student_profile_view(request,pk):
     user = request.user
     userEmail = user.email
@@ -462,44 +466,27 @@ def resend_otp(request):
 
     return redirect('reset-password', otp=request.session.get('otp'))
 
-
-# views.py
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.models import User
-from .forms import FacultyChangePasswordForm
-from .models import Faculty
-
 def change_password_view(request):
     user = request.user
-    userEmail = user.email
-    userProfile = get_object_or_404(Profile, email=userEmail)
+    userProfile = get_object_or_404(Profile, email=user.email)
     faculty = get_object_or_404(Faculty, profile=userProfile)
-    if request.method == 'POST':
-        form = FacultyChangePasswordForm(request.POST)
-        form.email = request.user.email  # Set the email from the logged-in user
 
+    if request.method == 'POST':
+        form = FacultyChangePasswordForm(request.POST, user_email=request.user.email)
         if form.is_valid():
             new_password = form.cleaned_data['new_password']
-            user = User.objects.get(email=request.user.email)
-
-            # Update user's password
-            user.set_password(new_password)
+            user.set_password(new_password)  # Set the new password
             user.save()
-
-            # Optionally update the session authentication
-            update_session_auth_hash(request, user)
-
+            update_session_auth_hash(request, user)  # Keep the user logged in after password change
             messages.success(request, 'Your password has been changed successfully.')
-            return redirect('projectsList')  # Redirect to a success page
-
+            return redirect('projectsList')
     else:
-        form = FacultyChangePasswordForm()
+        form = FacultyChangePasswordForm(user_email=request.user.email)
 
     return render(request, 'users/changePassword.html', {
         'form': form,
         'email': request.user.email,
-        'faculty':faculty
+        'faculty': faculty
     })
+
 
