@@ -35,6 +35,8 @@
    python manage.py runserver
    ```
 
+8. Create a JSON file with your Google Sheets API credentials and save it in the `mtechMinorEval/static` directory.
+
 ## Creating a Superuser
 
 To access the admin panel, create a superuser:
@@ -57,6 +59,10 @@ TWILIO_AUTHTOKEN= 'TWILIO_AUTHTOKEN'
 ```
 
 Make sure to replace the placeholders with your actual credentials.
+
+## Google Sheets API Credentials
+
+Create a JSON file containing your Google Sheets API credentials and save it in the `mtechMinorEval/static` directory with the name `client.json` . This file is necessary for the application to interact with Google Sheets.
 
 ## Running the Application
 
