@@ -128,7 +128,7 @@
                             </a>
                         </td>
                         <td>
-                            <a href="../invoice.html" class="font-weight-bold">
+                            <a href="{% url 'student-profile' project.student.id %}" class="font-weight-bold">
                                 {{ project.student.name|truncatechars:30 }}
                             </a>
                         </td>

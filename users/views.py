@@ -1,6 +1,6 @@
 import requests
 import datetime
-
+from mtechMinorEval.forms import StudentEditForm,ProfileEditForm
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect,get_object_or_404
 from django.db import IntegrityError
@@ -429,10 +429,19 @@ def student_profile_view(request,pk):
     userEmail = user.email
     userProfile = get_object_or_404(Profile, email=userEmail)
     faculty = get_object_or_404(Faculty, profile=userProfile)
-    student=Student.objects.get(id=pk)
-    context={
-        'student':student,
-        'faculty':faculty
+    student = Student.objects.get(id=pk)
+    profile = student.profile 
+    form =StudentEditForm(instance=student)
+    profile_form = ProfileEditForm(instance=profile) 
+
+    if request.method == 'POST':
+        form = StudentEditForm(request.POST, request.FILES,instance=student)
+        profile_form = ProfileEditForm(request.POST, instance=profile) 
+    context = {
+        'student': student,
+        'form': form,
+        'profile_form': profile_form,
+        'faculty':faculty  
     }
     return render(request,'users/student_profile.html',context)
 

@@ -1,4 +1,386 @@
-{% load static %}
+{% extends "mtechMinorEval/base_faculty.html" %}
+
+{% block title %} Settings {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+                
+    <main class="content">
+
+        
+        <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark pl-0 pr-2 pb-0">
+            <div class="container-fluid px-0">
+              <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
+                <div class="d-flex">
+                  <!-- Search form -->
+                  
+                </div>
+                <!-- Navbar links -->
+                <ul class="navbar-nav align-items-center">
+                  <li class="nav-item dropdown">
+                    <a class="nav-link pt-1 px-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <div class="media d-flex align-items-center">
+                        <img class="user-avatar md-avatar rounded-circle" alt="Image placeholder" src="/static/assets/img/team/admin.svg">
+                        <div class="media-body ml-2 text-dark align-items-center d-none d-lg-block">
+                          <span class="mb-0 font-small font-weight-bold">
+                            {{ request.user.username }}
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                    <div class="dropdown-menu dashboard-dropdown dropdown-menu-right mt-2">
+                      <!-- <a class="dropdown-item font-weight-bold" href="/settings.html"><span class="fas fa-cog"></span>Settings</a>
+                      <div role="separator" class="dropdown-divider"></div> -->
+                      <a class="dropdown-item font-weight-bold" href="{% url 'admin-logout' %}">
+                          <span class="fas fa-sign-out-alt text-danger"></span>Logout</a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+        </nav>
+
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+            <!-- <div>
+                <button class="btn btn-secondary text-dark mr-2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fas fa-plus mr-2"></span>New
+                </button>
+                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="far fa-file-alt mr-2"></span>Document</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="far fa-comment-dots mr-2"></span>Message</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Product</a>
+                    <div role="separator" class="dropdown-divider"></div>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-danger mr-2"></span>Subscription Plan</a>
+                </div>
+            </div> -->
+            <div>
+                <!-- <div class="btn-group">
+                    <button type="button" data-toggle="tooltip" title="Calendar" class="btn btn-primary"><span class="fas fa-calendar-alt"></span></button>
+                </div>
+                <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="fas fa-clipboard mr-2"></span>Reports
+                    <span class="icon icon-small ml-1"><span class="fas fa-chevron-down"></span></span>
+                </button>
+                <div class="dropdown-menu dashboard-dropdown dropdown-menu-left mt-2">
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-box-open mr-2"></span>Products</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-store mr-2"></span>Customers</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-cart-arrow-down mr-2"></span>Orders</a>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-chart-pie mr-2"></span>Console</a>
+                    <div role="separator" class="dropdown-divider"></div>
+                    <a class="dropdown-item font-weight-bold" href="#"><span class="fas fa-rocket text-success mr-2"></span>All Reports</a>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-xl-8">
+                <div class="card card-body bg-white border-light shadow-sm mb-4">
+                    <h2 class="h5 mb-4">General information</h2>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-12">  
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="first_name">Name</label>
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                        <p class="text-danger">{{ form.name.errors }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="email">Email</label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}
+                                        <p class="text-danger">{{ form.email.errors }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row align-items-center">
+                            <div class="col-md-6 mb-3">
+                                <label for="birthday">Birthday</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
+                                    {{ form.date_of_birth }}
+                                    {% if form.date_of_birth.errors %}
+                                        <p class="text-danger">{{ form.date_of_birth.errors }}</p>
+                                    {% endif %}                                  
+                                </div>
+                                </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gender">Gender</label>
+                                {{ form.gender }}
+                                {% if form.gender.errors %}
+                                    <p class="text-danger">{{ form.gender.errors }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="degree">Degree</label>
+                                    {{ form.degree }}
+                                    {% if form.degree.errors %}
+                                        <p class="text-danger">{{ form.degree.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">Student Roll no</label>
+                                    {{ form.rollno }}
+                                    {% if form.rollno.errors %}
+                                        <p class="text-danger">{{ form.rollno.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="branch">Branch</label>
+                                    {{ form.branch }}
+                                    {% if form.branch.errors %}
+                                        <p class="text-danger">{{ form.branch.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">CGPA</label>
+                                    {{ form.cgpa }}
+                                    {% if form.cpga.errors %}
+                                        <p class="text-danger">{{ form.cgpa.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="mother_tongue">Mother Tongue</label>
+                                    {{ form.mother_tongue }}
+                                    {% if form.mother_tongue.errors %}
+                                        <p class="text-danger">{{ form.mother_tongue.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">Aadhaar Number</label>
+                                    {{ form.aadhaar_number }}
+                                    {% if form.aadhaar_number.errors %}
+                                        <p class="text-danger">{{ form.aadhaar_number.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="email">Father's Name</label>
+                                    {{ form.fathersName }}
+                                    {% if form.fathersName.errors %}
+                                        <p class="text-danger">{{ form.fathersName.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">Nationality</label>
+                                    {{ form.nationality }}
+                                    {% if form.nationality.errors %}
+                                        <p class="text-danger">{{ form.nationality.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+
+
+
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="email">Phone Number</label>
+                                    {{ form.phone_number}}
+                                    {% if form.phone_number.errors %}
+                                        <p class="text-danger">{{ form.phone_number.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">Date of Admission</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
+                                        {{ form.date_of_admission }}
+                                        {% if form.date_of_admission.errors %}
+                                            <p class="text-danger">{{ form.date_of_admission.errors }}</p>
+                                        {% endif %}                                  
+                                    </div>                                 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    {{ form.password }}
+                                    {% if form.password.errors %}
+                                        <p class="text-danger">{{ form.password.errors }}</p>
+                                    {% endif %}                                
+                                </div>
+                            </div>
+                        </div>
+                        <h2 class="h5 my-4">Address</h2>
+                        <div class="row">
+                            <div class="col-sm-12 mb-3">
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    {{ form.address }}
+                                    {% if form.address.errors %}
+                                        <p class="text-danger">{{ form.address.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                            <!-- <div class="col-sm-3 mb-3">
+                                <div class="form-group">
+                                    <label for="number">Student Roll No.</label>
+                                    {{ form.rollno }}
+                                    {% if form.rollno.errors %}
+                                        <p class="text-danger">{{ form.rollno.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div> -->
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4 mb-3">
+                                <div class="form-group">
+                                    <label for="city">Country</label>
+                                    {{ form.country }}
+                                    {% if form.country.errors %}
+                                        <p class="text-danger">{{ form.country.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="zip">ZIP</label>
+                                {{ form.pincode }}
+                                    {% if form.pincode.errors %}
+                                        <p class="text-danger">{{ form.pincode.errors }}</p>
+                                    {% endif %}                                  </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <div class="card border-light text-center p-0">
+                            <div class="profile-cover rounded-top" data-background="/static/images/profile-cover.jpg"></div>
+                            <div class="card-body pb-5">
+                                <img src="{{ student.profile_image.url }}" class="user-avatar large-avatar rounded-circle mx-auto mt-n7 mb-4" alt="Neil Portrait">
+                                <h4 class="h3">
+                                    {{ student.name }}
+                                </h4>
+                                <h5 class="font-weight-normal">
+                                    {{ student.email }}
+                                </h5>
+                                <p class="text-gray mb-4">{{ student.rollno }}</p>
+                            </div>
+                          </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <style>
+            input:disabled, select:disabled, textarea:disabled {
+                cursor: not-allowed;
+            }
+        </style>
+        <script type="text/javascript">
+            // Disable all input, select, and textarea elements in the form
+            const form = document.querySelector("form");
+            const fields = form.querySelectorAll("input, select, textarea");
+            
+            fields.forEach(field => {
+                field.disabled = true;
+                if (field.hasAttribute("placeholder")) {
+                    field.setAttribute("placeholder", ""); // Clear placeholder
+                }
+            });
+        </script>
+
+        {% include 'mtechMinorEval/footer.html' %}
+    </main>
+    
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
+
+
+
+<!-- {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white shadow-md rounded-lg p-8 max-w-lg w-full">
+        <h1 class="text-2xl font-bold mb-6 text-gray-800 text-center">Edit Student</h1>
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {% for field in form %}
+                    <div class="p-4 border rounded-md bg-gray-50 shadow-sm">
+                        <label class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                        {{ field }} 
+                        {% if field.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ field.errors }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">
+                Submit
+            </button>
+        </form>
+    </div>
+</body>
+
+</html> -->
+
+{% comment %} {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,4 +417,4 @@
     </div>
 
 </body>
-</html>
+</html> {% endcomment %}

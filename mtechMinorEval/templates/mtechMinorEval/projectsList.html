@@ -145,7 +145,7 @@
                             </a>
                         </td>
                         <td>
-                            <span class="font-weight-normal">{{ project.student.name|truncatechars:30  }}</span>
+                            <span class="font-weight-normal"><a href="{% url 'student-profile' project.student.id %}">{{ project.student.name|truncatechars:30  }}</a></span>
                         </td>
                         <td><span class="font-weight-normal">{{ project.student.email|truncatechars:30 }}</span></td>
                         {% if project.guide.name == request.user.username %}
