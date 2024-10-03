@@ -1,43 +1,63 @@
-inside mtechMinorEval folder open a terminal ( required only in dev phase )
+# IT303 Software Engineering MTech IT Minor Project Marks Submission Module
 
-`npm i`
-`npm run watch`
+## Setup Instructions
 
-in the main folder open another terminal 
-`pip install -r requirements.txt`
-`python manage.py runserver`
+1. Open a terminal in the main folder of the project.
 
+2. Install virtualenv:
+   ```
+   sudo apt install virtualenv
+   ```
 
+3. Create a virtual environment:
+   ```
+   virtualenv env
+   ```
 
-Create a super user to view the admin panel
-`python manage.py createsuperuser`
+4. Activate the virtual environment:
+   ```
+   source env/bin/activate
+   ```
 
+5. Install the required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
 
-Create a .env file in home folder and type your credentials
+6. Run database migrations:
+   ```
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
 
-EMAIL = 'youremailaddress'
-PASSWD = 'yourapppassword'
+7. Start the development server:
+   ```
+   python manage.py runserver
+   ```
 
-# Login Details
+## Creating a Superuser
 
-## Faculty Login Details
+To access the admin panel, create a superuser:
 
-| Username                | Password    |
-|-------------------------|-------------|
-| faculty1@gmail.com      | viratkohli  |
-| faculty2@gmail.com      | viratkohli  |
-| faculty3@gmail.com      | viratkohli  |
-| faculty4@gmail.com      | viratkohli  |
-| faculty5@gmail.com      | viratkohli  |
+```
+python manage.py createsuperuser
+```
 
-## Student Login Details
+Follow the prompts to set up your superuser account.
 
-| Username                | Password    |
-|-------------------------|-------------|
-| student1@gmail.com      | viratkohli  |
-| student2@gmail.com      | viratkohli  |
-| student3@gmail.com      | viratkohli  |
-| student4@gmail.com      | viratkohli  |
-| student5@gmail.com      | viratkohli  |
+## Environment Variables
 
+Create a `.env` file in the home folder of the project and add your credentials according to the `.env.example` file:
 
+```
+EMAIL = 'YOUR_EMAIL_ADDRESS'
+PASSWD = 'GOOGLE_SMTP_API_PASSWORD'
+TWILIO_SID = 'TWILIO_SID_TOKEN'
+TWILIO_AUTHTOKEN= 'TWILIO_AUTHTOKEN'
+```
+
+Make sure to replace the placeholders with your actual credentials.
+
+## Running the Application
+
+After completing the setup and configuration steps, you can access the application by opening a web browser and navigating to the address provided by the development server (typically http://127.0.0.1:8000/).
