@@ -72,9 +72,14 @@ def projectsList(request):
                 Q(guide=faculty) | Q(examiner=faculty)
             ).distinct()
 
-            # Simple search on title only
+
             if search_query:
-                projects = projects.filter(title__icontains=search_query)
+                projects = projects.filter(
+                    Q(title__icontains=search_query) | 
+                    Q(student__rollno__icontains=search_query) |
+                    Q(student__name__icontains=search_query) |
+                    Q(student__email__icontains=search_query) 
+                )
 
             # Simple sorting
             if sort_order == 'desc':
