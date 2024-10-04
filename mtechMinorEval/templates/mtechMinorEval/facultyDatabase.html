@@ -117,9 +117,7 @@
                                 {{ faculty.name|truncatechars:30 }}
                             </a>
                         </td>
-                        <td>
-                            <span class="font-weight-normal">{{ faculty.email|truncatechars:30  }}</span>
-                        </td>
+                        <td><span class="font-weight-normal"><a href="mailto:{{ faculty.email }}" target="_blank">{{  faculty.email|truncatechars:30  }}</a></span></td>
                         <td>
                             <div class="btn-group">
                                 <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

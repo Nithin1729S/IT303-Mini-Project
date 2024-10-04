@@ -17,7 +17,20 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="card card-body bg-white border-light shadow-sm mb-4">
-                                    <h2 class="h5 mb-4">Project Title: {{project.title}}</h2>
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h2 class="h5">Project Title: {{ project.title }}</h2>
+                                        <div class="ml-auto font-weight-bold">Total Marks: {{ total_marks }} </div>
+                                        {% if role == 'Examiner' %}
+                                        <span>
+                                            &nbsp;(Max: 40)
+                                        </span>
+                                        {% endif %}
+                                        {% if role == 'Guide' %}
+                                        <span>
+                                            &nbsp;(Max: 60)
+                                        </span>
+                                        {% endif %}
+                                    </div>
                                     <div class="d-xl-flex align-items-center">
                                         <div class="file-field">
                                             <div class="d-flex justify-content-xl-center ml-xl-3">
@@ -25,7 +38,10 @@
                                                     <div class="d-md-block text-left" style="cursor: pointer;">
                                                         <div class="font-weight-normal text-dark mb-1" style="cursor: pointer;">Student Name: {{ project.student.name }}</div>
                                                         <div class="text-gray small">Student Rollno: {{ project.student.rollno }}</div>
-                                                        <div class="text-gray small">Student Email: {{ project.student.email }}</div>
+                                                        <div class="text-gray small">
+                                                            Student Email: 
+                                                            <a href="mailto:{{ project.student.email }}" target="_blank">{{ project.student.email }}</a>
+                                                        </div>                                                   
                                                     </div>
                                                 </div>
                                             </div>
@@ -61,16 +77,16 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="degree">Depth Of Understanding</label>
+                                    <label for="degree">Depth Of Understanding  (Max: {{ form.depthOfUnderstanding.field.widget.attrs.max }})</label>
                                     {{ form.depthOfUnderstanding }}
                                     {% if form.depthOfUnderstanding.errors %}
                                         <p class="text-danger">{{ form.depthOfUnderstanding.errors }}</p>
                                     {% endif %}                                
                                 </div>
-                            </div>
+                            </div> 
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="phone">Work Done & Results</label>
+                                    <label for="phone">Work Done & Results (Max: {{ form.workDoneAndResults.field.widget.attrs.max }})</label>
                                     {{ form.workDoneAndResults }}
                                     {% if form.workDoneAndResults.errors %}
                                         <p class="text-danger">{{ form.workDoneAndResults.errors }}</p>
@@ -83,7 +99,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="branch">Exceptional Work</label>
+                                    <label for="branch">Exceptional Work (Max: {{ form.exceptionalWork.field.widget.attrs.max }}) </label>
                                     {{ form.exceptionalWork }}
                                     {% if form.exceptionalWork.errors %}
                                         <p class="text-danger">{{ form.exceptionalWork.errors }}</p>
@@ -92,7 +108,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="phone">Viva Voce</label>
+                                    <label for="phone">Viva Voce (Max: {{ form.vivaVoce.field.widget.attrs.max }})</label>
                                     {{ form.vivaVoce }}
                                     {% if form.vivaVoce.errors %}
                                         <p class="text-danger">{{ form.vivaVoce.errors }}</p>
@@ -107,7 +123,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="mother_tongue">Presentation</label>
+                                    <label for="mother_tongue">Presentation (Max: {{ form.presentation.field.widget.attrs.max }}) </label>
                                     {{ form.presentation }}
                                     {% if form.presentation.errors %}
                                         <p class="text-danger">{{ form.presentation.errors }}</p>
@@ -116,7 +132,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="phone">Report</label>
+                                    <label for="phone">Report (Max: {{ form.report.field.widget.attrs.max }}) </label>
                                     {{ form.report }}
                                     {% if form.report.errors %}
                                         <p class="text-danger">{{ form.report.errors }}</p>
@@ -129,7 +145,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="email">Attendance</label>
+                                    <label for="email">Attendance (Max: {{ form.attendance.field.widget.attrs.max }}) </label>
                                     {{ form.attendance }}
                                     {% if form.attendance.errors %}
                                         <p class="text-danger">{{ form.attendance.errors }}</p>
