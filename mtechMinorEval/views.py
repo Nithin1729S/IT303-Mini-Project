@@ -136,6 +136,8 @@ def evaluate(request, pk):
         
         if form.is_valid():
             form.save()
+            faculty.done=False
+            faculty.save()
             return redirect('projectsList')
         else:
             print("Form is invalid")
