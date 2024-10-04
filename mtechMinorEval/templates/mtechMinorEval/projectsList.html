@@ -18,6 +18,19 @@
                 </nav>
                 <h2 class="h4">All Projects</h2>
                 <p class="mb-0">MTech IT Minor Projects</p>
+                <br/>
+                <div class="btn-toolbar dropdown">
+                    {% if faculty.done %}
+                        <a href="#" class="btn btn-success btn-sm mr-2 disabled">
+                            <span class="fa fa-lock"></span><span id='evaluation_status'> Finalized</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'send-report' %}" class="btn btn-primary btn-sm mr-2">
+                            <span class="fa fa-check-circle"></span><span id='evaluation_status'> Finalize Evaluation</span>
+                        </a>
+                    {% endif %}
+                </div>
+                
             </div>
             <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group">

@@ -280,16 +280,20 @@
     </table> -->
 
     <div style="display: flex; justify-content: space-between;">
+        {% if guide_count %}
         <div style="text-align: left;">
             <div style="width: 300px; padding-top: 50px;">
                 Signature of the Guide with Date
             </div>
         </div>
+        {% endif %}
+        {% if examiner_count %}
         <div style="text-align: right;">
             <div style="width: 300px; padding-top: 50px;">
                 Signature of the Examiner with Date
             </div>
         </div>
+        {% endif %}
     </div>
   </div>
 </body>

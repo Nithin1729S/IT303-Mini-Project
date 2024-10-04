@@ -1,5 +1,8 @@
 import os
 import requests
+import pytz
+import threading
+from datetime import datetime
 from dotenv import load_dotenv
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -9,6 +12,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.contrib import messages
+from django.core.mail import send_mail,EmailMessage
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 
@@ -100,9 +104,6 @@ def projectsList(request):
             return redirect('login')
     else:
         return redirect('login')
-
-
-
 
 
 @login_required(login_url='login')
@@ -1060,3 +1061,50 @@ def access_count_view(request):
         'bounce_rate': bounce_rate,
     }
     return render(request, 'mtechMinorEval/access_count.html', context)
+
+
+@login_required(login_url='login')
+def send_evaluation_report_to_faculty(request):
+    # Get faculty object
+    user = request.user
+    userEmail = user.email
+    userProfile = get_object_or_404(Profile, email=userEmail)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
+
+    if not faculty.done:
+        # Update the 'done' field
+        faculty.done = True
+        faculty.save()
+
+        # Generate the PDF
+        projects = Project.objects.select_related('student', 'guide', 'examiner')\
+                                  .prefetch_related('guide_evaluation', 'examiner_evaluation')\
+                                  .filter(Q(guide=faculty) | Q(examiner=faculty))
+        guide_projects_count = Project.objects.filter(guide=faculty).count()
+        examiner_projects_count = Project.objects.filter(examiner=faculty).count()
+
+        context = {
+            'projects': projects,
+            'faculty': faculty,
+            'guide_count': guide_projects_count,
+            'examiner_count': examiner_projects_count
+        }
+
+        html_string = render_to_string('mtechMinorEval/generate-pdf-summary.html', context)
+        pdf_file = HTML(string=html_string).write_pdf()
+
+        # Send email with PDF as an attachment
+        subject = 'MTech IT Minor Project Marks Finalized Report'
+        message = f'Hello {faculty.name},\n\nYou have successfully finalized the MTech IT Minor Project Marks.'
+        email = EmailMessage(subject, message, os.getenv("EMAIL"), [faculty.email])
+
+        # Attach the PDF
+        email.attach('evaluation_summary.pdf', pdf_file, 'application/pdf')
+
+        # Use a thread to send the email in the background
+        email_thread = threading.Thread(target=email.send)
+        email_thread.start()
+
+        messages.success(request, 'Evaluation finalized, and email with PDF sent.')
+
+    return redirect('projectsList')  # Redirect to the relevant page

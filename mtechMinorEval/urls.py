@@ -30,5 +30,5 @@ urlpatterns=[
     path('export-total-eval/', views.export_total_eval_to_google_sheet, name='total-eval-export'),
     path('export-faculty-eval/', views.export_faculty_eval_to_google_sheet, name='faculty-eval-export'),
     path('access-counts/', views.access_count_view, name='access-counts'),
-
+    path('send_report/',views.send_evaluation_report_to_faculty,name='send-report')
 ]
