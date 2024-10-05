@@ -546,7 +546,10 @@ def editFaculty(request, pk):
             profile_instance.save()  
 
             messages.success(request, 'Faculty updated successfully!')
-            ActivityLog.objects.create(activity=f"Admin edited {faculty.name}'s details")
+            if request.user.is_superuser:
+                ActivityLog.objects.create(activity=f"Admin edited {faculty.name}'s details")
+            else:
+                ActivityLog.objects.create(activity=f"{faculty.name} updated his details")
             if request.user.is_superuser:
                 return redirect('faculty-database')  
             else:
@@ -576,7 +579,6 @@ def deleteProject(request,pk):
     }
     if(request.method=='POST'):
         project.delete()
-        ActivityLog.objects.create(action='projectDelete',project=project,isadmin=True)
         ActivityLog.objects.create(activity=f"Admin deleted {project.student.name}'s project {project.name}")
         return redirect('project-allotment')
     return render(request,'mtechMinorEval/delete.html',context)
@@ -1130,7 +1132,7 @@ def send_evaluation_report_to_faculty(request):
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
 def activity_log(request):
-    logs=ActivityLog.objects.all()
+    logs=ActivityLog.objects.all().order_by('-timestamp')
     context={
         'logs':logs
     }

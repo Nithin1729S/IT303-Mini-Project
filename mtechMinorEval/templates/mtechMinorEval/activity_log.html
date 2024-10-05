@@ -3,44 +3,44 @@
 {% block stylesheets %}{% endblock stylesheets %}
 {% block content %}
                 
-    <main class="content">
-        {% include 'mtechMinorEval/navigation.html' %}
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-            <div class="d-block mb-4 mb-md-0">
-                <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
-                    <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
-                        <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}"><span class="fas fa-home"></span></a></li>
-                        <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'activity-log' %}">Activity Logs</a></li>
-                    </ol>
-                </nav>
-                <h2 class="h4">Activity Logs</h2>
-                <p class="mb-0">Log files of MTech IT Minor Project Marks Submission Module</p>
-            </div>
-            
+<main class="content">
+    {% include 'mtechMinorEval/navigation.html' %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+        <div class="d-block mb-4 mb-md-0">
+            <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+                <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+                    <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}"><span class="fas fa-home"></span></a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'admin-panel' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><a href="{% url 'activity-log' %}">Activity Logs</a></li>
+                </ol>
+            </nav>
+            <h2 class="h4">Activity Logs</h2>
+            <p class="mb-0">Log files of MTech IT Minor Project Marks Submission Module</p>
         </div>
+    </div>
 
+    <div class="card card-body border-light shadow-sm table-wrapper table-responsive pt-0" style="max-height: 480px; overflow-y: auto;">
+        <table class="table table-hover">
+            <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
+                <tr>
+                    <th>Activities</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td>
+                            {{ log.activity }} at {{ log.timestamp }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-        <div class="card card-body border-light shadow-sm table-wrapper table-responsive pt-0">
-            <table class="table table-hover">
-                <thead>
-                    <tr><th>Activities</th></tr>
-                </thead>
-                <tbody>
-                    {% for log in logs %}
-                        <tr>
-                            <td>
-                                {{ log.activity }} at {{ log.timestamp }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            
-            
-        </div>
-        {% include 'mtechMinorEval/footer.html' %}
-    </main>
+    {% include 'mtechMinorEval/footer.html' %}
+</main>
+
     
 {% endblock content %}
 {% block javascripts %}{% endblock javascripts %}

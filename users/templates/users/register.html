@@ -21,8 +21,7 @@
                               <label for="username">Username</label>
                               <div class="input-group">
                                   <span class="input-group-text" id="basic-addon1"><span class="fas fa-user"></span></span>
-                                  <input id="username" name="username" type="text" class="form-control" placeholder="Dr. Faculty" required 
-                                  oninput="if (!this.value.endsWith('@nitk.edu.in')) { this.setCustomValidity('Email must end with @nitk.edu.in'); } else { this.setCustomValidity(''); }" />
+                                  <input id="username" name="username" type="text" class="form-control" placeholder="Dr. Faculty" required  />
                               </div>
                           </div>
                           <!-- Email Input -->
@@ -30,7 +29,8 @@
                               <label for="email">Your Email</label>
                               <div class="input-group">
                                   <span class="input-group-text" id="basic-addon2"><span class="fas fa-envelope"></span></span>
-                                  <input id="email" name="email" type="email" class="form-control" placeholder="faculty@nitk.edu.in" required />
+                                  <input id="email" name="email" type="email" class="form-control" placeholder="faculty@nitk.edu.in" required 
+                                  oninput="if (!this.value.endsWith('@nitk.edu.in')) { this.setCustomValidity('Email must end with @nitk.edu.in'); } else { this.setCustomValidity(''); }" />
                               </div>
                           </div>
                           <!-- Password Input -->

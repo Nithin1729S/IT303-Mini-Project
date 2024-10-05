@@ -228,7 +228,7 @@ def loginUser(request):
                     userEmail = user.email
                     userProfile = get_object_or_404(Profile, email=userEmail)
                     faculty = get_object_or_404(Faculty, profile=userProfile)
-                    ActivityLog.objects.create(actvity=f'{faculty.name} logged in')
+                    ActivityLog.objects.create(activity=f'{faculty.name} logged in')
                     #Reset the failed attempts on successful login
                     cache.delete(cache_key)
                     return redirect('projectsList')
