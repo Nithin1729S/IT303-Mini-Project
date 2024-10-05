@@ -26,6 +26,7 @@ from users.forms import FacultyChangePasswordForm
 from mtechMinorEval.models import Project
 from twilio.rest import Client
 from users.models import Student, Faculty, Profile
+from mtechMinorEval.models import ActivityLog
 
 load_dotenv()
 
@@ -223,6 +224,11 @@ def loginUser(request):
                     recipient_list = [email]
                     send_login_email(profile.user.username, recipient_list)
                     messages.success(request, f'{email} logged in successfully!')
+                    user = request.user
+                    userEmail = user.email
+                    userProfile = get_object_or_404(Profile, email=userEmail)
+                    faculty = get_object_or_404(Faculty, profile=userProfile)
+                    ActivityLog.objects.create(actvity=f'{faculty.name} logged in')
                     #Reset the failed attempts on successful login
                     cache.delete(cache_key)
                     return redirect('projectsList')
@@ -312,6 +318,7 @@ def verify_otp_login(request):
                 recipient_list = [profile.email]
                 send_login_email(profile.user.username, recipient_list)
                 messages.success(request, 'Logged in successfully with OTP!')
+                ActivityLog.objects.create(activity=f'{faculty.name} logged via OTP')
                 return redirect('projectsList')
             except (User.DoesNotExist, Faculty.DoesNotExist):
                 messages.error(request, 'No user found with this contact information.')
@@ -323,9 +330,14 @@ def verify_otp_login(request):
 
 def logoutUser(request):
     "Logout Faculty"
+    user = request.user
+    userEmail = user.email
+    userProfile = get_object_or_404(Profile, email=userEmail)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
     username = request.user.username if request.user.is_authenticated else 'User'
     logout(request)
     messages.success(request,f"{username} was successfully logged out ")
+    ActivityLog.objects.create(activity=f'{faculty.name} logged out')
     return redirect('login')
 
 
@@ -376,6 +388,7 @@ def reset_password(request, otp):
                 user.save()
                 
                 messages.success(request, 'Your password has been updated successfully!')
+                ActivityLog.objects.create(activity=f'{faculty.name} updated password')
                 return redirect('login') 
             except Faculty.DoesNotExist:
                 messages.error(request, 'Faculty not found.')
@@ -410,7 +423,7 @@ def verify_otp(request):
                     role = 'faculty'
                     
                     profile = Profile.objects.create(user=user, email=email, role=role)
-                    Faculty.objects.create(profile=profile, email=email, name=username)
+                    faculty=Faculty.objects.create(profile=profile, email=email, name=username)
 
                     # Clear session data after successful registration
                     del request.session['otp']
@@ -418,6 +431,7 @@ def verify_otp(request):
                     del request.session['form_data']
 
                     messages.success(request, 'Account created successfully!')
+                    ActivityLog.objects.create(activity=f'{faculty.name} registered')
                     return redirect('login')
             except IntegrityError:
                 messages.error(request, 'An unexpected error occurred. Please try again.')
@@ -447,6 +461,7 @@ def student_profile_view(request,pk):
         'profile_form': profile_form,
         'faculty':faculty  
     }
+    ActivityLog.objects.create(activity=f"{faculty.name} viewed {student.name}'s profile")
     return render(request,'users/student_profile.html',context)
 
 
@@ -480,6 +495,7 @@ def change_password_view(request):
             user.save()
             update_session_auth_hash(request, user)  # Keep the user logged in after password change
             messages.success(request, 'Your password has been changed successfully.')
+            ActivityLog.objects.create(activity=f'{faculty.name} updated password')
             return redirect('projectsList')
     else:
         form = FacultyChangePasswordForm(user_email=request.user.email)

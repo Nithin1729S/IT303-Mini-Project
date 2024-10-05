@@ -48,6 +48,12 @@
                     <span>Evaluations</span>
                 </a>
             </li>       
+            <li class="nav-item {% if request.resolver_match.url_name == 'activity-log' %} active {% endif %}">
+                <a href="{% url 'activity-log' %}" class="nav-link">
+                    <span class="sidebar-icon"><span class="fa fa-history"></span></span>
+                    <span>Activity Log</span>
+                </a>
+            </li>       
             <li role="separator" class="dropdown-divider mt-4 mb-3 border-black"></li>
             <li class="nav-item">
                 <a href="{% url 'admin-logout' %}" class="nav-link">

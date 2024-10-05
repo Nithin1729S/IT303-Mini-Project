@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import FileExtensionValidator, MinValueValidator, MaxValueValidator
@@ -131,3 +132,10 @@ class PathAccess(models.Model):
 
     def __str__(self):
         return self.path
+
+
+class ActivityLog(models.Model):
+    activity = models.TextField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f'{self.activity} at {self.timestamp}'

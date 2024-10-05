@@ -138,6 +138,7 @@ def evaluate(request, pk):
             form.save()
             faculty.done=False
             faculty.save()
+            ActivityLog.objects.create(activity=f"{faculty.name} evaluated {project.student.name}'s project ( {project.name} )as a {role}")
             return redirect('projectsList')
         else:
             print("Form is invalid")
@@ -233,7 +234,7 @@ def generate_pdf(request):
         response = HttpResponse(pdf_file, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="evaluation_summary.pdf"'
         return response
-    
+    ActivityLog.objects.create(activity=f'{faculty.name} generated report of his evaluation')
     return render(request,'mtechMinorEval/generate-pdf-summary.html', context)
 
 
@@ -308,6 +309,7 @@ def adminLogin(request):
                 recipient_list = [user.email]
                 send_login_email(user.username,recipient_list)
                 messages.success(request, "Admin successfully logged in")
+                ActivityLog.objects.create(activity=f'Admin logged in')
                 return redirect('admin-panel') 
             else:
                 messages.error(request, "You are not an admin of this module")
@@ -343,6 +345,7 @@ def adminLogout(request):
     "Admin logout"
     logout(request)  # This logs out the user
     messages.success(request, "Admin successfully logged out")
+    ActivityLog.objects.create(activity=f'Admin Logged out')
     return redirect('admin-login')  # Redirect to the login page after logout
 
 
@@ -469,6 +472,7 @@ def editProject(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Project details updated successfully.')
+            ActivityLog.objects.create(f"Admin edited {project.student.name}'s project ({project.name}) details")
             return redirect('project-allotment') 
         else:
             messages.error(request, 'There was an error updating the project.')
@@ -503,6 +507,7 @@ def editStudent(request, pk):
             user.save()  
             profile_instance.save()  
             messages.success(request, 'Student updated successfully!')
+            ActivityLog.objects.create(activity=f"Admin edited {student.name}'s details")
             return redirect('student-database')  
         else:
             messages.error(request, 'Please correct the errors below.')
@@ -541,6 +546,7 @@ def editFaculty(request, pk):
             profile_instance.save()  
 
             messages.success(request, 'Faculty updated successfully!')
+            ActivityLog.objects.create(activity=f"Admin edited {faculty.name}'s details")
             if request.user.is_superuser:
                 return redirect('faculty-database')  
             else:
@@ -570,6 +576,8 @@ def deleteProject(request,pk):
     }
     if(request.method=='POST'):
         project.delete()
+        ActivityLog.objects.create(action='projectDelete',project=project,isadmin=True)
+        ActivityLog.objects.create(activity=f"Admin deleted {project.student.name}'s project {project.name}")
         return redirect('project-allotment')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -590,6 +598,7 @@ def deleteStudent(request,pk):
             student.delete()
             profile.delete()
             user.delete()
+            ActivityLog.objects.create(activity=f"Admin deleted {student.name}'s entry")
             return redirect('student-database')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -610,6 +619,7 @@ def deleteFaculty(request,pk):
             faculty.delete()
             profile.delete()
             user.delete()
+            ActivityLog.objects.create(activity=f"Admin deleted {faculty.name}'s entry")
             return redirect('faculty-database')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -622,7 +632,8 @@ def addNewProject(request):
     if request.method == 'POST':
         form = ProjectEditForm(request.POST,request.FILES)
         if form.is_valid():
-            form.save()
+            project=form.save()
+            ActivityLog.objects.create(activity=f"Admin created {project.name} belonging to {project.student.name}")
             return redirect('project-allotment')
     else:
         form = ProjectEditForm()
@@ -687,7 +698,7 @@ def addNewStudent(request):
                     pincode=pincode,
                     profile_image=profile_image
                 )
-                
+                ActivityLog.objects.create(activity=f"Admin created {student.name}'s entry")
                 return redirect('student-database')
     else:
         form = StudentEditForm()
@@ -744,7 +755,7 @@ def addNewFaculty(request):
                     profile_image=profile_image,
                     pincode=pincode,
                 )
-                
+                ActivityLog.objects.create(activity=f"Admin created {faculty.name}'s entry")
                 return redirect('faculty-database')
     else:
         form = FacultyEditForm()
@@ -846,6 +857,7 @@ def export_total_eval_to_google_sheet(request):
 
         spreadsheet = service.spreadsheets().create(body=body).execute()
         sheet_id = spreadsheet.get('spreadsheetId')
+        ActivityLog.objects.create(activity=f"Admin dowloaded total evaluation sheet")
         return redirect(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
 
     except HttpError as err:
@@ -905,6 +917,8 @@ def export_faculty_eval_to_google_sheet(request):
         }
         spreadsheet = service.spreadsheets().create(body=body).execute()
         sheet_id = spreadsheet.get('spreadsheetId')
+        ActivityLog.objects.create(activity=f"{faculty.name} dowloaded his evaluation sheet")
+
         return redirect(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
     except HttpError as err:
         print(f"An error occurred: {err}")
@@ -1106,7 +1120,18 @@ def send_evaluation_report_to_faculty(request):
         # Use a thread to send the email in the background
         email_thread = threading.Thread(target=email.send)
         email_thread.start()
+        ActivityLog.objects.create(activity=f"Evaluation report sent to {faculty.name}")
 
         messages.success(request, 'Evaluation finalized, and email with PDF sent.')
 
     return redirect('projectsList')  # Redirect to the relevant page
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
+def activity_log(request):
+    logs=ActivityLog.objects.all()
+    context={
+        'logs':logs
+    }
+    return render(request,'mtechMinorEval/activity_log.html',context)
