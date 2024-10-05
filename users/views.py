@@ -344,31 +344,57 @@ def logoutUser(request):
 def forgot_password(request):
     "Forgot password to reset password"
     if request.method == 'POST':
-        email = request.POST.get('email')
-        print(f"Received email: {email}") 
-        print(Faculty.objects.filter(email=email))
-        if Faculty.objects.filter(email=email).exists():
-            print(Faculty.objects.filter(email=email))
-            otp = get_random_string(length=6, allowed_chars='0123456789')
-            try:
-                subject="Your OTP for Password Reset",
-                message=f'Your OTP is {otp}'
-                send_faculty_otp(subject,message,[email])
-                request.session['otp'] = otp
-                request.session['email'] = email
-                messages.success(request, 'An OTP has been sent to your email.')
-                return redirect('reset-password', otp=otp)
-            except Exception as e:
-                 print(f"Error sending email: {e}")  
-                 messages.error(request, 'Failed to send OTP. Please try again.')
+        contact_info = request.POST.get('contact_info')  # Can be email or phone number
+        otp = get_random_string(length=6, allowed_chars='0123456789')
+
+        # Check if contact_info is email or phone number
+        if '@' in contact_info:
+            # Handle email input
+            faculty = Faculty.objects.filter(email=contact_info).first()
+            if faculty:
+                try:
+                    # Send OTP via email
+                    subject = "Your OTP for Password Reset"
+                    message = f'Your OTP is {otp}. It is valid for 5 minutes.'
+                    send_faculty_otp(subject, message, [contact_info])
+
+                    # Save OTP and contact_info in session
+                    request.session['otp'] = otp
+                    request.session['contact_info'] = contact_info
+                    messages.success(request, 'An OTP has been sent to your email.')
+                    return redirect('reset-password', otp=otp)
+
+                except Exception as e:
+                    print(f"Error sending email: {e}")
+                    messages.error(request, 'Failed to send OTP. Please try again.')
+            else:
+                messages.error(request, 'Email not registered as faculty.')
+
         else:
-            messages.error(request, 'Email not registered as faculty.')
+            # Handle phone number input
+            faculty = Faculty.objects.filter(phone_number=contact_info).first()
+            if faculty:
+                try:
+                    # Send OTP via SMS
+                    send_sms(f'Your OTP for password reset is {otp}. It is valid for 5 minutes.', contact_info)
+                    print(otp)
+                    # Save OTP and contact_info in session
+                    request.session['otp'] = otp
+                    request.session['contact_info'] = contact_info
+                    messages.success(request, 'An OTP has been sent to your phone number.')
+                    return redirect('reset-password', otp=otp)
+
+                except Exception as e:
+                    print(f"Error sending SMS: {e}")
+                    messages.error(request, 'Failed to send OTP via SMS. Please try again.')
+            else:
+                messages.error(request, 'Phone number not registered as faculty.')
 
     return render(request, 'users/forgot_password.html')
 
 
 def reset_password(request, otp):
-    "Reset password after comparing otp"
+    "Reset password after comparing OTP"
     
     # Initialize the resend OTP timestamp if it does not exist
     if 'resend_otp_time' not in request.session:
@@ -378,18 +404,31 @@ def reset_password(request, otp):
         entered_otp = request.POST.get('otp')
         new_password = request.POST.get('new_password')
 
+        # Check if contact_info exists in session
+        contact_info = request.session.get('contact_info')
+
+        if not contact_info:
+            messages.error(request, 'Contact information is missing. Please try again.')
+            return redirect('forgot-password')  # Redirect to forgot password page if contact info is missing
+
         # Verify OTP
         if entered_otp == request.session.get('otp'):
-            email = request.session.get('email')
             try:
-                faculty = Faculty.objects.get(email=email)
-                user = faculty.profile.user  
-                user.set_password(new_password) 
+                if '@' in contact_info:
+                    # If contact_info is an email
+                    faculty = Faculty.objects.get(email=contact_info)
+                else:
+                    # If contact_info is a phone number
+                    faculty = Faculty.objects.get(phone_number=contact_info)
+
+                # Update password for the corresponding user
+                user = faculty.profile.user
+                user.set_password(new_password)
                 user.save()
-                
+
                 messages.success(request, 'Your password has been updated successfully!')
                 ActivityLog.objects.create(activity=f'{faculty.name} updated password')
-                return redirect('login') 
+                return redirect('login')
             except Faculty.DoesNotExist:
                 messages.error(request, 'Faculty not found.')
         else:
@@ -402,7 +441,6 @@ def reset_password(request, otp):
         can_resend = False
 
     return render(request, 'users/reset_password.html', {'otp': otp, 'can_resend': can_resend})
-
 
 
 def verify_otp(request):
