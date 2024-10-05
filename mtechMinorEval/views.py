@@ -138,7 +138,7 @@ def evaluate(request, pk):
             form.save()
             faculty.done=False
             faculty.save()
-            ActivityLog.objects.create(activity=f"{faculty.name} evaluated {project.student.name}'s project ( {project.name} )as a {role}")
+            ActivityLog.objects.create(activity=f"{faculty.name} evaluated {project.student.name}'s project ( {project.title} )as a {role}")
             return redirect('projectsList')
         else:
             print("Form is invalid")
@@ -472,7 +472,7 @@ def editProject(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Project details updated successfully.')
-            ActivityLog.objects.create(f"Admin edited {project.student.name}'s project ({project.name}) details")
+            ActivityLog.objects.create(activity=f"Admin edited {project.student.name}'s project ({project.title}) details")
             return redirect('project-allotment') 
         else:
             messages.error(request, 'There was an error updating the project.')
@@ -579,7 +579,7 @@ def deleteProject(request,pk):
     }
     if(request.method=='POST'):
         project.delete()
-        ActivityLog.objects.create(activity=f"Admin deleted {project.student.name}'s project {project.name}")
+        ActivityLog.objects.create(activity=f"Admin deleted {project.student.name}'s project {project.title}")
         return redirect('project-allotment')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -635,7 +635,7 @@ def addNewProject(request):
         form = ProjectEditForm(request.POST,request.FILES)
         if form.is_valid():
             project=form.save()
-            ActivityLog.objects.create(activity=f"Admin created {project.name} belonging to {project.student.name}")
+            ActivityLog.objects.create(activity=f"Admin created {project.title} belonging to {project.student.name}")
             return redirect('project-allotment')
     else:
         form = ProjectEditForm()
