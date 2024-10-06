@@ -267,7 +267,7 @@ def login_otp(request):
         try:
             # Check for email
             if '@' in contact_info:
-                user = User.objects.get(profile__email=contact_info)
+                user = User.objects.get(email=contact_info)
                 recipient_list = [contact_info]
                 
                 # Send OTP to email
@@ -308,7 +308,7 @@ def verify_otp_login(request):
             try:
                 # Check if contact_info is an email or phone number
                 if '@' in contact_info:
-                    user = User.objects.get(profile__email=contact_info)
+                    user = User.objects.get(email=contact_info)
                 else:
                     faculty = Faculty.objects.get(phone_number=contact_info)
                     user = faculty.profile.user  # Get the associated user
@@ -318,7 +318,7 @@ def verify_otp_login(request):
                 recipient_list = [profile.email]
                 send_login_email(profile.user.username, recipient_list)
                 messages.success(request, 'Logged in successfully with OTP!')
-                ActivityLog.objects.create(activity=f'{faculty.name} logged via OTP')
+                ActivityLog.objects.create(activity=f'{user.username} logged via OTP')
                 return redirect('projectsList')
             except (User.DoesNotExist, Faculty.DoesNotExist):
                 messages.error(request, 'No user found with this contact information.')
