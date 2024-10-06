@@ -23,8 +23,8 @@ Django==5.1
 django-appconf==1.0.6
 django-browser-reload==1.15.0
 django-cors-headers==4.4.0
-django-sms==0.7.0
-django-tailwind==3.8.0
+django-rest-framework==0.1.0
+djangorestframework==3.15.2
 fonttools==4.53.1
 frozenlist==1.4.1
 future==1.0.0
