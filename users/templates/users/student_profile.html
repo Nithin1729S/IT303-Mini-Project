@@ -18,7 +18,7 @@
                   <li class="nav-item dropdown">
                     <a class="nav-link pt-1 px-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <div class="media d-flex align-items-center">
-                        <img class="user-avatar md-avatar rounded-circle" alt="Image placeholder" src="/static/assets/img/team/admin.svg">
+                        <img class="user-avatar md-avatar rounded-circle" alt="Image placeholder" src="{{ faculty.profile_image.url }}">
                         <div class="media-body ml-2 text-dark align-items-center d-none d-lg-block">
                           <span class="mb-0 font-small font-weight-bold">
                             {{ request.user.username }}
@@ -29,7 +29,7 @@
                     <div class="dropdown-menu dashboard-dropdown dropdown-menu-right mt-2">
                       <!-- <a class="dropdown-item font-weight-bold" href="/settings.html"><span class="fas fa-cog"></span>Settings</a>
                       <div role="separator" class="dropdown-divider"></div> -->
-                      <a class="dropdown-item font-weight-bold" href="{% url 'admin-logout' %}">
+                      <a class="dropdown-item font-weight-bold" href="{% url 'logout' %}">
                           <span class="fas fa-sign-out-alt text-danger"></span>Logout</a>
                     </div>
                   </li>
@@ -211,7 +211,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        {% comment %} <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label for="password">Password</label>
@@ -221,7 +221,7 @@
                                     {% endif %}                                
                                 </div>
                             </div>
-                        </div>
+                        </div> {% endcomment %}
                         <h2 class="h5 my-4">Address</h2>
                         <div class="row">
                             <div class="col-sm-12 mb-3">
