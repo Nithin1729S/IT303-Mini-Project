@@ -1,1 +1,2 @@
 /assets/css/*.css linguist-vendored
+/static/styles/*.css linguist-vendored
