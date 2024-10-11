@@ -224,60 +224,7 @@
     </table>
     </div>
     {% endif %}
-    <!-- <h1>Total Evaluation</h1>
-    <table>
-        <tr>
-            <th>Sl. No.</th>
-            <th>Register Number</th>
-            <th>Name of the Student</th>
-            <th>Guide Marks (Maximum 60)</th>
-            <th>Examiner Marks (Maximum 40)</th>
-            <th>Total Marks (Maximum 100)</th>
-            <th>Satisfactory/
-                Non-Satisfactory</th>
-        </tr>
-        {% for project in projects %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ project.student.rollno }}</td>
-            <td>{{ project.student.name }}</td>
-            <td>
-                {% if project.guide_evaluation %}
-                    {{ project.guide_evaluation.total_score }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
-            <td>
-                {% if project.examiner_evaluation %}
-                    {{ project.examiner_evaluation.total_score }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
-            <td>
-                {% if project.guide_evaluation and project.examiner_evaluation %}
-                    {{ project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" }}
-                {% else %}
-                     N/A
-                {% endif %}
-            </td>
-            <td>
-                {% if project.guide_evaluation and project.examiner_evaluation %}
-                    {% with total_score=project.guide_evaluation.total_score|default:"0"|add:project.examiner_evaluation.total_score|default:"0" %}
-                        {% if total_score >= 50 %}
-                            S
-                        {% else %}
-                            N
-                        {% endif %}
-                    {% endwith %}
-                {% else %}
-                            N/A
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table> -->
+ 
 
     <div style="display: flex; justify-content: space-between;">
         {% if guide_count %}
