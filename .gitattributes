@@ -1,2 +1,1 @@
-/assets/css/*.css linguist-vendored
-/static/styles/style.css linguist-vendored
+*.css linguist-vendored
