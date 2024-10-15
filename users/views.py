@@ -255,25 +255,67 @@ def login_otp(request):
     return render(request, 'users/login_otp.html')
 
 def verify_otp_login(request):
-    "OTP Verification for login via otp"
+    "OTP Verification for login via OTP with account suspension after multiple failures"
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
         session_otp = request.session.get('otp')
-        email = request.session.get('email')
-        
+        contact_info = request.session.get('contact_info')
+
+        # Cache key to track OTP verification attempts
+        cache_key = f"otp_attempts_{contact_info}"
+        attempts = cache.get(cache_key, {'count': 0, 'lockout_until': None})
+
+        # Check if the user is currently locked out
+        if attempts['lockout_until']:
+            if timezone.now() < attempts['lockout_until']:
+                time_left = (attempts['lockout_until'] - timezone.now()).seconds
+                messages.error(request, f"Too many failed attempts. Please try again in {time_left} seconds.")
+                return redirect('verify_otp_login')
+            else:
+                # Reset lockout after the lockout period is over
+                attempts['count'] = 0
+                attempts['lockout_until'] = None
+
+        # Verify OTP
         if entered_otp == str(session_otp):
             try:
-                user = User.objects.get(email=email)
+                # Check if contact_info is an email or phone number
+                if '@' in contact_info:
+                    user = User.objects.get(email=contact_info)
+                else:
+                    faculty = Faculty.objects.get(phone_number=contact_info)
+                    user = faculty.profile.user  # Get the associated user
+
                 profile = Profile.objects.get(user=user)
-                login(request, user,backend='users.backends.EmailBackend')
-                recipient_list = [email]
-                send_login_email(profile.user.username,recipient_list)
+                login(request, user, backend='users.backends.EmailBackend')
+
+                # Send confirmation email
+                recipient_list = [profile.email]
+                send_login_email(profile.user.username, recipient_list)
+
+                # Log successful login and reset failed attempts
                 messages.success(request, 'Logged in successfully with OTP!')
+                ActivityLog.objects.create(activity=f'{user.username} logged in via OTP')
+                
+                # Reset OTP attempts after successful login
+                cache.delete(cache_key)
+
                 return redirect('projectsList')
-            except User.DoesNotExist:
-                messages.error(request, 'No user found with this email.')
+            except (User.DoesNotExist, Faculty.DoesNotExist):
+                messages.error(request, 'No user found with this contact information.')
         else:
-            messages.error(request, 'Invalid OTP. Please try again.')
+            # Increment the failed attempts count
+            attempts['count'] += 1
+
+            if attempts['count'] > 2:
+                # Lock the user out for 1 minute after 3 failed attempts
+                attempts['lockout_until'] = timezone.now() + timedelta(minutes=1)
+                messages.error(request, "Too many failed OTP attempts. You are suspended for 1 minute.")
+            else:
+                messages.error(request, "Invalid OTP. Please try again.")
+
+            # Update the cache with the new attempts data
+            cache.set(cache_key, attempts, timeout=60 * 2)  # Cache timeout of 2 minutes to store attempts
 
     return render(request, 'users/verify_otp_login.html')
 
@@ -314,31 +356,60 @@ def forgot_password(request):
 
 
 def reset_password(request, otp):
-    "Reset password after comparing otp"
-    
+    "Reset password after comparing otp and suspending account after multiple wrong attempts"
+
     # Initialize the resend OTP timestamp if it does not exist
     if 'resend_otp_time' not in request.session:
         request.session['resend_otp_time'] = timezone.now().timestamp()
+
+    # Cache key to track OTP verification attempts
+    email = request.session.get('email')
+    cache_key = f"reset_password_attempts_{email}"
+    attempts = cache.get(cache_key, {'count': 0, 'lockout_until': None})
+
+    # Check if the user is currently locked out
+    if attempts['lockout_until']:
+        if timezone.now() < attempts['lockout_until']:
+            time_left = (attempts['lockout_until'] - timezone.now()).seconds
+            messages.error(request, f"Too many failed attempts. Please try again in {time_left} seconds.")
+            return redirect('reset_password', otp=otp)
+        else:
+            # Reset lockout after the lockout period is over
+            attempts['count'] = 0
+            attempts['lockout_until'] = None
 
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
         new_password = request.POST.get('new_password')
 
         # Verify OTP
-        if entered_otp == request.session.get('otp'):
-            email = request.session.get('email')
+        if entered_otp == str(request.session.get('otp')):
             try:
                 faculty = Faculty.objects.get(email=email)
-                user = faculty.profile.user  
-                user.set_password(new_password) 
+                user = faculty.profile.user
+                user.set_password(new_password)  # Update the user's password
                 user.save()
-                
+
+                # Clear the failed attempts from cache after successful reset
+                cache.delete(cache_key)
+
                 messages.success(request, 'Your password has been updated successfully!')
-                return redirect('login') 
+                return redirect('login')
             except Faculty.DoesNotExist:
                 messages.error(request, 'Faculty not found.')
         else:
-            messages.error(request, 'Invalid OTP. Please try again.')
+            # Increment the failed attempts count
+            attempts['count'] += 1
+
+            if attempts['count'] > 2:
+                # Lock the user out for 1 minute after 3 failed OTP attempts
+                attempts['lockout_until'] = timezone.now() + timedelta(minutes=1)
+                messages.error(request, "Too many failed OTP attempts. You are suspended for 1 minute.")
+            else:
+                messages.error(request, "Invalid OTP. Please try again.")
+
+            # Update the cache with the new attempts data
+            cache.set(cache_key, attempts, timeout=60 * 2)  # Cache timeout of 2 minutes to store attempts
 
     # Check if 10 seconds have passed for OTP resend
     if timezone.now().timestamp() - request.session['resend_otp_time'] >= 10:
