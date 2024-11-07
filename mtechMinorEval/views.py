@@ -475,7 +475,7 @@ def editProject(request, pk):
             ActivityLog.objects.create(activity=f"Admin edited {project.student.name}'s project ({project.title}) details")
             return redirect('project-allotment') 
         else:
-            messages.error(request, 'There was an error updating the project.')
+            messages.error(request, form.errors)
     else:
         form = ProjectEditForm(instance=project)
     
