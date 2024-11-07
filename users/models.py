@@ -36,6 +36,7 @@ class Student(models.Model):
     phone_number = models.CharField(
         validators=[phone_regex],
         max_length=17,  
+        unique=True,
         blank=True,     
         null=True       
     )
@@ -100,6 +101,7 @@ class Faculty(models.Model):
     phone_number = models.CharField(
         validators=[phone_regex],
         max_length=17,  
+        unique=True,
         blank=True,     
         null=True       
     )
