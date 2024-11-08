@@ -90,8 +90,8 @@ def send_sms(message,to):
     auth_token=os.getenv('TWILIO_AUTHTOKEN')
     client = Client(account_sid, auth_token)
     message = client.messages.create(
-    messaging_service_sid='MG2f6a62ceae5ed730c7fa15a9ad623446',
-    # messaging_service_sid = os.getenv('MESSAGE_SERVICE_SID'),
+    #messaging_service_sid='MG2f6a62ceae5ed730c7fa15a9ad623446',
+    messaging_service_sid = os.getenv('TWILIO_MESSAGE_SERVICE_SID'),
     body=message,
     to=to
     )
