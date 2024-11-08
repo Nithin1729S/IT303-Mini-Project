@@ -5,32 +5,38 @@
 1. Open a terminal in the main folder of the project.
 
 2. Install virtualenv:
+
    ```
    sudo apt install virtualenv
    ```
 
 3. Create a virtual environment:
+
    ```
    virtualenv env
    ```
 
 4. Activate the virtual environment:
+
    ```
    source env/bin/activate
    ```
 
 5. Install the required dependencies:
+
    ```
    pip install -r requirements.txt
    ```
 
 6. Run database migrations:
+
    ```
    python manage.py makemigrations
    python manage.py migrate
    ```
 
 7. Start the development server:
+
    ```
    python manage.py runserver
    ```
@@ -56,13 +62,18 @@ EMAIL = 'YOUR_EMAIL_ADDRESS'
 PASSWD = 'GOOGLE_SMTP_API_PASSWORD'
 TWILIO_SID = 'TWILIO_SID_TOKEN'
 TWILIO_AUTHTOKEN= 'TWILIO_AUTHTOKEN'
+TWILIO_MESSAGE_SERVICE_SID='TWILIO_MESSAGE_SERVICE_SID'
 ```
 
 Make sure to replace the placeholders with your actual credentials.
 
 ## Google Sheets API Credentials
 
-Create a JSON file containing your Google Sheets API credentials and save it in the `mtechMinorEval/static` directory with the name `client.json` . This file is necessary for the application to interact with Google Sheets.
+Create a Desktop application in Google Sheet API dashboard. Download a JSON file containing your Google Sheets API credentials and save it in the `mtechMinorEval/static` directory with the name `client.json` . This file is necessary for the application to interact with Google Sheets.
+
+## Twilio
+
+Create a [messaging service](https://console.twilio.com/us1/develop/sms/services) in twilio console. Use that messaging service to [send an sms to personal number](https://console.twilio.com/us1/develop/sms/try-it-out/send-an-sms). Copy all credentials and paste in .env file.
 
 ## Running the Application
 
