@@ -34,7 +34,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("PASSWD")  # Use environment variables for security
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'mtechMinorEval.apps.MtechminorevalConfig',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -59,7 +60,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'mtechMinorEval.middleware.PathAccessMiddleware'
+    'mtechMinorEval.middleware.PathAccessMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = 'it303.urls'
@@ -95,6 +98,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': str(os.getenv('NAMEA')),
+#         'USER': str(os.getenv('USERA')),
+#         'PASSWORD': str(os.getenv('PASSWORDA')),
+#         'HOST': str(os.getenv('HOSTA')),
+#         'PORT': str(os.getenv('PORTA')),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
