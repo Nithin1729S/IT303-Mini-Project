@@ -35,6 +35,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL")
 EMAIL_HOST_PASSWORD = os.getenv("PASSWD")  # Use environment variables for security
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    'https://admittedly-usable-jennet.ngrok-free.app',
+]
 
 
 # Application definition
