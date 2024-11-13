@@ -1,4 +1,70 @@
 # IT303 Software Engineering MTech IT Minor Project Marks Submission Module
+## Screenshots
+
+### Faculty Register Page
+![image](https://github.com/user-attachments/assets/4fd1d92f-b0a3-44ff-9f0f-bb2022d75259)
+
+### Faculty Login Page
+![image](https://github.com/user-attachments/assets/2460c7a4-21a5-480b-90fa-c55c4cdb7832)
+
+### Faculty Login via OTP
+![image](https://github.com/user-attachments/assets/d790fe58-0a73-450c-93af-14dc01815abe)
+
+### Faculty Forget Password
+![image](https://github.com/user-attachments/assets/733f642d-8d87-4c94-94cf-1db43b8e1f56)
+
+### Faculty Dashboard 
+![image](https://github.com/user-attachments/assets/c13c059f-d8d6-463b-a5d5-ef4ff2bdbe15)
+
+### Faculty Evaluation Panel
+![image](https://github.com/user-attachments/assets/bc2d622f-c8a7-4512-9a32-493b2f4bcbe6)
+
+### Faculty Evaluations
+![image](https://github.com/user-attachments/assets/1d61dd87-6cde-42b3-95e7-e4321a18f14a)
+
+### Faculty Profile Edit
+![image](https://github.com/user-attachments/assets/5570c045-05df-4795-b26f-387a5322dc9b)
+
+
+### Faculty Change Password
+![image](https://github.com/user-attachments/assets/235362b7-a4b3-4f67-bbce-24144c62aff9)
+
+### Faculty Print Report
+![image](https://github.com/user-attachments/assets/8f12802b-be1a-4ad2-88a2-7e0a68f61815)
+
+### Admin Login Page
+![image](https://github.com/user-attachments/assets/2002a141-a11f-4a6c-be27-7cfa27c6152c)
+
+### Admin Dashboard
+![image](https://github.com/user-attachments/assets/5d286e76-8c1f-48a1-9cec-4900bf61124f)
+
+### Admin Faculty List View
+![image](https://github.com/user-attachments/assets/6a566c0c-b6a8-4c89-9a2b-584119a4292a)
+
+### Admin Edit Faculty  View
+![image](https://github.com/user-attachments/assets/9e5c05f9-510f-436e-bdac-43cbec356e38)
+
+### Admin Student List View
+![image](https://github.com/user-attachments/assets/0a9ee7a0-094c-43b0-8b91-dd52f744737f)
+
+### Admin Edit Student View
+![image](https://github.com/user-attachments/assets/415e110e-d541-4f72-ae52-abbc634062ac)
+
+### Admin Project List View
+![image](https://github.com/user-attachments/assets/1e840fe6-f939-4418-ba36-f94a96d25dc6)
+
+### Admin Edit Project View
+![image](https://github.com/user-attachments/assets/123c564b-7e01-4cdb-a5df-4f273bc9ada9)
+
+### Admin All Evaluation View
+![image](https://github.com/user-attachments/assets/ba89ad99-7085-4e1f-8621-729c3bd4ee22)
+
+### Activity Log
+![image](https://github.com/user-attachments/assets/8acc423a-9cd3-47eb-940b-9425fa10e552)
+
+
+
+
 
 ## Setup Instructions
 
