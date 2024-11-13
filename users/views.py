@@ -104,7 +104,7 @@ def register(request):
         if form.is_valid():
             recaptcha_response = request.POST.get('g-recaptcha-response')
             data = {
-                'secret': '6LeenVEqAAAAAC01Gp9B4M72_8jRXdgFeWjeL8EQ',
+                'secret':  os.getenv('RECAPTCHA_SECRET_KEY'),
                 'response': recaptcha_response
             }
             r = requests.post('https://www.google.com/recaptcha/api/siteverify', data = data)
@@ -156,7 +156,7 @@ def register(request):
     else:
         form = ExtendedUserCreationForm()
 
-    return render(request, 'users/register.html', {'form': form})
+    return render(request, 'users/register.html', {'form': form,'site_key':os.getenv('RECAPTCHA_SITE_KEY')})
 
 
 
@@ -173,7 +173,7 @@ def loginUser(request):
         # Fetch the reCAPTCHA response from the POST data
         recaptcha_response = request.POST.get('g-recaptcha-response')
         data = {
-            'secret': '6LeenVEqAAAAAC01Gp9B4M72_8jRXdgFeWjeL8EQ',  # Your reCAPTCHA secret key
+            'secret': os.getenv('RECAPTCHA_SECRET_KEY'),  # Your reCAPTCHA secret key
             'response': recaptcha_response
         }
 
@@ -253,7 +253,7 @@ def loginUser(request):
             #Update the cache with the new attempts data
             cache.set(cache_key, attempts, timeout = 60*2) #Cacehe timeout of 2 minutes to store attempts
 
-    return render(request, 'users/login.html')
+    return render(request, 'users/login.html',{'site_key':os.getenv('RECAPTCHA_SITE_KEY')})
 
 
 

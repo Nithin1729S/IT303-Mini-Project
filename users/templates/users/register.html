@@ -62,9 +62,9 @@
                               {{ form.role }}
                           </div>
                           <!-- Google reCAPTCHA -->
-                          <div class="mb-4" style="display: flex; justify-content: center; align-items: center;">
-                              <div class="g-recaptcha" data-sitekey="6LeenVEqAAAAAB1FwcXtRB2NqcWUfMAzOpeCMr8P"></div>
-                          </div>
+                          <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+                            <div class="g-recaptcha mb-4" data-sitekey={{site_key}}></div>
+                        </div>
                           <!-- Submit Button -->
                           <div style="text-align: center;">
                               <button class="btn btn--main" type="submit" style="display: inline-block; margin: 20px;">

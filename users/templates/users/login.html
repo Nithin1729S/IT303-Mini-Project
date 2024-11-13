@@ -38,8 +38,8 @@
                                   <div><a href="{% url 'forgot-password' %}" class="small text-right">Lost password?</a></div>
                               </div>
                               <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
-                                  <div class="g-recaptcha mb-4" data-sitekey="6LeenVEqAAAAAB1FwcXtRB2NqcWUfMAzOpeCMr8P"></div>
-                              </div>
+                                <div class="g-recaptcha mb-4" data-sitekey={{site_key}}></div>
+                            </div>
                               <button type="submit" class="btn btn-block btn-primary">Log in</button>
                           </form>
                           <div class="d-flex justify-content-center align-items-center mt-4">

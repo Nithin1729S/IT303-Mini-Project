@@ -280,7 +280,7 @@ def adminLogin(request):
     if request.method == 'POST':
         recaptcha_response = request.POST.get('g-recaptcha-response')
         data = {
-            'secret': '6LeenVEqAAAAAC01Gp9B4M72_8jRXdgFeWjeL8EQ',  
+            'secret': os.getenv('RECAPTCHA_SECRET_KEY'),  
             'response': recaptcha_response
         }
         try:
@@ -318,7 +318,7 @@ def adminLogin(request):
             messages.error(request, "You don't have an account in this module. Register !")
             return redirect('register')
 
-    return render(request, 'mtechMinorEval/adminLogin.html')
+    return render(request, 'mtechMinorEval/adminLogin.html',{'site_key':os.getenv('RECAPTCHA_SITE_KEY')})
 
 
 
