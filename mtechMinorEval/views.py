@@ -1,8 +1,6 @@
 import os
 import requests
-import pytz
 import threading
-from datetime import datetime
 from dotenv import load_dotenv
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -12,8 +10,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.contrib import messages
-from django.core.mail import send_mail,EmailMessage
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.core.mail import EmailMessage
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from google.auth.transport.requests import Request
