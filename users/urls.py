@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import logoutUser,loginUser
 from . import views
-from .views import forgot_password, reset_password,verify_otp,student_profile_view,resend_otp
+from mtechMinorEval.views import student_profile_view
+from .views import forgot_password, reset_password,verify_otp,resend_otp
 urlpatterns = [
     path('login/',views.loginUser,name='login'),
     path('logout/',views.logoutUser,name='logout'),
@@ -12,6 +12,6 @@ urlpatterns = [
     path('resend-otp/',resend_otp,name='resend_otp'),
     path('login-otp/', views.login_otp, name='login_otp'),
     path('verify-otp-login/', views.verify_otp_login, name='verify_otp_login'),
-    path('student-profile/<str:pk>',views.student_profile_view,name='student-profile'),
+    path('student-profile/<str:pk>',student_profile_view,name='student-profile'),
     path('change-password/', views.change_password_view, name='change_password'),
 ]

@@ -1,30 +1,22 @@
 import os
-import pytz
-import random
 import requests
-import socket
-import platform
-import threading
-import datetime
-from datetime import timedelta,datetime
+from datetime import timedelta
 from dotenv import load_dotenv
 from django import forms
 from django.core.cache import cache
-from django.core.mail import send_mail
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from mtechMinorEval.forms import StudentEditForm, ProfileEditForm
 from users.forms import FacultyChangePasswordForm
-from twilio.rest import Client
-from users.models import Student, Faculty, Profile
+from users.models import Faculty, Profile
 from mtechMinorEval.models import ActivityLog
+from users.notifications_views import generate_otp, send_faculty_otp, send_login_email, send_sms
 
 load_dotenv()
 
@@ -55,45 +47,6 @@ class ExtendedUserCreationForm(UserCreationForm):
             user.save()
         return user
 
-
-
-def generate_otp():
-    """Generate a random 6-digit OTP"""
-    return random.randint(100000, 999999)
-
-def send_login_email(to_faculty,recipient_list):
-    "Send login email to faculty"
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    ip_address = s.getsockname()[0]
-    timezone = pytz.timezone('Asia/Kolkata')
-    current_time = datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S')
-    from_email = os.getenv("EMAIL") 
-    subject = 'Login Notification'
-    message = f'Hello {to_faculty},\n\nYou have successfully logged into the module from IP address {ip_address} on { current_time } running on { platform.system()}.'
-    email_thread = threading.Thread(target=send_mail, args=(subject, message, from_email, recipient_list))
-    email_thread.start()    
-    print(message)
-    
-
-def send_faculty_otp(subject,message,recipient_list):
-    "Send otp to faculty"
-    from_email = os.getenv('MAIL')  
-    print(message)
-    send_mail(subject, message, from_email, recipient_list,fail_silently=False)
-
-def send_sms(message,to):
-    print(message)
-    account_sid=os.getenv('TWILIO_SID')
-    auth_token=os.getenv('TWILIO_AUTHTOKEN')
-    client = Client(account_sid, auth_token)
-    message = client.messages.create(
-    #messaging_service_sid='MG2f6a62ceae5ed730c7fa15a9ad623446',
-    messaging_service_sid = os.getenv('TWILIO_MESSAGE_SERVICE_SID'),
-    body=message,
-    to=to
-    )
-    
 
 def register(request):
     "Function to register a new faculty"
@@ -342,6 +295,63 @@ def logoutUser(request):
     return redirect('login')
 
 
+def adminLogin(request):
+    "Function to allow module adminstrator to log in"
+    if request.method == 'POST':
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        data = {
+            'secret': os.getenv('RECAPTCHA_SECRET_KEY'),  
+            'response': recaptcha_response
+        }
+        try:
+            r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+
+            if r.status_code != 200:
+                messages.error(request, 'Failed to verify reCAPTCHA. Please try again.')
+                return redirect('admin-login')
+
+            result = r.json()
+
+            if not result.get('success'):
+                messages.error(request, 'Invalid reCAPTCHA. Please try again.')
+                return redirect('admin-login')
+
+        except requests.exceptions.RequestException as e:
+            messages.error(request, f"reCAPTCHA verification failed: {str(e)}")
+            return redirect('login')
+        
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            if user.is_superuser:
+                login(request, user)
+                recipient_list = [user.email]
+                send_login_email(user.username,recipient_list)
+                messages.success(request, "Admin successfully logged in")
+                ActivityLog.objects.create(activity=f'Admin logged in')
+                return redirect('admin-panel') 
+            else:
+                messages.error(request, "You are not an admin of this module")
+                return redirect('login')  
+        else:
+            messages.error(request, "You don't have an account in this module. Register !")
+            return redirect('register')
+
+    return render(request, 'mtechMinorEval/adminLogin.html',{'site_key':os.getenv('RECAPTCHA_SITE_KEY')})
+
+
+
+@login_required(login_url='admin-login')
+@user_passes_test(lambda u: u.is_superuser)
+def adminLogout(request):
+    "Admin logout"
+    logout(request)  # This logs out the user
+    messages.success(request, "Admin successfully logged out")
+    ActivityLog.objects.create(activity=f'Admin Logged out')
+    return redirect('admin-login')  # Redirect to the login page after logout
+
+
 def forgot_password(request):
     "Forgot password to reset password"
     if request.method == 'POST':
@@ -480,35 +490,14 @@ def verify_otp(request):
     return render(request, 'users/verify_otp.html')
 
 
-@login_required
-def student_profile_view(request,pk):
-    user = request.user
-    userEmail = user.email
-    userProfile = get_object_or_404(Profile, email=userEmail)
-    faculty = get_object_or_404(Faculty, profile=userProfile)
-    student = Student.objects.get(id=pk)
-    profile = student.profile 
-    form =StudentEditForm(instance=student)
-    profile_form = ProfileEditForm(instance=profile) 
 
-    if request.method == 'POST':
-        form = StudentEditForm(request.POST, request.FILES,instance=student)
-        profile_form = ProfileEditForm(request.POST, instance=profile) 
-    context = {
-        'student': student,
-        'form': form,
-        'profile_form': profile_form,
-        'faculty':faculty  
-    }
-    ActivityLog.objects.create(activity=f"{faculty.name} viewed {student.name}'s profile")
-    return render(request,'users/student_profile.html',context)
 
 
 def resend_otp(request):
     "Resend OTP if requested"
     email = request.session.get('email')
     if email:
-        otp = get_random_string(length=6, allowed_chars='0123456789')
+        otp = generate_otp()
         subject = "Your OTP for Password Reset"
         message = f'Your OTP is {otp}'
         send_faculty_otp(subject, message, [email])
