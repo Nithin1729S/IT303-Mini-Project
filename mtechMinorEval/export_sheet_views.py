@@ -8,8 +8,8 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from mtechMinorEval.models import Profile, Faculty, Project
-from users.models import Student,Faculty
+from mtechMinorEval.models import  Faculty, Project
+from users.models import Profile,Student,Faculty
 from mtechMinorEval.models import ActivityLog,Project,ProjectEvalSummary
 from django.db.models import Q
 

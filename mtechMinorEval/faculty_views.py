@@ -11,10 +11,10 @@ from django.core.mail import EmailMessage
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from weasyprint import HTML
-from mtechMinorEval.models import Profile, Faculty, Project
+from mtechMinorEval.models import  Project
 from mtechMinorEval.forms import ExaminerEvaluationForm, GuideEvaluationForm, ProfileEditForm, StudentEditForm
-from users.models import *
-from mtechMinorEval.models import *
+from users.models import Profile,Faculty,Student
+from mtechMinorEval.models import ActivityLog,GuideEvaluation,ExaminerEvaluation,ProjectEvalSummary
 
 load_dotenv()
 
