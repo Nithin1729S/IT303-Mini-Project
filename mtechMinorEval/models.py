@@ -7,13 +7,18 @@ from django.utils import timezone
 from users.models import  Student, Faculty
 import uuid
 
+def validate_file_size(value):
+    max_size = 10 * 1024 * 1024  # 10 MB in bytes
+    if value.size > max_size:
+        raise ValidationError(f"The maximum file size allowed is 10 MB. The file size is {value.size / (1024 * 1024):.2f} MB.")
+
 
 class Project(models.Model):
     id = models.UUIDField(default=uuid.uuid4,unique=True,primary_key=True,editable=False)
     title=models.CharField(max_length=255)
     desc=models.TextField(null=True,blank=True)
     src_link=models.CharField(max_length=2000,null=True,blank=True)
-    ppt=models.FileField(upload_to='mtechMinorEval/ppts/',null=True,blank=True)
+    ppt=models.FileField(upload_to='mtechMinorEval/ppts/',null=True,blank=True, validators=[validate_file_size])
     student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='projects')
     submitted_at = models.DateTimeField(auto_now_add=True)
     examiner = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='examiner_projects')
