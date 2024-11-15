@@ -19,7 +19,7 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 from users.faculty_auth_views import change_password_view, forgot_password, login_otp, loginUser,register, reset_password, verify_otp,verify_otp_login
-from mtechMinorEval.views import student_profile_view
+from mtechMinorEval.faculty_views import student_profile_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),

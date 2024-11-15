@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect
 from django.db import transaction
 from django.contrib.auth.decorators import login_required, user_passes_test
-from mtechMinorEval.models import Faculty, Project
-from users.models import *
-from mtechMinorEval.models import *
+from mtechMinorEval.models import Faculty, Project,ActivityLog
+from users.models import Student
 
 
 @login_required(login_url='admin-login')

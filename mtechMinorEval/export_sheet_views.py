@@ -9,8 +9,9 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from mtechMinorEval.models import Profile, Faculty, Project
-from users.models import *
-from mtechMinorEval.models import *
+from users.models import Student,Faculty
+from mtechMinorEval.models import ActivityLog,Project,ProjectEvalSummary
+from django.db.models import Q
 
 
 load_dotenv()

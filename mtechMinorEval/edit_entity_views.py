@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from mtechMinorEval.models import Faculty, Project
+from mtechMinorEval.models import Faculty, Project,Student
 from mtechMinorEval.forms import ProfileEditForm, ProjectEditForm, StudentEditForm, FacultyEditForm
-from users.models import *
-from mtechMinorEval.models import *
+from mtechMinorEval.models import ActivityLog
 
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)

@@ -1,6 +1,6 @@
 from django.urls import path
 from . import faculty_auth_views
-from mtechMinorEval.views import student_profile_view
+from mtechMinorEval.faculty_views import student_profile_view
 from users.faculty_auth_views import forgot_password, reset_password,verify_otp,resend_otp
 urlpatterns = [
     path('login/',faculty_auth_views.loginUser,name='login'),
