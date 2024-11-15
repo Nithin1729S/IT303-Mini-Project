@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator,FileExtensionValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from users.models import  Student, Faculty
@@ -18,7 +18,7 @@ class Project(models.Model):
     title=models.CharField(max_length=255)
     desc=models.TextField(null=True,blank=True)
     src_link=models.CharField(max_length=2000,null=True,blank=True)
-    ppt=models.FileField(upload_to='mtechMinorEval/ppts/',null=True,blank=True, validators=[validate_file_size])
+    ppt=models.FileField(upload_to='mtechMinorEval/ppts/',null=True,blank=True, validators=[validate_file_size,FileExtensionValidator(allowed_extensions=['pdf'])])
     student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='projects')
     submitted_at = models.DateTimeField(auto_now_add=True)
     examiner = models.ForeignKey(Faculty, on_delete=models.SET_NULL, null=True, related_name='examiner_projects')
