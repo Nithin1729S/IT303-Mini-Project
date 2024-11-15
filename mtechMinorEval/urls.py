@@ -4,7 +4,7 @@ from . import export_sheet_views
 from . import edit_entity_views
 from . import delete_entity_views
 from . import create_entity_views
-from users.views import adminLogin,adminLogout
+from users.admin_auth_views import adminLogin,adminLogout
 
 urlpatterns=[
     path('',views.projectsList,name='home'),

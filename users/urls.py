@@ -1,17 +1,17 @@
 from django.urls import path
-from . import views
+from . import faculty_auth_views
 from mtechMinorEval.views import student_profile_view
-from .views import forgot_password, reset_password,verify_otp,resend_otp
+from users.faculty_auth_views import forgot_password, reset_password,verify_otp,resend_otp
 urlpatterns = [
-    path('login/',views.loginUser,name='login'),
-    path('logout/',views.logoutUser,name='logout'),
-    path('register/',views.register,name='register'),
+    path('login/',faculty_auth_views.loginUser,name='login'),
+    path('logout/',faculty_auth_views.logoutUser,name='logout'),
+    path('register/',faculty_auth_views.register,name='register'),
     path('forgot-password/', forgot_password, name='forgot-password'),
     path('reset-password/<str:otp>/', reset_password, name='reset-password'),
     path('verify-otp/', verify_otp, name='verify_otp'),
     path('resend-otp/',resend_otp,name='resend_otp'),
-    path('login-otp/', views.login_otp, name='login_otp'),
-    path('verify-otp-login/', views.verify_otp_login, name='verify_otp_login'),
+    path('login-otp/', faculty_auth_views.login_otp, name='login_otp'),
+    path('verify-otp-login/', faculty_auth_views.verify_otp_login, name='verify_otp_login'),
     path('student-profile/<str:pk>',student_profile_view,name='student-profile'),
-    path('change-password/', views.change_password_view, name='change_password'),
+    path('change-password/', faculty_auth_views.change_password_view, name='change_password'),
 ]

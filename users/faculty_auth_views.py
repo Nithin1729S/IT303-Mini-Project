@@ -6,7 +6,7 @@ from django import forms
 from django.core.cache import cache
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
@@ -19,7 +19,6 @@ from mtechMinorEval.models import ActivityLog
 from users.notifications_views import generate_otp, send_faculty_otp, send_login_email, send_sms
 
 load_dotenv()
-
 
 class ExtendedUserCreationForm(UserCreationForm):
     ROLE_CHOICES = (
@@ -295,61 +294,88 @@ def logoutUser(request):
     return redirect('login')
 
 
-def adminLogin(request):
-    "Function to allow module adminstrator to log in"
+
+def verify_otp(request):
+    "Verification of OTP for account registration "
     if request.method == 'POST':
-        recaptcha_response = request.POST.get('g-recaptcha-response')
-        data = {
-            'secret': os.getenv('RECAPTCHA_SECRET_KEY'),  
-            'response': recaptcha_response
-        }
-        try:
-            r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+        entered_otp = request.POST.get('otp')
+        session_otp = request.session.get('otp')
+        form_data = request.session.get('form_data')
 
-            if r.status_code != 200:
-                messages.error(request, 'Failed to verify reCAPTCHA. Please try again.')
-                return redirect('admin-login')
+        # Check if OTP matches
+        if entered_otp == str(session_otp):
+            try:
+                form = ExtendedUserCreationForm(form_data)
+                if form.is_valid():
+                    user = form.save()
+                    email = form.cleaned_data.get('email')
+                    username = form.cleaned_data.get('username')
+                    role = 'faculty'
+                    
+                    profile = Profile.objects.create(user=user, email=email, role=role)
+                    faculty=Faculty.objects.create(profile=profile, email=email, name=username)
 
-            result = r.json()
+                    # Clear session data after successful registration
+                    del request.session['otp']
+                    del request.session['email']
+                    del request.session['form_data']
 
-            if not result.get('success'):
-                messages.error(request, 'Invalid reCAPTCHA. Please try again.')
-                return redirect('admin-login')
-
-        except requests.exceptions.RequestException as e:
-            messages.error(request, f"reCAPTCHA verification failed: {str(e)}")
-            return redirect('login')
-        
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            if user.is_superuser:
-                login(request, user)
-                recipient_list = [user.email]
-                send_login_email(user.username,recipient_list)
-                messages.success(request, "Admin successfully logged in")
-                ActivityLog.objects.create(activity=f'Admin logged in')
-                return redirect('admin-panel') 
-            else:
-                messages.error(request, "You are not an admin of this module")
-                return redirect('login')  
+                    messages.success(request, 'Account created successfully!')
+                    ActivityLog.objects.create(activity=f'{faculty.name} registered')
+                    return redirect('login')
+            except IntegrityError:
+                messages.error(request, 'An unexpected error occurred. Please try again.')
         else:
-            messages.error(request, "You don't have an account in this module. Register !")
-            return redirect('register')
+            messages.error(request, 'Invalid OTP. Please try again.')
 
-    return render(request, 'mtechMinorEval/adminLogin.html',{'site_key':os.getenv('RECAPTCHA_SITE_KEY')})
-
+    return render(request, 'users/verify_otp.html')
 
 
-@login_required(login_url='admin-login')
-@user_passes_test(lambda u: u.is_superuser)
-def adminLogout(request):
-    "Admin logout"
-    logout(request)  # This logs out the user
-    messages.success(request, "Admin successfully logged out")
-    ActivityLog.objects.create(activity=f'Admin Logged out')
-    return redirect('admin-login')  # Redirect to the login page after logout
+
+
+
+def resend_otp(request):
+    "Resend OTP if requested"
+    email = request.session.get('email')
+    if email:
+        otp = generate_otp()
+        subject = "Your OTP for Password Reset"
+        message = f'Your OTP is {otp}'
+        send_faculty_otp(subject, message, [email])
+        request.session['otp'] = otp
+        request.session['resend_otp_time'] = timezone.now().timestamp() 
+        messages.success(request, 'A new OTP has been sent to your email.')
+    else:
+        messages.error(request, 'Unable to resend OTP. Please try again.')
+
+    return redirect('reset-password', otp=request.session.get('otp'))
+
+@login_required
+def change_password_view(request):
+    user = request.user
+    userProfile = get_object_or_404(Profile, email=user.email)
+    faculty = get_object_or_404(Faculty, profile=userProfile)
+
+    if request.method == 'POST':
+        form = FacultyChangePasswordForm(request.POST, user_email=request.user.email)
+        if form.is_valid():
+            new_password = form.cleaned_data['new_password']
+            user.set_password(new_password)  # Set the new password
+            user.save()
+            update_session_auth_hash(request, user)  # Keep the user logged in after password change
+            messages.success(request, 'Your password has been changed successfully.')
+            ActivityLog.objects.create(activity=f'{faculty.name} updated password')
+            return redirect('projectsList')
+    else:
+        form = FacultyChangePasswordForm(user_email=request.user.email)
+
+    return render(request, 'users/changePassword.html', {
+        'form': form,
+        'email': request.user.email,
+        'faculty': faculty
+    })
+
+
 
 
 def forgot_password(request):
@@ -452,86 +478,4 @@ def reset_password(request, otp):
         can_resend = False
 
     return render(request, 'users/reset_password.html', {'otp': otp, 'can_resend': can_resend})
-
-
-def verify_otp(request):
-    "Verification of OTP for account registration "
-    if request.method == 'POST':
-        entered_otp = request.POST.get('otp')
-        session_otp = request.session.get('otp')
-        form_data = request.session.get('form_data')
-
-        # Check if OTP matches
-        if entered_otp == str(session_otp):
-            try:
-                form = ExtendedUserCreationForm(form_data)
-                if form.is_valid():
-                    user = form.save()
-                    email = form.cleaned_data.get('email')
-                    username = form.cleaned_data.get('username')
-                    role = 'faculty'
-                    
-                    profile = Profile.objects.create(user=user, email=email, role=role)
-                    faculty=Faculty.objects.create(profile=profile, email=email, name=username)
-
-                    # Clear session data after successful registration
-                    del request.session['otp']
-                    del request.session['email']
-                    del request.session['form_data']
-
-                    messages.success(request, 'Account created successfully!')
-                    ActivityLog.objects.create(activity=f'{faculty.name} registered')
-                    return redirect('login')
-            except IntegrityError:
-                messages.error(request, 'An unexpected error occurred. Please try again.')
-        else:
-            messages.error(request, 'Invalid OTP. Please try again.')
-
-    return render(request, 'users/verify_otp.html')
-
-
-
-
-
-def resend_otp(request):
-    "Resend OTP if requested"
-    email = request.session.get('email')
-    if email:
-        otp = generate_otp()
-        subject = "Your OTP for Password Reset"
-        message = f'Your OTP is {otp}'
-        send_faculty_otp(subject, message, [email])
-        request.session['otp'] = otp
-        request.session['resend_otp_time'] = timezone.now().timestamp() 
-        messages.success(request, 'A new OTP has been sent to your email.')
-    else:
-        messages.error(request, 'Unable to resend OTP. Please try again.')
-
-    return redirect('reset-password', otp=request.session.get('otp'))
-
-@login_required
-def change_password_view(request):
-    user = request.user
-    userProfile = get_object_or_404(Profile, email=user.email)
-    faculty = get_object_or_404(Faculty, profile=userProfile)
-
-    if request.method == 'POST':
-        form = FacultyChangePasswordForm(request.POST, user_email=request.user.email)
-        if form.is_valid():
-            new_password = form.cleaned_data['new_password']
-            user.set_password(new_password)  # Set the new password
-            user.save()
-            update_session_auth_hash(request, user)  # Keep the user logged in after password change
-            messages.success(request, 'Your password has been changed successfully.')
-            ActivityLog.objects.create(activity=f'{faculty.name} updated password')
-            return redirect('projectsList')
-    else:
-        form = FacultyChangePasswordForm(user_email=request.user.email)
-
-    return render(request, 'users/changePassword.html', {
-        'form': form,
-        'email': request.user.email,
-        'faculty': faculty
-    })
-
 
