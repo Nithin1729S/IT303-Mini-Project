@@ -96,27 +96,28 @@ def adminPanel(request):
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
 def projectAllotment(request):
-    "View the projects database."
     search_query = request.GET.get('search', '')
-    per_page = request.GET.get('per_page', 5)  
-    sort_column = request.GET.get('sort', 'title')  
-    sort_order = request.GET.get('order', 'asc')  
+    per_page = request.GET.get('per_page', 5)
+    sort_column = request.GET.get('sort', 'title')
+    sort_order = request.GET.get('order', 'asc')
 
     if sort_order == 'desc':
         order_by = f'-{sort_column}'
     else:
         order_by = sort_column
 
-   
-    projects= Project.objects.filter(
+    cache_key = f'project_allotment_{search_query}_{per_page}_{order_by}'
+    projects = cache.get(cache_key)
+    if not projects:
+        projects = Project.objects.filter(
             Q(title__icontains=search_query) |
             Q(desc__icontains=search_query) |
             Q(student__name__icontains=search_query) |
-            Q(student__rollno__icontains=search_query) 
+            Q(student__rollno__icontains=search_query)
         ).order_by(order_by)
+        cache.set(cache_key, projects, timeout=3600)  # Cache for 1 hour
 
-    
-    paginator = Paginator(projects, per_page)  
+    paginator = Paginator(projects, per_page)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -128,33 +129,34 @@ def projectAllotment(request):
         'sort_order': sort_order,
     }
     return render(request, 'mtechMinorEval/projectAllotment.html', context)
+
     
 
 
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
 def studentDatabase(request):
-    "View the student database."
     search_query = request.GET.get('search', '')
-    per_page = request.GET.get('per_page', 5)  # Default to 5 entries per page
-    sort_column = request.GET.get('sort', 'name')  # Default sort column is 'name'
-    sort_order = request.GET.get('order', 'asc')   # Default order is ascending
+    per_page = request.GET.get('per_page', 5)
+    sort_column = request.GET.get('sort', 'name')
+    sort_order = request.GET.get('order', 'asc')
 
     if sort_order == 'desc':
         order_by = f'-{sort_column}'
     else:
         order_by = sort_column
 
-    # Filter students based on the search query
-   
-    students = Student.objects.filter(
+    cache_key = f'student_database_{search_query}_{per_page}_{order_by}'
+    students = cache.get(cache_key)
+    if not students:
+        students = Student.objects.filter(
             Q(rollno__icontains=search_query) |
             Q(name__icontains=search_query) |
             Q(email__icontains=search_query)
-    ).order_by(order_by)
+        ).order_by(order_by)
+        cache.set(cache_key, students, timeout=3600)  # Cache for 1 hour
 
-    # Pagination
-    paginator = Paginator(students, per_page)  # Use the per_page value
+    paginator = Paginator(students, per_page)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -174,22 +176,23 @@ def studentDatabase(request):
 def facultyDatabase(request):
     search_query = request.GET.get('search', '')
     per_page = request.GET.get('per_page', 5)
-    sort_column = request.GET.get('sort', 'name')  # Default sort column is 'name'
-    sort_order = request.GET.get('order', 'asc')   # Default order is ascending
+    sort_column = request.GET.get('sort', 'name')
+    sort_order = request.GET.get('order', 'asc')
 
-    # Determine the order by adding a minus sign for descending order
     if sort_order == 'desc':
         order_by = f'-{sort_column}'
     else:
         order_by = sort_column
 
-    # Filter facultys based on the search query
-    facultys = Faculty.objects.filter(
-        Q(name__icontains=search_query) |
-        Q(email__icontains=search_query)
-    ).order_by(order_by)
+    cache_key = f'faculty_database_{search_query}_{per_page}_{order_by}'
+    facultys = cache.get(cache_key)
+    if not facultys:
+        facultys = Faculty.objects.filter(
+            Q(name__icontains=search_query) |
+            Q(email__icontains=search_query)
+        ).order_by(order_by)
+        cache.set(cache_key, facultys, timeout=3600)  # Cache for 1 hour
 
-    # Pagination
     paginator = Paginator(facultys, per_page)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -202,6 +205,7 @@ def facultyDatabase(request):
         'sort_order': sort_order,
     }
     return render(request, 'mtechMinorEval/facultyDatabase.html', context)
+
 
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)

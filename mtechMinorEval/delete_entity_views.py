@@ -17,7 +17,7 @@ def deleteProject(request,pk):
     if(request.method=='POST'):
         project.delete()
         log_activity.delay(f"Admin deleted {project.student.name}'s project {project.title}")
-        cache.delete('projects')
+        cache.clear()
         return redirect('project-allotment')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -39,7 +39,7 @@ def deleteStudent(request,pk):
             profile.delete()
             user.delete()
             log_activity.delay(f"Admin deleted {student.name}'s entry")
-            cache.delete('students')
+            cache.clear()
             return redirect('student-database')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -61,6 +61,6 @@ def deleteFaculty(request,pk):
             profile.delete()
             user.delete()
             log_activity.delay(f"Admin deleted {faculty.name}'s entry")
-            cache.delete('facultys')
+            cache.clear()
             return redirect('faculty-database')
     return render(request,'mtechMinorEval/delete.html',context)

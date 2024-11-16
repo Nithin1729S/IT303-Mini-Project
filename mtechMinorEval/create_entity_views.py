@@ -15,7 +15,7 @@ def addNewProject(request):
         if form.is_valid():
             project=form.save()
             log_activity.delay(f"Admin created {project.title} belonging to {project.student.name}")
-            cache.delete('projects')
+            cache.clear()
             return redirect('project-allotment')
     else:
         form = ProjectEditForm()
@@ -81,7 +81,7 @@ def addNewStudent(request):
                     profile_image=profile_image
                 )
                 log_activity.delay(f"Admin created {student.name}'s entry")
-                cache.delete('students')
+                cache.clear()
                 return redirect('student-database')
     else:
         form = StudentEditForm()
@@ -139,7 +139,7 @@ def addNewFaculty(request):
                     pincode=pincode,
                 )
                 log_activity.delay(f"Admin created {faculty.name}'s entry")
-                cache.delete('facultys')
+                cache.clear()
                 return redirect('faculty-database')
     else:
         form = FacultyEditForm()

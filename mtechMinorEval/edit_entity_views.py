@@ -18,7 +18,7 @@ def editProject(request, pk):
             form.save()
             messages.success(request, 'Project details updated successfully.')
             log_activity.delay(f"Admin edited {project.student.name}'s project ({project.title}) details")
-            cache.delete('projects')
+            cache.clear()
             return redirect('project-allotment') 
         else:
             messages.error(request, form.errors)
@@ -54,7 +54,7 @@ def editStudent(request, pk):
             profile_instance.save()  
             messages.success(request, 'Student updated successfully!')
             log_activity.delay(f"Admin edited {student.name}'s details")
-            cache.delete('students')
+            cache.clear()
             return redirect('student-database')  
         else:
             messages.error(request, 'Please correct the errors below.')
@@ -95,10 +95,10 @@ def editFaculty(request, pk):
             messages.success(request, 'Faculty updated successfully!')
             if request.user.is_superuser:
                 log_activity.delay(f"Admin edited {faculty.name}'s details")
-                cache.delete('facultys')
+                cache.clear()
             else:
                 log_activity.delay(f"{faculty.name} updated his details")
-                cache.delete('facultys')
+                cache.clear()
             if request.user.is_superuser:
                 return redirect('faculty-database')  
             else:
