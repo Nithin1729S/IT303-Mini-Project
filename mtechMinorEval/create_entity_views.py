@@ -14,7 +14,7 @@ def addNewProject(request):
         form = ProjectEditForm(request.POST,request.FILES)
         if form.is_valid():
             project=form.save()
-            log_activity.deley(f"Admin created {project.title} belonging to {project.student.name}")
+            log_activity.delay(f"Admin created {project.title} belonging to {project.student.name}")
             cache.delete('projects')
             return redirect('project-allotment')
     else:
