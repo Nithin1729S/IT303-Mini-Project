@@ -3,7 +3,7 @@ from django.db import transaction
 from django.contrib.auth.decorators import login_required, user_passes_test
 from mtechMinorEval.forms import ProjectEditForm, StudentEditForm, FacultyEditForm
 from users.models import User,Student,Profile,Faculty
-from mtechMinorEval.models import ActivityLog
+from .tasks import log_activity
 
 
 @login_required(login_url='admin-login')
@@ -14,7 +14,7 @@ def addNewProject(request):
         form = ProjectEditForm(request.POST,request.FILES)
         if form.is_valid():
             project=form.save()
-            ActivityLog.objects.create(activity=f"Admin created {project.title} belonging to {project.student.name}")
+            log_activity.deley(f"Admin created {project.title} belonging to {project.student.name}")
             return redirect('project-allotment')
     else:
         form = ProjectEditForm()
@@ -79,7 +79,7 @@ def addNewStudent(request):
                     pincode=pincode,
                     profile_image=profile_image
                 )
-                ActivityLog.objects.create(activity=f"Admin created {student.name}'s entry")
+                log_activity.delay(f"Admin created {student.name}'s entry")
                 return redirect('student-database')
     else:
         form = StudentEditForm()
@@ -136,7 +136,7 @@ def addNewFaculty(request):
                     profile_image=profile_image,
                     pincode=pincode,
                 )
-                ActivityLog.objects.create(activity=f"Admin created {faculty.name}'s entry")
+                log_activity.delay(f"Admin created {faculty.name}'s entry")
                 return redirect('faculty-database')
     else:
         form = FacultyEditForm()

@@ -15,9 +15,8 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from users.forms import FacultyChangePasswordForm
 from users.models import Faculty, Profile
-from mtechMinorEval.models import ActivityLog
 from users.notifications_views import generate_otp, send_faculty_otp, send_login_email, send_sms
-
+from .tasks import log_activity
 load_dotenv()
 
 class ExtendedUserCreationForm(UserCreationForm):
@@ -181,7 +180,7 @@ def loginUser(request):
                     userEmail = user.email
                     userProfile = get_object_or_404(Profile, email=userEmail)
                     faculty = get_object_or_404(Faculty, profile=userProfile)
-                    ActivityLog.objects.create(activity=f'{faculty.name} logged in')
+                    log_activity.delay(f'{faculty.name} logged in')
                     #Reset the failed attempts on successful login
                     cache.delete(cache_key)
                     return redirect('projectsList')
@@ -271,7 +270,7 @@ def verify_otp_login(request):
                 recipient_list = [profile.email]
                 send_login_email(profile.user.username, recipient_list)
                 messages.success(request, 'Logged in successfully with OTP!')
-                ActivityLog.objects.create(activity=f'{user.username} logged via OTP')
+                log_activity.delay(f'{user.username} logged via OTP')
                 return redirect('projectsList')
             except (User.DoesNotExist, Faculty.DoesNotExist):
                 messages.error(request, 'No user found with this contact information.')
@@ -290,7 +289,7 @@ def logoutUser(request):
     username = request.user.username if request.user.is_authenticated else 'User'
     logout(request)
     messages.success(request,f"{username} was successfully logged out ")
-    ActivityLog.objects.create(activity=f'{faculty.name} logged out')
+    log_activity.delay(f'{faculty.name} logged out')
     return redirect('login')
 
 
@@ -321,7 +320,7 @@ def verify_otp(request):
                     del request.session['form_data']
 
                     messages.success(request, 'Account created successfully!')
-                    ActivityLog.objects.create(activity=f'{faculty.name} registered')
+                    log_activity.delay(f'{faculty.name} registered')
                     return redirect('login')
             except IntegrityError:
                 messages.error(request, 'An unexpected error occurred. Please try again.')
@@ -364,7 +363,7 @@ def change_password_view(request):
             user.save()
             update_session_auth_hash(request, user)  # Keep the user logged in after password change
             messages.success(request, 'Your password has been changed successfully.')
-            ActivityLog.objects.create(activity=f'{faculty.name} updated password')
+            log_activity.delay(f'{faculty.name} updated password')
             return redirect('projectsList')
     else:
         form = FacultyChangePasswordForm(user_email=request.user.email)
@@ -464,7 +463,7 @@ def reset_password(request, otp):
                 user.save()
 
                 messages.success(request, 'Your password has been updated successfully!')
-                ActivityLog.objects.create(activity=f'{faculty.name} updated password')
+                log_activity.delay(f'{faculty.name} updated password')
                 return redirect('login')
             except Faculty.DoesNotExist:
                 messages.error(request, 'Faculty not found.')

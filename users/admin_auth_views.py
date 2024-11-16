@@ -5,9 +5,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
-from mtechMinorEval.models import ActivityLog
 from users.notifications_views import send_login_email
-
+from .tasks import log_activity
 load_dotenv()
 
 
@@ -45,7 +44,7 @@ def adminLogin(request):
                 recipient_list = [user.email]
                 send_login_email(user.username,recipient_list)
                 messages.success(request, "Admin successfully logged in")
-                ActivityLog.objects.create(activity=f'Admin logged in')
+                log_activity.delay(f'Admin logged in')
                 return redirect('admin-panel') 
             else:
                 messages.error(request, "You are not an admin of this module")
@@ -63,6 +62,6 @@ def adminLogout(request):
     "Admin logout"
     logout(request)  # This logs out the user
     messages.success(request, "Admin successfully logged out")
-    ActivityLog.objects.create(activity=f'Admin Logged out')
+    log_activity.delay(f'Admin logged out')
     return redirect('admin-login')  # Redirect to the login page after logout
 

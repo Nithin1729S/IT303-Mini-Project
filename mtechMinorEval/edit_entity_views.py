@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from users.models import Faculty,Student
 from mtechMinorEval.forms import ProfileEditForm, ProjectEditForm, StudentEditForm, FacultyEditForm
-from mtechMinorEval.models import ActivityLog,Project
-
+from mtechMinorEval.models import Project
+from .tasks import log_activity
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
 def editProject(request, pk):
@@ -15,7 +15,7 @@ def editProject(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Project details updated successfully.')
-            ActivityLog.objects.create(activity=f"Admin edited {project.student.name}'s project ({project.title}) details")
+            log_activity.delay(f"Admin edited {project.student.name}'s project ({project.title}) details")
             return redirect('project-allotment') 
         else:
             messages.error(request, form.errors)
@@ -50,7 +50,7 @@ def editStudent(request, pk):
             user.save()  
             profile_instance.save()  
             messages.success(request, 'Student updated successfully!')
-            ActivityLog.objects.create(activity=f"Admin edited {student.name}'s details")
+            log_activity.delay(f"Admin edited {student.name}'s details")
             return redirect('student-database')  
         else:
             messages.error(request, 'Please correct the errors below.')
@@ -90,9 +90,9 @@ def editFaculty(request, pk):
 
             messages.success(request, 'Faculty updated successfully!')
             if request.user.is_superuser:
-                ActivityLog.objects.create(activity=f"Admin edited {faculty.name}'s details")
+                log_activity.delay(f"Admin edited {faculty.name}'s details")
             else:
-                ActivityLog.objects.create(activity=f"{faculty.name} updated his details")
+                log_activity.delay(f"{faculty.name} updated his details")
             if request.user.is_superuser:
                 return redirect('faculty-database')  
             else:

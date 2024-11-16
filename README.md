@@ -101,7 +101,11 @@
    python manage.py migrate
    ```
 
-7. Start the development server:
+7. Start Celery Server
+   ```
+   celery -A it303 worker --loglevel=debug
+   ```
+8. Start the development server:
 
    ```
    python manage.py runserver

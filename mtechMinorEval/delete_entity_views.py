@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.db import transaction
 from django.contrib.auth.decorators import login_required, user_passes_test
-from mtechMinorEval.models import Project,ActivityLog
+from mtechMinorEval.models import Project
 from users.models import Student,Faculty
+from .tasks import log_activity
 
 
 @login_required(login_url='admin-login')
@@ -15,7 +16,7 @@ def deleteProject(request,pk):
     }
     if(request.method=='POST'):
         project.delete()
-        ActivityLog.objects.create(activity=f"Admin deleted {project.student.name}'s project {project.title}")
+        log_activity.delay(f"Admin deleted {project.student.name}'s project {project.title}")
         return redirect('project-allotment')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -36,7 +37,7 @@ def deleteStudent(request,pk):
             student.delete()
             profile.delete()
             user.delete()
-            ActivityLog.objects.create(activity=f"Admin deleted {student.name}'s entry")
+            log_activity.delay(f"Admin deleted {student.name}'s entry")
             return redirect('student-database')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -57,6 +58,6 @@ def deleteFaculty(request,pk):
             faculty.delete()
             profile.delete()
             user.delete()
-            ActivityLog.objects.create(activity=f"Admin deleted {faculty.name}'s entry")
+            log_activity.delay(f"Admin deleted {faculty.name}'s entry")
             return redirect('faculty-database')
     return render(request,'mtechMinorEval/delete.html',context)

@@ -10,9 +10,9 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from mtechMinorEval.models import  Faculty, Project
 from users.models import Profile,Student,Faculty
-from mtechMinorEval.models import ActivityLog,Project,ProjectEvalSummary
+from mtechMinorEval.models import Project,ProjectEvalSummary
 from django.db.models import Q
-
+from .tasks import log_activity
 
 load_dotenv()
 
@@ -113,7 +113,7 @@ def export_total_eval_to_google_sheet(request):
 
         spreadsheet = service.spreadsheets().create(body=body).execute()
         sheet_id = spreadsheet.get('spreadsheetId')
-        ActivityLog.objects.create(activity=f"Admin dowloaded total evaluation sheet")
+        log_activity.delay(f"Admin dowloaded total evaluation sheet")
         return redirect(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
 
     except HttpError as err:
@@ -173,7 +173,7 @@ def export_faculty_eval_to_google_sheet(request):
         }
         spreadsheet = service.spreadsheets().create(body=body).execute()
         sheet_id = spreadsheet.get('spreadsheetId')
-        ActivityLog.objects.create(activity=f"{faculty.name} dowloaded his evaluation sheet")
+        log_activity.delay(f"{faculty.name} dowloaded his evaluation sheet")
 
         return redirect(f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit")
     except HttpError as err:

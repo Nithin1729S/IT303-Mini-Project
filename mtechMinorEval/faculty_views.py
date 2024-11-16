@@ -14,8 +14,8 @@ from weasyprint import HTML
 from mtechMinorEval.models import  Project
 from mtechMinorEval.forms import ExaminerEvaluationForm, GuideEvaluationForm, ProfileEditForm, StudentEditForm
 from users.models import Profile,Faculty,Student
-from mtechMinorEval.models import ActivityLog,GuideEvaluation,ExaminerEvaluation,ProjectEvalSummary
-
+from mtechMinorEval.models import GuideEvaluation,ExaminerEvaluation,ProjectEvalSummary
+from .tasks import log_activity
 load_dotenv()
 
 def home(request):
@@ -120,7 +120,7 @@ def evaluate(request, pk):
             form.save()
             faculty.done=False
             faculty.save()
-            ActivityLog.objects.create(activity=f"{faculty.name} evaluated {project.student.name}'s project ( {project.title} )as a {role}")
+            log_activity.delay(f"{faculty.name} evaluated {project.student.name}'s project ( {project.title} )as a {role}")
             return redirect('projectsList')
         else:
             print("Form is invalid")
@@ -175,7 +175,7 @@ def generate_pdf(request):
         response = HttpResponse(pdf_file, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="evaluation_summary.pdf"'
         return response
-    ActivityLog.objects.create(activity=f'{faculty.name} generated report of his evaluation')
+    log_activity.delay(f"{faculty.name} generated report of his evaluation")
     return render(request,'mtechMinorEval/generate-pdf-summary.html', context)
 
 
@@ -236,7 +236,7 @@ def student_profile_view(request,pk):
         'profile_form': profile_form,
         'faculty':faculty  
     }
-    ActivityLog.objects.create(activity=f"{faculty.name} viewed {student.name}'s profile")
+    log_activity.delay(f"{faculty.name} viewed {student.name}'s profile")
     return render(request,'users/student_profile.html',context)
 
 
@@ -283,7 +283,7 @@ def send_evaluation_report_to_faculty(request):
         # Use a thread to send the email in the background
         email_thread = threading.Thread(target=email.send)
         email_thread.start()
-        ActivityLog.objects.create(activity=f"Evaluation report sent to {faculty.name}")
+        log_activity.delay(f"Evaluation report sent to {faculty.name}")
 
         messages.success(request, 'Evaluation finalized, and email with PDF sent.')
 
