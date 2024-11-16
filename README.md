@@ -105,10 +105,10 @@
    ```
    celery -A it303 worker --loglevel=debug
    ```
-8. Start the development server:
+8. Start the server:
 
    ```
-   python manage.py runserver
+   gunicorn --workers 3 it303.wsgi:application
    ```
 
 8. Create a JSON file with your Google Sheets API credentials and save it in the `mtechMinorEval/static` directory.
