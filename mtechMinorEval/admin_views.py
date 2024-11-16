@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from django.shortcuts import render
+from django.core.cache import cache
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -50,24 +51,45 @@ def totalEval(request):
     return render(request, 'mtechMinorEval/totalEval.html', context)
 
 
-
-
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
 def adminPanel(request):
-        "Gives a panel to admin listing all databases to perform CRUD operations on."
+    # Check if data is already cached
+    path_accesses = cache.get('path_accesses')
+    if not path_accesses:
         path_accesses = PathAccess.objects.order_by('-access_count')[:8]
-        total_visits = sum(access.access_count for access in path_accesses)
-        total_bounces = sum(access.bounces for access in path_accesses)
-        bounce_rate = (total_bounces / total_visits) * 100 if total_visits > 0 else 0
-        projects = Project.objects.all() 
-        students = Student.objects.all() 
-        facultys = Faculty.objects.all() 
-        context={'projects':projects,'students':students,'facultys':facultys,'path_accesses': path_accesses,
-            'bounce_rate': bounce_rate,}
-        return render(request,'mtechMinorEval/adminPanel.html', context)
+        # Cache the path_accesses data for 5 minutes
+        cache.set('path_accesses', path_accesses, timeout=300)  # timeout in seconds
+    
+    total_visits = sum(access.access_count for access in path_accesses)
+    total_bounces = sum(access.bounces for access in path_accesses)
+    bounce_rate = (total_bounces / total_visits) * 100 if total_visits > 0 else 0
 
+    # Cache projects, students, and faculties
+    projects = cache.get('projects')
+    if not projects:
+        projects = Project.objects.all()
+        cache.set('projects', projects, timeout=3600)
 
+    students = cache.get('students')
+    if not students:
+        students = Student.objects.all()
+        cache.set('students', students, timeout=3600)
+
+    facultys = cache.get('facultys')
+    if not facultys:
+        facultys = Faculty.objects.all()
+        cache.set('facultys', facultys, timeout=3600)
+
+    context = {
+        'projects': projects,
+        'students': students,
+        'facultys': facultys,
+        'path_accesses': path_accesses,
+        'bounce_rate': bounce_rate,
+    }
+    
+    return render(request, 'mtechMinorEval/adminPanel.html', context)
 
 
 

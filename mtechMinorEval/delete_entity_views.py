@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from mtechMinorEval.models import Project
 from users.models import Student,Faculty
 from .tasks import log_activity
-
+from django.core.cache import cache
 
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
@@ -17,6 +17,7 @@ def deleteProject(request,pk):
     if(request.method=='POST'):
         project.delete()
         log_activity.delay(f"Admin deleted {project.student.name}'s project {project.title}")
+        cache.delete('projects')
         return redirect('project-allotment')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -38,6 +39,7 @@ def deleteStudent(request,pk):
             profile.delete()
             user.delete()
             log_activity.delay(f"Admin deleted {student.name}'s entry")
+            cache.delete('students')
             return redirect('student-database')
     return render(request,'mtechMinorEval/delete.html',context)
 
@@ -59,5 +61,6 @@ def deleteFaculty(request,pk):
             profile.delete()
             user.delete()
             log_activity.delay(f"Admin deleted {faculty.name}'s entry")
+            cache.delete('facultys')
             return redirect('faculty-database')
     return render(request,'mtechMinorEval/delete.html',context)

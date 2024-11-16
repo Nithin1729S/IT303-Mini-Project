@@ -5,6 +5,8 @@ from users.models import Faculty,Student
 from mtechMinorEval.forms import ProfileEditForm, ProjectEditForm, StudentEditForm, FacultyEditForm
 from mtechMinorEval.models import Project
 from .tasks import log_activity
+from django.core.cache import cache
+
 @login_required(login_url='admin-login')
 @user_passes_test(lambda u: u.is_superuser)
 def editProject(request, pk):
@@ -16,6 +18,7 @@ def editProject(request, pk):
             form.save()
             messages.success(request, 'Project details updated successfully.')
             log_activity.delay(f"Admin edited {project.student.name}'s project ({project.title}) details")
+            cache.delete('projects')
             return redirect('project-allotment') 
         else:
             messages.error(request, form.errors)
@@ -51,6 +54,7 @@ def editStudent(request, pk):
             profile_instance.save()  
             messages.success(request, 'Student updated successfully!')
             log_activity.delay(f"Admin edited {student.name}'s details")
+            cache.delete('students')
             return redirect('student-database')  
         else:
             messages.error(request, 'Please correct the errors below.')
@@ -91,8 +95,10 @@ def editFaculty(request, pk):
             messages.success(request, 'Faculty updated successfully!')
             if request.user.is_superuser:
                 log_activity.delay(f"Admin edited {faculty.name}'s details")
+                cache.delete('facultys')
             else:
                 log_activity.delay(f"{faculty.name} updated his details")
+                cache.delete('facultys')
             if request.user.is_superuser:
                 return redirect('faculty-database')  
             else:
