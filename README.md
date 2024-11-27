@@ -62,8 +62,31 @@
 ### Activity Log
 ![image](https://github.com/user-attachments/assets/8acc423a-9cd3-47eb-940b-9425fa10e552)
 
+# Tech Stack
 
+- **Backend**: Django  
+- **Frontend**: Bootstrap  
+- **Task Queue**: Celery  
+- **Caching/Message Broker**: Redis  
+- **Application Server**: Gunicorn 
 
+## Features
+
+- **Authentication**:  
+  - Faculty can log in, log out, and reset their password via OTP-based authentication.  
+  - Password updates and uploads are supported.
+
+- **Project Evaluation**:  
+  - Faculty can evaluate students' marks based on their role (guide or examiner) as assigned during the project allocation process.  
+
+- **Roles and Permissions**:  
+  - Faculty can be assigned as a **guide** or **examiner** for specific projects, with evaluation privileges tailored to their role.  
+
+- **Reports and Notifications**:  
+  - Marks reports are automatically generated and sent to faculty via email in PDF format.  
+
+- **Admin Panel**:  
+  - Admins can view and manage details for all students, faculty members, and projects.  
 
 
 ## Setup Instructions
