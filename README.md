@@ -62,7 +62,7 @@
 ### Activity Log
 ![image](https://github.com/user-attachments/assets/8acc423a-9cd3-47eb-940b-9425fa10e552)
 
-# Tech Stack
+## Tech Stack
 
 - **Backend**: Django  
 - **Frontend**: Bootstrap  
