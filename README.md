@@ -74,19 +74,26 @@
 
 - **Authentication**:  
   - Faculty can log in, log out, and reset their password via OTP-based authentication.  
-  - Password updates and uploads are supported.
+  - Password updates are supported.
+
+- **Profile Management**:  
+  - Faculty can edit their profile information.  
+  - Faculty can view student profiles, including details such as CGPA and other academic records.  
 
 - **Project Evaluation**:  
-  - Faculty can evaluate students' marks based on their role (guide or examiner) as assigned during the project allocation process.  
+  - Faculty can evaluate students' marks based on their role (guide or examiner) as assigned during the guide allocation process.  
+  - Evaluations can be exported to an Excel sheet.  
 
 - **Roles and Permissions**:  
   - Faculty can be assigned as a **guide** or **examiner** for specific projects, with evaluation privileges tailored to their role.  
+  - The admin has higher-level access to the module, overseeing and managing all users, projects, and activities.  
 
 - **Reports and Notifications**:  
   - Marks reports are automatically generated and sent to faculty via email in PDF format.  
 
 - **Admin Panel**:  
   - Admins can view and manage details for all students, faculty members, and projects.  
+  - An activity log is available for the admin to monitor all actions performed in the system.  
 
 
 ## Setup Instructions
