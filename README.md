@@ -75,6 +75,7 @@
 ### Authentication
 - Faculty can log in, log out, and reset their password via OTP-based authentication.  
 - Password updates are supported.
+- **CAPTCHA** has been added to the login and registration forms to enhance security and prevent automated attacks.  
 
 ### Profile Management
 - Faculty can edit their profile information.  
